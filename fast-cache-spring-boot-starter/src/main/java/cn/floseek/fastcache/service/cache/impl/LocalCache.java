@@ -29,7 +29,16 @@ public class LocalCache<K, V> implements Cache<K, V> {
 
     @Override
     public V get(K key, Supplier<V> dbLoader) {
-        return cache.get(key, k -> dbLoader.get());
+        V value = cache.getIfPresent(key);
+        if (value != null) {
+            return value;
+        }
+
+        value = dbLoader.get();
+        if (value != null) {
+            this.put(key, value);
+        }
+        return value;
     }
 
     @Override

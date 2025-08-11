@@ -32,14 +32,15 @@ public class RemoteCache<K, V> implements Cache<K, V> {
 
     @Override
     public V get(K key, Supplier<V> dbLoader) {
-        V value = this.get(key);
+        String cacheKey = this.buildRemoteCacheKey(key);
+        V value = redisService.getObject(cacheKey);
         if (value != null) {
             return value;
         }
 
         value = dbLoader.get();
         if (value != null) {
-            put(key, value);
+            this.put(key, value);
         }
         return value;
     }
