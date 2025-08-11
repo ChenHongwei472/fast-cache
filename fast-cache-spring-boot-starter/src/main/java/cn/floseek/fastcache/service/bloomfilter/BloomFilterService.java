@@ -1,0 +1,44 @@
+package cn.floseek.fastcache.service.bloomfilter;
+
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * 布隆过滤器服务接口
+ *
+ * @param <T> 元素类型
+ * @author ChenHongwei472
+ */
+public interface BloomFilterService<T> {
+
+    /**
+     * 添加元素
+     *
+     * @param object 要添加的元素
+     * @return boolean
+     */
+    boolean add(T object);
+
+    /**
+     * 添加元素
+     *
+     * @param elements 要添加的元素
+     * @return 添加元素的数量
+     */
+    long add(Collection<T> elements);
+
+    /**
+     * 判断元素是否可能存在
+     *
+     * @param object 元素
+     * @return boolean
+     */
+    boolean mightContain(T object);
+
+    /**
+     * 重建
+     *
+     * @param dataList 数据列表
+     */
+    void rebuild(List<T> dataList);
+}
