@@ -3,23 +3,22 @@ package cn.floseek.fastcache.service.cache.impl;
 import cn.floseek.fastcache.manager.LocalCacheManager;
 import cn.floseek.fastcache.model.CacheConfig;
 import cn.floseek.fastcache.model.CacheType;
-import cn.floseek.fastcache.service.cache.CacheService;
-import com.github.benmanes.caffeine.cache.Cache;
+import cn.floseek.fastcache.service.cache.Cache;
 
 import java.util.function.Supplier;
 
 /**
- * 本地缓存服务实现
+ * 本地缓存
  *
  * @param <K> 缓存键类型
  * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
-public class LocalCacheService<K, V> implements CacheService<K, V> {
+public class LocalCache<K, V> implements Cache<K, V> {
 
-    private final Cache<K, V> cache;
+    private final com.github.benmanes.caffeine.cache.Cache<K, V> cache;
 
-    public LocalCacheService(CacheConfig cacheConfig) {
+    public LocalCache(CacheConfig cacheConfig) {
         this.cache = LocalCacheManager.getInstance().getOrCreateCache(cacheConfig.getCacheName(), cacheConfig);
     }
 

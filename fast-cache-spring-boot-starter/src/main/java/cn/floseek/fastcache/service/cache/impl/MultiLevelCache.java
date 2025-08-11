@@ -3,29 +3,29 @@ package cn.floseek.fastcache.service.cache.impl;
 import cn.floseek.fastcache.model.CacheConfig;
 import cn.floseek.fastcache.model.CacheType;
 import cn.floseek.fastcache.service.broadcast.BroadcastService;
-import cn.floseek.fastcache.service.cache.CacheService;
+import cn.floseek.fastcache.service.cache.Cache;
 import cn.floseek.fastcache.service.redis.RedisService;
 
 import java.util.function.Supplier;
 
 /**
- * 多级缓存服务实现
+ * 多级缓存
  *
  * @param <K> 缓存键类型
  * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
-public class MultiLevelCacheService<K, V> implements CacheService<K, V> {
+public class MultiLevelCache<K, V> implements Cache<K, V> {
 
     private final CacheConfig cacheConfig;
-    private final LocalCacheService<K, V> localCacheService;
-    private final RemoteCacheService<K, V> remoteCacheService;
+    private final LocalCache<K, V> localCacheService;
+    private final RemoteCache<K, V> remoteCacheService;
     private final BroadcastService broadcastService;
 
-    public MultiLevelCacheService(CacheConfig cacheConfig, RedisService redisService, BroadcastService broadcastService) {
+    public MultiLevelCache(CacheConfig cacheConfig, RedisService redisService, BroadcastService broadcastService) {
         this.cacheConfig = cacheConfig;
-        this.localCacheService = new LocalCacheService<>(cacheConfig);
-        this.remoteCacheService = new RemoteCacheService<>(cacheConfig, redisService);
+        this.localCacheService = new LocalCache<>(cacheConfig);
+        this.remoteCacheService = new RemoteCache<>(cacheConfig, redisService);
         this.broadcastService = broadcastService;
     }
 

@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.service.bloomfilter.impl;
 
 import cn.floseek.fastcache.model.BloomFilterConfig;
-import cn.floseek.fastcache.service.bloomfilter.BloomFilterService;
+import cn.floseek.fastcache.service.bloomfilter.BloomFilter;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -12,12 +12,12 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Redisson 布隆过滤器服务实现
+ * Redisson 布隆过滤器
  *
  * @author ChenHongwei472
  */
 @Slf4j
-public class RedissonBloomFilterService implements BloomFilterService {
+public class RedissonBloomFilter implements BloomFilter {
 
     /**
      * Redisson 客户端
@@ -44,7 +44,7 @@ public class RedissonBloomFilterService implements BloomFilterService {
      */
     private RBloomFilter<String> bloomFilter;
 
-    public RedissonBloomFilterService(RedissonClient redissonClient, BloomFilterConfig bloomFilterConfig) {
+    public RedissonBloomFilter(RedissonClient redissonClient, BloomFilterConfig bloomFilterConfig) {
         this.redissonClient = redissonClient;
         this.key = bloomFilterConfig.getKey();
         this.expectedInsertions = bloomFilterConfig.getExpectedInsertions();

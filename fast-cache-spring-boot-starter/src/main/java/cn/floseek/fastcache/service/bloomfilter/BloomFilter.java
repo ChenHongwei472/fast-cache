@@ -4,11 +4,11 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * 布隆过滤器服务接口
+ * 布隆过滤器接口
  *
  * @author ChenHongwei472
  */
-public interface BloomFilterService {
+public interface BloomFilter {
 
     /**
      * 添加元素

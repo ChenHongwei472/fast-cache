@@ -1,8 +1,8 @@
 package cn.floseek.fastcache.manager;
 
 import cn.floseek.fastcache.model.BloomFilterConfig;
-import cn.floseek.fastcache.service.bloomfilter.BloomFilterService;
-import cn.floseek.fastcache.service.bloomfilter.impl.RedissonBloomFilterService;
+import cn.floseek.fastcache.service.bloomfilter.BloomFilter;
+import cn.floseek.fastcache.service.bloomfilter.impl.RedissonBloomFilter;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RedissonClient;
 
@@ -20,34 +20,34 @@ public class BloomFilterManager {
     private final RedissonClient redissonClient;
 
     /**
-     * 布隆过滤器服务映射，key：键名，value：布隆过滤器服务实例
+     * 布隆过滤器映射，key：键名，value：布隆过滤器实例
      */
-    private final Map<String, BloomFilterService> bloomFilterServiceMap = new ConcurrentHashMap<>();
+    private final Map<String, BloomFilter> bloomFilterMap = new ConcurrentHashMap<>();
 
     /**
-     * 获取或创建布隆过滤器服务实例
+     * 获取或创建布隆过滤器实例
      *
      * @param bloomFilterConfig 布隆过滤器配置
-     * @return 布隆过滤器服务实例
+     * @return 布隆过滤器实例
      */
-    public BloomFilterService getOrCreateBloomFilterService(BloomFilterConfig bloomFilterConfig) {
+    public BloomFilter getOrCreateBloomFilter(BloomFilterConfig bloomFilterConfig) {
         String key = bloomFilterConfig.getKey();
-        if (bloomFilterServiceMap.containsKey(key)) {
-            return bloomFilterServiceMap.get(key);
+        if (bloomFilterMap.containsKey(key)) {
+            return bloomFilterMap.get(key);
         }
 
-        BloomFilterService bloomFilterService = new RedissonBloomFilterService(redissonClient, bloomFilterConfig);
-        bloomFilterServiceMap.put(key, bloomFilterService);
-        return bloomFilterService;
+        BloomFilter bloomFilter = new RedissonBloomFilter(redissonClient, bloomFilterConfig);
+        bloomFilterMap.put(key, bloomFilter);
+        return bloomFilter;
     }
 
     /**
-     * 获取布隆过滤器服务实例
+     * 获取布隆过滤器实例
      *
      * @param key 键名
-     * @return 布隆过滤器服务实例
+     * @return 布隆过滤器实例
      */
-    public BloomFilterService getBloomFilterService(String key) {
-        return bloomFilterServiceMap.get(key);
+    public BloomFilter getBloomFilter(String key) {
+        return bloomFilterMap.get(key);
     }
 }

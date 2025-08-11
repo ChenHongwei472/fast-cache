@@ -2,24 +2,24 @@ package cn.floseek.fastcache.service.cache.impl;
 
 import cn.floseek.fastcache.model.CacheConfig;
 import cn.floseek.fastcache.model.CacheType;
-import cn.floseek.fastcache.service.cache.CacheService;
+import cn.floseek.fastcache.service.cache.Cache;
 import cn.floseek.fastcache.service.redis.RedisService;
 
 import java.util.function.Supplier;
 
 /**
- * 分布式缓存服务实现
+ * 分布式缓存
  *
  * @param <K> 缓存键类型
  * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
-public class RemoteCacheService<K, V> implements CacheService<K, V> {
+public class RemoteCache<K, V> implements Cache<K, V> {
 
     protected final CacheConfig cacheConfig;
     protected final RedisService redisService;
 
-    public RemoteCacheService(CacheConfig cacheConfig, RedisService redisService) {
+    public RemoteCache(CacheConfig cacheConfig, RedisService redisService) {
         this.cacheConfig = cacheConfig;
         this.redisService = redisService;
     }
