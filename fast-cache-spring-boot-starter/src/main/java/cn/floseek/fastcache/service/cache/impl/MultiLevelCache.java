@@ -61,16 +61,16 @@ public class MultiLevelCache<K, V> implements Cache<K, V> {
 
     @Override
     public Map<K, V> getAll(Collection<? extends K> keys) {
-        Map<K, V> value = localCacheService.getAll(keys);
-        if (value != null) {
-            return value;
+        Map<K, V> valueMap = localCacheService.getAll(keys);
+        if (valueMap != null && !valueMap.isEmpty()) {
+            return valueMap;
         }
 
-        value = remoteCacheService.getAll(keys);
-        if (value != null) {
-            localCacheService.putAll(value);
+        valueMap = remoteCacheService.getAll(keys);
+        if (valueMap != null && !valueMap.isEmpty()) {
+            localCacheService.putAll(valueMap);
         }
-        return value;
+        return valueMap;
     }
 
     @Override

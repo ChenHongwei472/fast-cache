@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * 分布式缓存
@@ -61,9 +59,15 @@ public class RemoteCache<K, V> implements Cache<K, V> {
                 .toList();
         List<V> objectList = redisService.getObjects(cacheKeys);
 
-        return IntStream.range(0, keyList.size())
-                .boxed()
-                .collect(Collectors.toMap(keyList::get, objectList::get));
+        Map<K, V> valueMap = new HashMap<>();
+        for (int i = 0; i < keyList.size(); i++) {
+            K key = keyList.get(i);
+            V value = objectList.get(i);
+            if (value != null) {
+                valueMap.put(key, value);
+            }
+        }
+        return valueMap;
     }
 
     @Override

@@ -4,7 +4,6 @@ import cn.floseek.fastcache.manager.LocalCacheManager;
 import cn.floseek.fastcache.model.CacheConfig;
 import cn.floseek.fastcache.model.CacheType;
 import cn.floseek.fastcache.service.cache.Cache;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.Map;
@@ -17,7 +16,6 @@ import java.util.function.Supplier;
  * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
-@Slf4j
 public class LocalCache<K, V> implements Cache<K, V> {
 
     private final com.github.benmanes.caffeine.cache.Cache<K, V> cache;
