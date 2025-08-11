@@ -3,6 +3,7 @@ package cn.floseek.fastcache.manager;
 import cn.floseek.fastcache.model.BloomFilterConfig;
 import cn.floseek.fastcache.service.bloomfilter.BloomFilterService;
 import cn.floseek.fastcache.service.bloomfilter.impl.RedissonBloomFilterService;
+import lombok.RequiredArgsConstructor;
 import org.redisson.api.RedissonClient;
 
 import java.util.Map;
@@ -13,29 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author ChenHongwei472
  */
+@RequiredArgsConstructor
 public class BloomFilterManager {
 
-    /**
-     * 静态内部类实现单例模式
-     */
-    private static class SingletonHolder {
-        private static final BloomFilterManager INSTANCE = new BloomFilterManager();
-    }
-
-    /**
-     * 获取布隆过滤器实例
-     *
-     * @return 布隆过滤器实例
-     */
-    public static BloomFilterManager getInstance() {
-        return SingletonHolder.INSTANCE;
-    }
-
-    /**
-     * 私有构造函数，防止外部实例化
-     */
-    private BloomFilterManager() {
-    }
+    private final RedissonClient redissonClient;
 
     /**
      * 布隆过滤器服务映射，key：键名，value：布隆过滤器服务实例
@@ -46,10 +28,9 @@ public class BloomFilterManager {
      * 获取或创建布隆过滤器服务实例
      *
      * @param bloomFilterConfig 布隆过滤器配置
-     * @param redissonClient    Redisson 客户端
      * @return 布隆过滤器服务实例
      */
-    public BloomFilterService getOrCreateBloomFilterService(BloomFilterConfig bloomFilterConfig, RedissonClient redissonClient) {
+    public BloomFilterService getOrCreateBloomFilterService(BloomFilterConfig bloomFilterConfig) {
         String key = bloomFilterConfig.getKey();
         if (bloomFilterServiceMap.containsKey(key)) {
             return bloomFilterServiceMap.get(key);
