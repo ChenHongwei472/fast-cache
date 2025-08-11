@@ -6,6 +6,8 @@ import cn.floseek.fastcache.service.broadcast.BroadcastService;
 import cn.floseek.fastcache.service.cache.Cache;
 import cn.floseek.fastcache.service.redis.RedisService;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -58,6 +60,20 @@ public class MultiLevelCache<K, V> implements Cache<K, V> {
     }
 
     @Override
+    public Map<K, V> getAll(Collection<? extends K> keys) {
+        Map<K, V> value = localCacheService.getAll(keys);
+        if (value != null) {
+            return value;
+        }
+
+        value = remoteCacheService.getAll(keys);
+        if (value != null) {
+            localCacheService.putAll(value);
+        }
+        return value;
+    }
+
+    @Override
     public void put(K key, V value) {
         remoteCacheService.put(key, value);
         localCacheService.put(key, value);
@@ -65,10 +81,24 @@ public class MultiLevelCache<K, V> implements Cache<K, V> {
     }
 
     @Override
+    public void putAll(Map<? extends K, ? extends V> map) {
+        remoteCacheService.putAll(map);
+        localCacheService.putAll(map);
+        broadcastService.broadcast(cacheConfig.getCacheName(), map.keySet());
+    }
+
+    @Override
     public void remove(K key) {
         remoteCacheService.remove(key);
         localCacheService.remove(key);
         broadcastService.broadcast(cacheConfig.getCacheName(), key);
+    }
+
+    @Override
+    public void removeAll(Collection<? extends K> keys) {
+        remoteCacheService.removeAll(keys);
+        localCacheService.removeAll(keys);
+        broadcastService.broadcast(cacheConfig.getCacheName(), keys);
     }
 
     @Override

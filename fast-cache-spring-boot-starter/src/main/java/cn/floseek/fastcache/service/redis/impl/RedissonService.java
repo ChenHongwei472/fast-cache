@@ -67,6 +67,27 @@ public class RedissonService implements RedisService {
     }
 
     @Override
+    public <T> void setObjects(Map<String, T> objects) {
+        RBatch batch = redissonClient.createBatch();
+        objects.forEach((key, value) -> {
+            RBucketAsync<T> bucket = batch.getBucket(key);
+            bucket.setAsync(value);
+        });
+        batch.execute();
+    }
+
+    @Override
+    public <T> void setObjects(Map<String, T> objects, Duration duration) {
+        RBatch batch = redissonClient.createBatch();
+        objects.forEach((key, value) -> {
+            RBucketAsync<T> bucket = batch.getBucket(key);
+            bucket.setAsync(value, duration);
+        });
+        batch.execute();
+
+    }
+
+    @Override
     public <T> boolean setObjectIfAbsent(final String key, final T value, final Duration duration) {
         RBucket<T> bucket = redissonClient.getBucket(key);
         return bucket.setIfAbsent(value, duration);

@@ -42,6 +42,21 @@ public interface RedisService {
     <T> void setObject(final String key, final T value, final Duration duration);
 
     /**
+     * 批量缓存对象
+     *
+     * @param objects 要缓存的对象 Map
+     */
+    <T> void setObjects(Map<String, T> objects);
+
+    /**
+     * 批量缓存对象
+     *
+     * @param objects  要缓存的对象 Map
+     * @param duration 过期时间
+     */
+    <T> void setObjects(Map<String, T> objects, Duration duration);
+
+    /**
      * 如果键不存在，则缓存对象
      *
      * @param key      键名

@@ -5,7 +5,14 @@ import cn.floseek.fastcache.model.CacheType;
 import cn.floseek.fastcache.service.cache.Cache;
 import cn.floseek.fastcache.service.redis.RedisService;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * 分布式缓存
@@ -46,6 +53,20 @@ public class RemoteCache<K, V> implements Cache<K, V> {
     }
 
     @Override
+    public Map<K, V> getAll(Collection<? extends K> keys) {
+        List<K> keyList = new ArrayList<>(keys);
+
+        List<String> cacheKeys = keyList.stream()
+                .map(this::buildRemoteCacheKey)
+                .toList();
+        List<V> objectList = redisService.getObjects(cacheKeys);
+
+        return IntStream.range(0, keyList.size())
+                .boxed()
+                .collect(Collectors.toMap(keyList::get, objectList::get));
+    }
+
+    @Override
     public void put(K key, V value) {
         String cacheKey = this.buildRemoteCacheKey(key);
         if (cacheConfig.getExpireTime() == null) {
@@ -56,9 +77,29 @@ public class RemoteCache<K, V> implements Cache<K, V> {
     }
 
     @Override
+    public void putAll(Map<? extends K, ? extends V> map) {
+        Map<String, V> remoteCacheMap = new HashMap<>();
+        map.forEach((key, value) -> remoteCacheMap.put(this.buildRemoteCacheKey(key), value));
+
+        if (cacheConfig.getExpireTime() == null) {
+            redisService.setObjects(remoteCacheMap);
+        } else {
+            redisService.setObjects(remoteCacheMap, cacheConfig.getExpireTime());
+        }
+    }
+
+    @Override
     public void remove(K key) {
         String cacheKey = this.buildRemoteCacheKey(key);
         redisService.deleteObject(cacheKey);
+    }
+
+    @Override
+    public void removeAll(Collection<? extends K> keys) {
+        List<String> cacheKeys = keys.stream()
+                .map(this::buildRemoteCacheKey)
+                .toList();
+        redisService.deleteObjects(cacheKeys);
     }
 
     @Override

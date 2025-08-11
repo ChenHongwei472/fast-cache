@@ -2,6 +2,8 @@ package cn.floseek.fastcache.service.cache;
 
 import cn.floseek.fastcache.model.CacheType;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -31,6 +33,14 @@ public interface Cache<K, V> {
     V get(K key, Supplier<V> dbLoader);
 
     /**
+     * 批量获取缓存值
+     *
+     * @param keys 缓存键集合
+     * @return 缓存值映射
+     */
+    Map<K, V> getAll(Collection<? extends K> keys);
+
+    /**
      * 设置缓存值
      *
      * @param key   缓存键
@@ -39,11 +49,25 @@ public interface Cache<K, V> {
     void put(K key, V value);
 
     /**
+     * 批量设置缓存值
+     *
+     * @param map 映射
+     */
+    void putAll(Map<? extends K, ? extends V> map);
+
+    /**
      * 删除缓存值
      *
      * @param key 缓存键
      */
     void remove(K key);
+
+    /**
+     * 批量删除缓存值
+     *
+     * @param keys 缓存键集合
+     */
+    void removeAll(Collection<? extends K> keys);
 
     /**
      * 获取缓存类型
