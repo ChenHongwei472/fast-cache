@@ -1,8 +1,9 @@
-package cn.floseek.fastcache.service.bloomfilter;
+package cn.floseek.fastcache.service.bloomfilter.impl;
 
+import cn.floseek.fastcache.model.BloomFilterConfig;
+import cn.floseek.fastcache.service.bloomfilter.BloomFilterService;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RedissonClient;
@@ -16,7 +17,7 @@ import java.util.List;
  * @author ChenHongwei472
  */
 @Slf4j
-public class RedissonBloomFilterService<T> implements BloomFilterService<T> {
+public class RedissonBloomFilterService implements BloomFilterService {
 
     /**
      * Redisson 客户端
@@ -41,19 +42,19 @@ public class RedissonBloomFilterService<T> implements BloomFilterService<T> {
     /**
      * 布隆过滤器
      */
-    private RBloomFilter<T> bloomFilter;
+    private RBloomFilter<String> bloomFilter;
 
-    public RedissonBloomFilterService(String key, long expectedInsertions, double falsePositiveProbability) {
-        this.redissonClient = SpringUtil.getBean(RedissonClient.class);
-        this.key = key;
-        this.expectedInsertions = expectedInsertions;
-        this.falsePositiveProbability = falsePositiveProbability;
+    public RedissonBloomFilterService(RedissonClient redissonClient, BloomFilterConfig bloomFilterConfig) {
+        this.redissonClient = redissonClient;
+        this.key = bloomFilterConfig.getKey();
+        this.expectedInsertions = bloomFilterConfig.getExpectedInsertions();
+        this.falsePositiveProbability = bloomFilterConfig.getFalsePositiveProbability();
 
         this.bloomFilter = this.getBloomFilter(key);
     }
 
     @Override
-    public boolean add(T object) {
+    public boolean add(String object) {
         if (ObjUtil.isNull(object)) {
             return false;
         }
@@ -61,7 +62,7 @@ public class RedissonBloomFilterService<T> implements BloomFilterService<T> {
     }
 
     @Override
-    public long add(Collection<T> elements) {
+    public long add(Collection<String> elements) {
         if (CollUtil.isEmpty(elements)) {
             return 0;
         }
@@ -69,7 +70,7 @@ public class RedissonBloomFilterService<T> implements BloomFilterService<T> {
     }
 
     @Override
-    public boolean mightContain(T object) {
+    public boolean mightContain(String object) {
         if (ObjUtil.isNull(object)) {
             return false;
         }
@@ -77,11 +78,11 @@ public class RedissonBloomFilterService<T> implements BloomFilterService<T> {
     }
 
     @Override
-    public void rebuild(List<T> dataList) {
+    public void rebuild(List<String> dataList) {
         log.info("开始重建布隆过滤器，key：{}", key);
         // 创建备份布隆过滤器
         String backupKey = key + "_backup";
-        RBloomFilter<T> backupBloomFilter = this.getBloomFilter(backupKey);
+        RBloomFilter<String> backupBloomFilter = this.getBloomFilter(backupKey);
         if (CollUtil.isNotEmpty(dataList)) {
             backupBloomFilter.add(dataList);
         }
@@ -98,8 +99,8 @@ public class RedissonBloomFilterService<T> implements BloomFilterService<T> {
      * @param key 键名
      * @return 布隆过滤器
      */
-    private RBloomFilter<T> getBloomFilter(String key) {
-        RBloomFilter<T> bloomFilter = redissonClient.getBloomFilter(key);
+    private RBloomFilter<String> getBloomFilter(String key) {
+        RBloomFilter<String> bloomFilter = redissonClient.getBloomFilter(key);
         if (ObjUtil.isNotNull(bloomFilter) && !bloomFilter.isExists()) {
             bloomFilter.tryInit(expectedInsertions, falsePositiveProbability);
         }

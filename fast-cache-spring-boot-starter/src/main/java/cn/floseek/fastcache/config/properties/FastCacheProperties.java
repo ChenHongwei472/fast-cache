@@ -4,15 +4,15 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Redisson 配置属性类
+ * FastCache 配置属性
  *
  * @author ChenHongwei472
  */
 @Data
-@ConfigurationProperties(prefix = RedissonProperties.PREFIX)
-public class RedissonProperties {
+@ConfigurationProperties(prefix = FastCacheProperties.PREFIX)
+public class FastCacheProperties {
 
-    public static final String PREFIX = "redisson";
+    public static final String PREFIX = "fast-cache";
 
     /**
      * Key 前缀

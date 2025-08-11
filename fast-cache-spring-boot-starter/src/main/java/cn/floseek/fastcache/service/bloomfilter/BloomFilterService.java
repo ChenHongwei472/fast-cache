@@ -6,10 +6,9 @@ import java.util.List;
 /**
  * 布隆过滤器服务接口
  *
- * @param <T> 元素类型
  * @author ChenHongwei472
  */
-public interface BloomFilterService<T> {
+public interface BloomFilterService {
 
     /**
      * 添加元素
@@ -17,7 +16,7 @@ public interface BloomFilterService<T> {
      * @param object 要添加的元素
      * @return boolean
      */
-    boolean add(T object);
+    boolean add(String object);
 
     /**
      * 添加元素
@@ -25,7 +24,7 @@ public interface BloomFilterService<T> {
      * @param elements 要添加的元素
      * @return 添加元素的数量
      */
-    long add(Collection<T> elements);
+    long add(Collection<String> elements);
 
     /**
      * 判断元素是否可能存在
@@ -33,12 +32,12 @@ public interface BloomFilterService<T> {
      * @param object 元素
      * @return boolean
      */
-    boolean mightContain(T object);
+    boolean mightContain(String object);
 
     /**
      * 重建
      *
      * @param dataList 数据列表
      */
-    void rebuild(List<T> dataList);
+    void rebuild(List<String> dataList);
 }

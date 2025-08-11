@@ -1,6 +1,6 @@
 package cn.floseek.fastcache.config;
 
-import cn.floseek.fastcache.config.properties.RedissonProperties;
+import cn.floseek.fastcache.config.properties.FastCacheProperties;
 import cn.floseek.fastcache.constant.CacheConstant;
 import cn.floseek.fastcache.handler.RedisKeyPrefixHandler;
 import cn.floseek.fastcache.listener.CacheMessageListener;
@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.StringCodec;
 import org.redisson.codec.CompositeCodec;
@@ -26,13 +27,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 缓存配置类
+ * FastCache 配置类
  *
  * @author ChenHongwei472
  */
+@Slf4j
 @Configuration
-@EnableConfigurationProperties(RedissonProperties.class)
-public class CacheConfiguration {
+@EnableConfigurationProperties(FastCacheProperties.class)
+public class FastCacheConfiguration {
 
     @Bean
     public RedisService redisService(RedissonClient redissonClient) {
@@ -60,7 +62,7 @@ public class CacheConfiguration {
     }
 
     @Bean
-    public RedissonAutoConfigurationCustomizer redissonAutoConfigurationCustomizer(RedissonProperties redissonProperties, RedisProperties redisProperties) {
+    public RedissonAutoConfigurationCustomizer redissonAutoConfigurationCustomizer(FastCacheProperties fastCacheProperties, RedisProperties redisProperties) {
         return config -> {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
@@ -72,7 +74,7 @@ public class CacheConfiguration {
             CompositeCodec codec = new CompositeCodec(StringCodec.INSTANCE, jsonCodec, jsonCodec);
             config.setCodec(codec);
 
-            RedisKeyPrefixHandler keyPrefixHandler = new RedisKeyPrefixHandler(redissonProperties.getKeyPrefix());
+            RedisKeyPrefixHandler keyPrefixHandler = new RedisKeyPrefixHandler(fastCacheProperties.getKeyPrefix());
             if (redisProperties.getCluster() != null) {
                 config.useSingleServer().setNameMapper(keyPrefixHandler);
             } else if (redisProperties.getSentinel() != null) {
