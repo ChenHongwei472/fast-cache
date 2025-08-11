@@ -1,8 +1,8 @@
 package cn.floseek.fastcache.service.broadcast;
 
 import cn.floseek.fastcache.model.CacheMessage;
-import cn.floseek.fastcache.service.redis.RedisService;
 import org.redisson.api.RTopic;
+import org.redisson.api.RedissonClient;
 
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -14,12 +14,12 @@ import java.util.function.Consumer;
  */
 public class RedisBroadcastService implements BroadcastService {
 
-    private final RedisService redisService;
+    private final RedissonClient redissonClient;
     private final String instanceId;
     private final String topicName;
 
-    public RedisBroadcastService(RedisService redisService, String topicName) {
-        this.redisService = redisService;
+    public RedisBroadcastService(RedissonClient redissonClient, String topicName) {
+        this.redissonClient = redissonClient;
         this.instanceId = UUID.randomUUID().toString();
         this.topicName = topicName;
     }
@@ -32,13 +32,13 @@ public class RedisBroadcastService implements BroadcastService {
                 .instanceId(instanceId)
                 .build();
 
-        RTopic topic = redisService.getTopic(topicName);
+        RTopic topic = redissonClient.getTopic(topicName);
         topic.publish(message);
     }
 
     @Override
     public void listen(Consumer<CacheMessage<?>> handler) {
-        RTopic topic = redisService.getTopic(topicName);
+        RTopic topic = redissonClient.getTopic(topicName);
         topic.addListener(CacheMessage.class, (channel, msg) -> {
             if (!msg.getInstanceId().equals(instanceId)) {
                 handler.accept(msg);

@@ -8,6 +8,7 @@ import cn.floseek.fastcache.manager.CacheManager;
 import cn.floseek.fastcache.service.broadcast.BroadcastService;
 import cn.floseek.fastcache.service.broadcast.RedisBroadcastService;
 import cn.floseek.fastcache.service.redis.RedisService;
+import cn.floseek.fastcache.service.redis.impl.RedissonService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,12 +38,12 @@ public class FastCacheConfiguration {
 
     @Bean
     public RedisService redisService(RedissonClient redissonClient) {
-        return new RedisService(redissonClient);
+        return new RedissonService(redissonClient);
     }
 
     @Bean
-    public BroadcastService broadcastService(RedisService redisService) {
-        return new RedisBroadcastService(redisService, CacheConstant.CACHE_MESSAGE_TOPIC);
+    public BroadcastService broadcastService(RedissonClient redissonClient) {
+        return new RedisBroadcastService(redissonClient, CacheConstant.CACHE_MESSAGE_TOPIC);
     }
 
     @Bean
