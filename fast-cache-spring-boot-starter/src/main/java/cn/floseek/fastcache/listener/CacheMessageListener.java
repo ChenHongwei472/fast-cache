@@ -24,7 +24,7 @@ public class CacheMessageListener implements ApplicationRunner {
         broadcastService.listen(cacheMessage -> {
             Cache<Object, Object> cache = LocalCacheManager.getInstance().getCache(cacheMessage.getCacheName());
             if (cache != null) {
-                cache.invalidate(cacheMessage.getKey());
+                cache.invalidateAll(cacheMessage.getKeys());
             }
         });
     }

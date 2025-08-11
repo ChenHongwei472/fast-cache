@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Collection;
+
 /**
  * 缓存消息
  *
@@ -23,9 +25,9 @@ public class CacheMessage<K> {
     private String cacheName;
 
     /**
-     * 缓存键
+     * 缓存键集合
      */
-    private K key;
+    private Collection<? extends K> keys;
 
     /**
      * 实例 ID

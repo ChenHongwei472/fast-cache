@@ -4,6 +4,8 @@ import cn.floseek.fastcache.model.CacheMessage;
 import org.redisson.api.RTopic;
 import org.redisson.api.RedissonClient;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -25,10 +27,15 @@ public class RedisBroadcastService implements BroadcastService {
     }
 
     @Override
-    public void broadcast(String cacheName, Object key) {
+    public <K> void broadcast(String cacheName, K key) {
+        broadcast(cacheName, List.of(key));
+    }
+
+    @Override
+    public <K> void broadcast(String cacheName, Collection<? extends K> keys) {
         CacheMessage<Object> message = CacheMessage.builder()
                 .cacheName(cacheName)
-                .key(key)
+                .keys(keys)
                 .instanceId(instanceId)
                 .build();
 
