@@ -14,17 +14,15 @@ import org.springframework.boot.ApplicationRunner;
 public class CacheMessageListener implements ApplicationRunner {
 
     private final BroadcastService broadcastService;
-    private final LocalCacheManager localCacheManager;
 
-    public CacheMessageListener(BroadcastService broadcastService, LocalCacheManager localCacheManager) {
+    public CacheMessageListener(BroadcastService broadcastService) {
         this.broadcastService = broadcastService;
-        this.localCacheManager = localCacheManager;
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         broadcastService.listen(cacheMessage -> {
-            Cache<Object, Object> cache = localCacheManager.getCache(cacheMessage.getCacheName());
+            Cache<Object, Object> cache = LocalCacheManager.getInstance().getCache(cacheMessage.getCacheName());
             if (cache != null) {
                 cache.invalidate(cacheMessage.getKey());
             }

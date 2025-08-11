@@ -5,7 +5,6 @@ import cn.floseek.fastcache.constant.CacheConstant;
 import cn.floseek.fastcache.handler.RedisKeyPrefixHandler;
 import cn.floseek.fastcache.listener.CacheMessageListener;
 import cn.floseek.fastcache.manager.CacheManager;
-import cn.floseek.fastcache.manager.LocalCacheManager;
 import cn.floseek.fastcache.service.broadcast.BroadcastService;
 import cn.floseek.fastcache.service.broadcast.RedisBroadcastService;
 import cn.floseek.fastcache.service.redis.RedisService;
@@ -42,23 +41,18 @@ public class FastCacheConfiguration {
     }
 
     @Bean
-    public LocalCacheManager localCacheManager() {
-        return new LocalCacheManager();
-    }
-
-    @Bean
     public BroadcastService broadcastService(RedisService redisService) {
         return new RedisBroadcastService(redisService, CacheConstant.CACHE_MESSAGE_TOPIC);
     }
 
     @Bean
-    public CacheMessageListener cacheMessageListener(BroadcastService broadcastService, LocalCacheManager localCacheManager) {
-        return new CacheMessageListener(broadcastService, localCacheManager);
+    public CacheMessageListener cacheMessageListener(BroadcastService broadcastService) {
+        return new CacheMessageListener(broadcastService);
     }
 
     @Bean
-    public CacheManager cacheManager(RedisService redisService, LocalCacheManager localCacheManager, BroadcastService broadcastService) {
-        return new CacheManager(redisService, localCacheManager, broadcastService);
+    public CacheManager cacheManager(RedisService redisService, BroadcastService broadcastService) {
+        return new CacheManager(redisService, broadcastService);
     }
 
     @Bean

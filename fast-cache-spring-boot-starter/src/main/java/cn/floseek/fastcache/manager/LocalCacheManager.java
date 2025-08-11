@@ -15,6 +15,28 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LocalCacheManager {
 
     /**
+     * 静态内部类实现单例模式
+     */
+    private static class SingletonHolder {
+        private static final LocalCacheManager INSTANCE = new LocalCacheManager();
+    }
+
+    /**
+     * 获取本地缓存管理器实例
+     *
+     * @return 本地缓存管理器实例
+     */
+    public static LocalCacheManager getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+
+    /**
+     * 私有构造函数，防止外部实例化
+     */
+    private LocalCacheManager() {
+    }
+
+    /**
      * 缓存映射，key：缓存名称，value：缓存实例
      */
     private final Map<String, Cache<?, ?>> cacheMap = new ConcurrentHashMap<>();

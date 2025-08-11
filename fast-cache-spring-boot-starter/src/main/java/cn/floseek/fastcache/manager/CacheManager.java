@@ -19,7 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CacheManager {
 
     private final RedisService redisService;
-    private final LocalCacheManager localCacheManager;
     private final BroadcastService broadcastService;
 
     /**
@@ -27,9 +26,8 @@ public class CacheManager {
      */
     private final Map<String, CacheService<?, ?>> cacheServiceMap = new ConcurrentHashMap<>();
 
-    public CacheManager(RedisService redisService, LocalCacheManager localCacheManager, BroadcastService broadcastService) {
+    public CacheManager(RedisService redisService, BroadcastService broadcastService) {
         this.redisService = redisService;
-        this.localCacheManager = localCacheManager;
         this.broadcastService = broadcastService;
     }
 
@@ -49,10 +47,9 @@ public class CacheManager {
         }
 
         CacheService<K, V> cacheService = switch (cacheConfig.getCacheType()) {
-            case LOCAL -> new LocalCacheService<>(cacheConfig, localCacheManager);
+            case LOCAL -> new LocalCacheService<>(cacheConfig);
             case REMOTE -> new RemoteCacheService<>(cacheConfig, redisService);
-            case MULTI_LEVEL ->
-                    new MultiLevelCacheService<>(cacheConfig, localCacheManager, redisService, broadcastService);
+            case MULTI_LEVEL -> new MultiLevelCacheService<>(cacheConfig, redisService, broadcastService);
         };
         cacheServiceMap.put(cacheKey, cacheService);
         return cacheService;

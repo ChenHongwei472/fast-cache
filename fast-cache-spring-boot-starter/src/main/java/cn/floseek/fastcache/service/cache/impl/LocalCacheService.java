@@ -19,8 +19,8 @@ public class LocalCacheService<K, V> implements CacheService<K, V> {
 
     private final Cache<K, V> cache;
 
-    public LocalCacheService(CacheConfig cacheConfig, LocalCacheManager localCacheManager) {
-        this.cache = localCacheManager.getOrCreateCache(cacheConfig.getCacheName(), cacheConfig);
+    public LocalCacheService(CacheConfig cacheConfig) {
+        this.cache = LocalCacheManager.getInstance().getOrCreateCache(cacheConfig.getCacheName(), cacheConfig);
     }
 
     @Override
