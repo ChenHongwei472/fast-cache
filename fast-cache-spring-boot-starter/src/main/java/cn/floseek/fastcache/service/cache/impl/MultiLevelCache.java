@@ -6,7 +6,6 @@ import cn.floseek.fastcache.service.broadcast.BroadcastService;
 import cn.floseek.fastcache.service.cache.Cache;
 import cn.floseek.fastcache.service.redis.RedisService;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -85,7 +84,7 @@ public class MultiLevelCache<K, V> implements Cache<K, V> {
     public void putAll(Map<? extends K, ? extends V> map) {
         remoteCacheService.putAll(map);
         localCacheService.putAll(map);
-        broadcastService.broadcast(cacheConfig.getCacheName(), new ArrayList<>(map.keySet()));
+        broadcastService.broadcast(cacheConfig.getCacheName(), map.keySet());
     }
 
     @Override

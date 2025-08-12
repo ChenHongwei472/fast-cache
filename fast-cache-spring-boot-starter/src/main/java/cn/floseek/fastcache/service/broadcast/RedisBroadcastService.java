@@ -4,6 +4,7 @@ import cn.floseek.fastcache.model.CacheMessage;
 import org.redisson.api.RTopic;
 import org.redisson.api.RedissonClient;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +36,7 @@ public class RedisBroadcastService implements BroadcastService {
     public <K> void broadcast(String cacheName, Collection<? extends K> keys) {
         CacheMessage<Object> message = CacheMessage.builder()
                 .cacheName(cacheName)
-                .keys(keys)
+                .keys(new ArrayList<>(keys))
                 .instanceId(instanceId)
                 .build();
 
