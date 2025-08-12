@@ -1,35 +1,14 @@
 package cn.floseek.fastcache.manager;
 
 import cn.floseek.fastcache.model.CacheConfig;
-import cn.floseek.fastcache.manager.broadcast.BroadcastManager;
 import cn.floseek.fastcache.service.cache.Cache;
-import cn.floseek.fastcache.service.cache.impl.LocalCache;
-import cn.floseek.fastcache.service.cache.impl.MultiLevelCache;
-import cn.floseek.fastcache.service.cache.impl.RemoteCache;
-import cn.floseek.fastcache.service.redis.RedisService;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 缓存管理类
+ * 缓存管理器接口
  *
  * @author ChenHongwei472
  */
-public class CacheManager {
-
-    private final RedisService redisService;
-    private final BroadcastManager broadcastManager;
-
-    /**
-     * 缓存映射
-     */
-    private final Map<String, Cache<?, ?>> cacheMap = new ConcurrentHashMap<>();
-
-    public CacheManager(RedisService redisService, BroadcastManager broadcastManager) {
-        this.redisService = redisService;
-        this.broadcastManager = broadcastManager;
-    }
+public interface CacheManager extends AutoCloseable {
 
     /**
      * 获取或创建缓存实例
@@ -39,19 +18,5 @@ public class CacheManager {
      * @param <V>         缓存值类型
      * @return 缓存实例
      */
-    @SuppressWarnings("unchecked")
-    public <K, V> Cache<K, V> getOrCreateCache(CacheConfig cacheConfig) {
-        String cacheKey = cacheConfig.getCacheName() + "_" + cacheConfig.getCacheType();
-        if (cacheMap.containsKey(cacheKey)) {
-            return (Cache<K, V>) cacheMap.get(cacheKey);
-        }
-
-        Cache<K, V> cache = switch (cacheConfig.getCacheType()) {
-            case LOCAL -> new LocalCache<>(cacheConfig, broadcastManager);
-            case REMOTE -> new RemoteCache<>(cacheConfig, redisService);
-            case MULTI_LEVEL -> new MultiLevelCache<>(cacheConfig, redisService, broadcastManager);
-        };
-        cacheMap.put(cacheKey, cache);
-        return cache;
-    }
+    <K, V> Cache<K, V> getOrCreateCache(CacheConfig cacheConfig);
 }
