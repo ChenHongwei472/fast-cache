@@ -1,13 +1,12 @@
 package cn.floseek.fastcache.config;
 
 import cn.floseek.fastcache.config.properties.FastCacheProperties;
-import cn.floseek.fastcache.constant.CacheConstant;
 import cn.floseek.fastcache.handler.RedisKeyPrefixHandler;
 import cn.floseek.fastcache.listener.CacheMessageListener;
 import cn.floseek.fastcache.manager.BloomFilterManager;
 import cn.floseek.fastcache.manager.CacheManager;
-import cn.floseek.fastcache.service.broadcast.BroadcastService;
-import cn.floseek.fastcache.service.broadcast.RedisBroadcastService;
+import cn.floseek.fastcache.manager.broadcast.BroadcastManager;
+import cn.floseek.fastcache.manager.broadcast.impl.RedissonBroadcastManager;
 import cn.floseek.fastcache.service.redis.RedisService;
 import cn.floseek.fastcache.service.redis.impl.RedissonService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -43,13 +42,13 @@ public class FastCacheConfiguration {
     }
 
     @Bean
-    public BroadcastService broadcastService(RedissonClient redissonClient) {
-        return new RedisBroadcastService(redissonClient, CacheConstant.CACHE_MESSAGE_TOPIC);
+    public BroadcastManager broadcastManager(FastCacheProperties fastCacheProperties, RedissonClient redissonClient) {
+        return new RedissonBroadcastManager(fastCacheProperties, redissonClient);
     }
 
     @Bean
-    public CacheMessageListener cacheMessageListener(BroadcastService broadcastService) {
-        return new CacheMessageListener(broadcastService);
+    public CacheMessageListener cacheMessageListener(BroadcastManager broadcastManager) {
+        return new CacheMessageListener(broadcastManager);
     }
 
     @Bean
@@ -58,8 +57,8 @@ public class FastCacheConfiguration {
     }
 
     @Bean
-    public CacheManager cacheManager(RedisService redisService, BroadcastService broadcastService) {
-        return new CacheManager(redisService, broadcastService);
+    public CacheManager cacheManager(RedisService redisService, BroadcastManager broadcastManager) {
+        return new CacheManager(redisService, broadcastManager);
     }
 
     @Bean

@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.model;
 
 /**
- * 缓存类型
+ * 缓存类型枚举
  *
  * @author ChenHongwei472
  */

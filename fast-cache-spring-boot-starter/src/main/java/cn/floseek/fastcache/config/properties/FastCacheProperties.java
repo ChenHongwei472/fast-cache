@@ -18,4 +18,9 @@ public class FastCacheProperties {
      * Key 前缀
      */
     private String keyPrefix;
+
+    /**
+     * 广播通道
+     */
+    private String broadcastChannel = "default_broadcast_channel";
 }

@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.manager;
 
 import cn.floseek.fastcache.model.CacheConfig;
-import cn.floseek.fastcache.service.broadcast.BroadcastService;
+import cn.floseek.fastcache.manager.broadcast.BroadcastManager;
 import cn.floseek.fastcache.service.cache.Cache;
 import cn.floseek.fastcache.service.cache.impl.LocalCache;
 import cn.floseek.fastcache.service.cache.impl.MultiLevelCache;
@@ -19,16 +19,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CacheManager {
 
     private final RedisService redisService;
-    private final BroadcastService broadcastService;
+    private final BroadcastManager broadcastManager;
 
     /**
      * 缓存映射
      */
     private final Map<String, Cache<?, ?>> cacheMap = new ConcurrentHashMap<>();
 
-    public CacheManager(RedisService redisService, BroadcastService broadcastService) {
+    public CacheManager(RedisService redisService, BroadcastManager broadcastManager) {
         this.redisService = redisService;
-        this.broadcastService = broadcastService;
+        this.broadcastManager = broadcastManager;
     }
 
     /**
@@ -47,9 +47,9 @@ public class CacheManager {
         }
 
         Cache<K, V> cache = switch (cacheConfig.getCacheType()) {
-            case LOCAL -> new LocalCache<>(cacheConfig, broadcastService);
+            case LOCAL -> new LocalCache<>(cacheConfig, broadcastManager);
             case REMOTE -> new RemoteCache<>(cacheConfig, redisService);
-            case MULTI_LEVEL -> new MultiLevelCache<>(cacheConfig, redisService, broadcastService);
+            case MULTI_LEVEL -> new MultiLevelCache<>(cacheConfig, redisService, broadcastManager);
         };
         cacheMap.put(cacheKey, cache);
         return cache;

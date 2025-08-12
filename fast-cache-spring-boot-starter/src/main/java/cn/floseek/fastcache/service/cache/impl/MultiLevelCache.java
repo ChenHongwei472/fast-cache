@@ -2,7 +2,7 @@ package cn.floseek.fastcache.service.cache.impl;
 
 import cn.floseek.fastcache.model.CacheConfig;
 import cn.floseek.fastcache.model.CacheType;
-import cn.floseek.fastcache.service.broadcast.BroadcastService;
+import cn.floseek.fastcache.manager.broadcast.BroadcastManager;
 import cn.floseek.fastcache.service.cache.Cache;
 import cn.floseek.fastcache.service.redis.RedisService;
 
@@ -22,8 +22,8 @@ public class MultiLevelCache<K, V> implements Cache<K, V> {
     private final LocalCache<K, V> localCacheService;
     private final RemoteCache<K, V> remoteCacheService;
 
-    public MultiLevelCache(CacheConfig cacheConfig, RedisService redisService, BroadcastService broadcastService) {
-        this.localCacheService = new LocalCache<>(cacheConfig, broadcastService);
+    public MultiLevelCache(CacheConfig cacheConfig, RedisService redisService, BroadcastManager broadcastManager) {
+        this.localCacheService = new LocalCache<>(cacheConfig, broadcastManager);
         this.remoteCacheService = new RemoteCache<>(cacheConfig, redisService);
     }
 

@@ -2,11 +2,14 @@ package cn.floseek.fastcache.service.cache.impl;
 
 import cn.floseek.fastcache.manager.LocalCacheManager;
 import cn.floseek.fastcache.model.CacheConfig;
+import cn.floseek.fastcache.model.CacheMessage;
 import cn.floseek.fastcache.model.CacheType;
-import cn.floseek.fastcache.service.broadcast.BroadcastService;
+import cn.floseek.fastcache.manager.broadcast.BroadcastManager;
 import cn.floseek.fastcache.service.cache.Cache;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -20,13 +23,13 @@ import java.util.function.Supplier;
 public class LocalCache<K, V> implements Cache<K, V> {
 
     private final CacheConfig cacheConfig;
-    private final BroadcastService broadcastService;
+    private final BroadcastManager broadcastManager;
 
     private final com.github.benmanes.caffeine.cache.Cache<K, V> cache;
 
-    public LocalCache(CacheConfig cacheConfig, BroadcastService broadcastService) {
+    public LocalCache(CacheConfig cacheConfig, BroadcastManager broadcastManager) {
         this.cacheConfig = cacheConfig;
-        this.broadcastService = broadcastService;
+        this.broadcastManager = broadcastManager;
 
         this.cache = LocalCacheManager.getInstance().getOrCreateCache(cacheConfig.getCacheName(), cacheConfig);
     }
@@ -58,29 +61,57 @@ public class LocalCache<K, V> implements Cache<K, V> {
     @Override
     public void put(K key, V value) {
         cache.put(key, value);
-        broadcastService.broadcast(cacheConfig.getCacheName(), key);
+        this.broadcast(key);
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
         cache.putAll(map);
-        broadcastService.broadcast(cacheConfig.getCacheName(), map.keySet());
+        this.broadcast(map.keySet());
     }
 
     @Override
     public void remove(K key) {
         cache.invalidate(key);
-        broadcastService.broadcast(cacheConfig.getCacheName(), key);
+        this.broadcast(key);
     }
 
     @Override
     public void removeAll(Collection<? extends K> keys) {
         cache.invalidateAll(keys);
-        broadcastService.broadcast(cacheConfig.getCacheName(), keys);
+        this.broadcast(keys);
     }
 
     @Override
     public CacheType getCacheType() {
         return CacheType.LOCAL;
+    }
+
+    /**
+     * 缓存广播
+     *
+     * @param key 缓存键
+     */
+    private void broadcast(K key) {
+        CacheMessage cacheMessage = CacheMessage.builder()
+                .instanceId(broadcastManager.getInstanceId())
+                .cacheName(cacheConfig.getCacheName())
+                .keys(List.of(key))
+                .build();
+        broadcastManager.publish(cacheMessage);
+    }
+
+    /**
+     * 缓存广播
+     *
+     * @param keys 缓存键
+     */
+    private void broadcast(Collection<? extends K> keys) {
+        CacheMessage cacheMessage = CacheMessage.builder()
+                .instanceId(broadcastManager.getInstanceId())
+                .cacheName(cacheConfig.getCacheName())
+                .keys(new ArrayList<>(keys))
+                .build();
+        broadcastManager.publish(cacheMessage);
     }
 }

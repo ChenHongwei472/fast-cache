@@ -5,19 +5,28 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Collection;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * 缓存消息
  *
- * @param <K> 缓存键类型
  * @author ChenHongwei472
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CacheMessage<K> {
+public class CacheMessage implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 实例 ID
+     */
+    private String instanceId;
 
     /**
      * 缓存名称
@@ -27,10 +36,5 @@ public class CacheMessage<K> {
     /**
      * 缓存键集合
      */
-    private Collection<? extends K> keys;
-
-    /**
-     * 实例 ID
-     */
-    private String instanceId;
+    private List<Object> keys;
 }
