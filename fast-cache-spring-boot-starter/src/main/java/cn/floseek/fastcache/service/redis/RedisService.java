@@ -1,6 +1,6 @@
 package cn.floseek.fastcache.service.redis;
 
-import org.redisson.client.protocol.ScoredEntry;
+import cn.floseek.fastcache.model.SortedEntry;
 
 import java.time.Duration;
 import java.util.Collection;
@@ -285,7 +285,7 @@ public interface RedisService {
      * @param <T>        对象类型
      * @return 元素列表
      */
-    <T> Collection<T> getSortedSetValueRange(String key, int startIndex, int endIndex);
+    <T> List<T> getSortedSetValueRange(String key, int startIndex, int endIndex);
 
     /**
      * 按分数范围返回有序集合的值
@@ -298,7 +298,7 @@ public interface RedisService {
      * @param <T>                 对象类型
      * @return 元素列表
      */
-    <T> Collection<T> getSortedSetValueRange(String key, double startScore, boolean startScoreInclusive, double endScore, boolean endScoreInclusive);
+    <T> List<T> getSortedSetValueRange(String key, double startScore, boolean startScoreInclusive, double endScore, boolean endScoreInclusive);
 
     /**
      * 按分数范围返回有序集合的值。分数范围包含开始分数和结束分数。
@@ -309,7 +309,7 @@ public interface RedisService {
      * @param <T>        对象类型
      * @return 元素列表
      */
-    <T> Collection<T> getSortedSetValueRange(String key, double startScore, double endScore);
+    <T> List<T> getSortedSetValueRange(String key, double startScore, double endScore);
 
     /**
      * 按排名范围返回有序集合的值，降序方式。索引是从零开始的。
@@ -321,7 +321,7 @@ public interface RedisService {
      * @param <T>        对象类型
      * @return 元素列表
      */
-    <T> Collection<T> getSortedSetValueRangeReversed(String key, int startIndex, int endIndex);
+    <T> List<T> getSortedSetValueRangeReversed(String key, int startIndex, int endIndex);
 
     /**
      * 按分数范围返回有序集合的值，降序方式
@@ -334,7 +334,7 @@ public interface RedisService {
      * @param <T>                 对象类型
      * @return 元素列表
      */
-    <T> Collection<T> getSortedSetValueRangeReversed(String key, double startScore, boolean startScoreInclusive, double endScore, boolean endScoreInclusive);
+    <T> List<T> getSortedSetValueRangeReversed(String key, double startScore, boolean startScoreInclusive, double endScore, boolean endScoreInclusive);
 
     /**
      * 按分数范围返回有序集合的值，降序方式。分数范围包含开始分数和结束分数。
@@ -345,7 +345,7 @@ public interface RedisService {
      * @param <T>        对象类型
      * @return 元素列表
      */
-    <T> Collection<T> getSortedSetValueRangeReversed(String key, double startScore, double endScore);
+    <T> List<T> getSortedSetValueRangeReversed(String key, double startScore, double endScore);
 
     /**
      * 按排名范围返回有序集合的条目（值及其分数）。索引是从零开始的。
@@ -357,7 +357,7 @@ public interface RedisService {
      * @param <T>        对象类型
      * @return 条目列表
      */
-    <T> Collection<ScoredEntry<T>> getSortedSetEntryRange(String key, int startIndex, int endIndex);
+    <T> List<SortedEntry<T>> getSortedSetEntryRange(String key, int startIndex, int endIndex);
 
     /**
      * 按分数范围返回有序集合的条目（值及其分数）。
@@ -370,7 +370,7 @@ public interface RedisService {
      * @param <T>                 对象类型
      * @return 条目列表
      */
-    <T> Collection<ScoredEntry<T>> getSortedSetEntryRange(String key, double startScore, boolean startScoreInclusive, double endScore, boolean endScoreInclusive);
+    <T> List<SortedEntry<T>> getSortedSetEntryRange(String key, double startScore, boolean startScoreInclusive, double endScore, boolean endScoreInclusive);
 
     /**
      * 按分数范围返回有序集合的条目（值及其分数）。分数范围包含开始分数和结束分数。
@@ -381,7 +381,7 @@ public interface RedisService {
      * @param <T>        对象类型
      * @return 条目列表
      */
-    <T> Collection<ScoredEntry<T>> getSortedSetEntryRange(String key, double startScore, double endScore);
+    <T> List<SortedEntry<T>> getSortedSetEntryRange(String key, double startScore, double endScore);
 
     /**
      * 按排名范围返回有序集合的条目（值及其分数），降序方式。索引是从零开始的。
@@ -393,7 +393,7 @@ public interface RedisService {
      * @param <T>        对象类型
      * @return 条目列表
      */
-    <T> Collection<ScoredEntry<T>> getSortedSetEntryRangeReversed(String key, int startIndex, int endIndex);
+    <T> List<SortedEntry<T>> getSortedSetEntryRangeReversed(String key, int startIndex, int endIndex);
 
     /**
      * 按分数范围返回有序集合的条目（值及其分数），降序方式。
@@ -406,7 +406,7 @@ public interface RedisService {
      * @param <T>                 对象类型
      * @return 条目列表
      */
-    <T> Collection<ScoredEntry<T>> getSortedSetEntryRangeReversed(String key, double startScore, boolean startScoreInclusive, double endScore, boolean endScoreInclusive);
+    <T> List<SortedEntry<T>> getSortedSetEntryRangeReversed(String key, double startScore, boolean startScoreInclusive, double endScore, boolean endScoreInclusive);
 
     /**
      * 按分数范围返回有序集合的条目（值及其分数），降序方式。分数范围包含开始分数和结束分数。
@@ -417,7 +417,7 @@ public interface RedisService {
      * @param <T>        对象类型
      * @return 条目列表
      */
-    <T> Collection<ScoredEntry<T>> getSortedSetEntryRangeReversed(String key, double startScore, double endScore);
+    <T> List<SortedEntry<T>> getSortedSetEntryRangeReversed(String key, double startScore, double endScore);
 
     /**
      * 缓存哈希表

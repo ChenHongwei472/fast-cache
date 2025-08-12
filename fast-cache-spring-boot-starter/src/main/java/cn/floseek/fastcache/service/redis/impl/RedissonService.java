@@ -1,5 +1,6 @@
 package cn.floseek.fastcache.service.redis.impl;
 
+import cn.floseek.fastcache.model.SortedEntry;
 import cn.floseek.fastcache.service.redis.RedisService;
 import org.redisson.api.BatchResult;
 import org.redisson.api.RAtomicLong;
@@ -17,12 +18,16 @@ import org.redisson.api.options.KeysScanOptions;
 import org.redisson.client.protocol.ScoredEntry;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+;
 
 /**
  * Redisson 服务
@@ -234,71 +239,79 @@ public class RedissonService implements RedisService {
     }
 
     @Override
-    public <T> Collection<T> getSortedSetValueRange(String key, int startIndex, int endIndex) {
+    public <T> List<T> getSortedSetValueRange(String key, int startIndex, int endIndex) {
         RScoredSortedSet<T> scoredSortedSet = redissonClient.getScoredSortedSet(key);
-        return scoredSortedSet.valueRange(startIndex, endIndex);
+        Collection<T> collection = scoredSortedSet.valueRange(startIndex, endIndex);
+        return new ArrayList<>(collection);
     }
 
     @Override
-    public <T> Collection<T> getSortedSetValueRange(String key, double startScore, boolean startScoreInclusive, double endScore, boolean endScoreInclusive) {
+    public <T> List<T> getSortedSetValueRange(String key, double startScore, boolean startScoreInclusive, double endScore, boolean endScoreInclusive) {
         RScoredSortedSet<T> scoredSortedSet = redissonClient.getScoredSortedSet(key);
-        return scoredSortedSet.valueRange(startScore, startScoreInclusive, endScore, endScoreInclusive);
+        Collection<T> collection = scoredSortedSet.valueRange(startScore, startScoreInclusive, endScore, endScoreInclusive);
+        return new ArrayList<>(collection);
     }
 
     @Override
-    public <T> Collection<T> getSortedSetValueRange(String key, double startScore, double endScore) {
-        return getSortedSetValueRange(key, startScore, true, endScore, true);
+    public <T> List<T> getSortedSetValueRange(String key, double startScore, double endScore) {
+        return this.getSortedSetValueRange(key, startScore, true, endScore, true);
     }
 
     @Override
-    public <T> Collection<T> getSortedSetValueRangeReversed(String key, int startIndex, int endIndex) {
+    public <T> List<T> getSortedSetValueRangeReversed(String key, int startIndex, int endIndex) {
         RScoredSortedSet<T> scoredSortedSet = redissonClient.getScoredSortedSet(key);
-        return scoredSortedSet.valueRangeReversed(startIndex, endIndex);
+        Collection<T> collection = scoredSortedSet.valueRangeReversed(startIndex, endIndex);
+        return new ArrayList<>(collection);
     }
 
     @Override
-    public <T> Collection<T> getSortedSetValueRangeReversed(String key, double startScore, boolean startScoreInclusive, double endScore, boolean endScoreInclusive) {
+    public <T> List<T> getSortedSetValueRangeReversed(String key, double startScore, boolean startScoreInclusive, double endScore, boolean endScoreInclusive) {
         RScoredSortedSet<T> scoredSortedSet = redissonClient.getScoredSortedSet(key);
-        return scoredSortedSet.valueRangeReversed(startScore, startScoreInclusive, endScore, endScoreInclusive);
+        Collection<T> collection = scoredSortedSet.valueRangeReversed(startScore, startScoreInclusive, endScore, endScoreInclusive);
+        return new ArrayList<>(collection);
     }
 
     @Override
-    public <T> Collection<T> getSortedSetValueRangeReversed(String key, double startScore, double endScore) {
-        return getSortedSetValueRangeReversed(key, startScore, true, endScore, true);
+    public <T> List<T> getSortedSetValueRangeReversed(String key, double startScore, double endScore) {
+        return this.getSortedSetValueRangeReversed(key, startScore, true, endScore, true);
     }
 
     @Override
-    public <T> Collection<ScoredEntry<T>> getSortedSetEntryRange(String key, int startIndex, int endIndex) {
+    public <T> List<SortedEntry<T>> getSortedSetEntryRange(String key, int startIndex, int endIndex) {
         RScoredSortedSet<T> scoredSortedSet = redissonClient.getScoredSortedSet(key);
-        return scoredSortedSet.entryRange(startIndex, endIndex);
+        Collection<ScoredEntry<T>> scoredEntryCollection = scoredSortedSet.entryRange(startIndex, endIndex);
+        return this.convertToSortedEntryList(scoredEntryCollection);
     }
 
     @Override
-    public <T> Collection<ScoredEntry<T>> getSortedSetEntryRange(String key, double startScore, boolean startScoreInclusive, double endScore, boolean endScoreInclusive) {
+    public <T> List<SortedEntry<T>> getSortedSetEntryRange(String key, double startScore, boolean startScoreInclusive, double endScore, boolean endScoreInclusive) {
         RScoredSortedSet<T> scoredSortedSet = redissonClient.getScoredSortedSet(key);
-        return scoredSortedSet.entryRange(startScore, startScoreInclusive, endScore, endScoreInclusive);
+        Collection<ScoredEntry<T>> scoredEntryCollection = scoredSortedSet.entryRange(startScore, startScoreInclusive, endScore, endScoreInclusive);
+        return this.convertToSortedEntryList(scoredEntryCollection);
     }
 
     @Override
-    public <T> Collection<ScoredEntry<T>> getSortedSetEntryRange(String key, double startScore, double endScore) {
-        return getSortedSetEntryRange(key, startScore, true, endScore, true);
+    public <T> List<SortedEntry<T>> getSortedSetEntryRange(String key, double startScore, double endScore) {
+        return this.getSortedSetEntryRange(key, startScore, true, endScore, true);
     }
 
     @Override
-    public <T> Collection<ScoredEntry<T>> getSortedSetEntryRangeReversed(String key, int startIndex, int endIndex) {
+    public <T> List<SortedEntry<T>> getSortedSetEntryRangeReversed(String key, int startIndex, int endIndex) {
         RScoredSortedSet<T> scoredSortedSet = redissonClient.getScoredSortedSet(key);
-        return scoredSortedSet.entryRangeReversed(startIndex, endIndex);
+        Collection<ScoredEntry<T>> scoredEntryCollection = scoredSortedSet.entryRangeReversed(startIndex, endIndex);
+        return this.convertToSortedEntryList(scoredEntryCollection);
     }
 
     @Override
-    public <T> Collection<ScoredEntry<T>> getSortedSetEntryRangeReversed(String key, double startScore, boolean startScoreInclusive, double endScore, boolean endScoreInclusive) {
+    public <T> List<SortedEntry<T>> getSortedSetEntryRangeReversed(String key, double startScore, boolean startScoreInclusive, double endScore, boolean endScoreInclusive) {
         RScoredSortedSet<T> scoredSortedSet = redissonClient.getScoredSortedSet(key);
-        return scoredSortedSet.entryRangeReversed(startScore, startScoreInclusive, endScore, endScoreInclusive);
+        Collection<ScoredEntry<T>> scoredEntryCollection = scoredSortedSet.entryRangeReversed(startScore, startScoreInclusive, endScore, endScoreInclusive);
+        return this.convertToSortedEntryList(scoredEntryCollection);
     }
 
     @Override
-    public <T> Collection<ScoredEntry<T>> getSortedSetEntryRangeReversed(String key, double startScore, double endScore) {
-        return getSortedSetEntryRange(key, startScore, true, endScore, true);
+    public <T> List<SortedEntry<T>> getSortedSetEntryRangeReversed(String key, double startScore, double endScore) {
+        return this.getSortedSetEntryRange(key, startScore, true, endScore, true);
     }
 
     @Override
@@ -395,5 +408,22 @@ public class RedissonService implements RedisService {
     public Boolean hasKey(String key) {
         RKeys rKeys = redissonClient.getKeys();
         return rKeys.countExists(key) > 0;
+    }
+
+    /**
+     * 转换为 {@link SortedEntry} 列表
+     *
+     * @param scoredEntryCollection {@link ScoredEntry} 集合
+     * @param <T>                   值类型
+     * @return {@link SortedEntry} 列表
+     */
+    private <T> List<SortedEntry<T>> convertToSortedEntryList(Collection<ScoredEntry<T>> scoredEntryCollection) {
+        if (scoredEntryCollection == null || scoredEntryCollection.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return scoredEntryCollection.stream()
+                .map(scoredEntry -> new SortedEntry<>(scoredEntry.getScore(), scoredEntry.getValue()))
+                .collect(Collectors.toList());
     }
 }
