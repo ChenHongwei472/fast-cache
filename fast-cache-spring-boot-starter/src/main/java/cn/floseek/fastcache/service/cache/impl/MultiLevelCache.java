@@ -19,16 +19,12 @@ import java.util.function.Supplier;
  */
 public class MultiLevelCache<K, V> implements Cache<K, V> {
 
-    private final CacheConfig cacheConfig;
     private final LocalCache<K, V> localCacheService;
     private final RemoteCache<K, V> remoteCacheService;
-    private final BroadcastService broadcastService;
 
     public MultiLevelCache(CacheConfig cacheConfig, RedisService redisService, BroadcastService broadcastService) {
-        this.cacheConfig = cacheConfig;
-        this.localCacheService = new LocalCache<>(cacheConfig);
+        this.localCacheService = new LocalCache<>(cacheConfig, broadcastService);
         this.remoteCacheService = new RemoteCache<>(cacheConfig, redisService);
-        this.broadcastService = broadcastService;
     }
 
     @Override
@@ -77,28 +73,24 @@ public class MultiLevelCache<K, V> implements Cache<K, V> {
     public void put(K key, V value) {
         remoteCacheService.put(key, value);
         localCacheService.put(key, value);
-        broadcastService.broadcast(cacheConfig.getCacheName(), key);
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
         remoteCacheService.putAll(map);
         localCacheService.putAll(map);
-        broadcastService.broadcast(cacheConfig.getCacheName(), map.keySet());
     }
 
     @Override
     public void remove(K key) {
         remoteCacheService.remove(key);
         localCacheService.remove(key);
-        broadcastService.broadcast(cacheConfig.getCacheName(), key);
     }
 
     @Override
     public void removeAll(Collection<? extends K> keys) {
         remoteCacheService.removeAll(keys);
         localCacheService.removeAll(keys);
-        broadcastService.broadcast(cacheConfig.getCacheName(), keys);
     }
 
     @Override

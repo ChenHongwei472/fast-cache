@@ -47,7 +47,7 @@ public class CacheManager {
         }
 
         Cache<K, V> cache = switch (cacheConfig.getCacheType()) {
-            case LOCAL -> new LocalCache<>(cacheConfig);
+            case LOCAL -> new LocalCache<>(cacheConfig, broadcastService);
             case REMOTE -> new RemoteCache<>(cacheConfig, redisService);
             case MULTI_LEVEL -> new MultiLevelCache<>(cacheConfig, redisService, broadcastService);
         };

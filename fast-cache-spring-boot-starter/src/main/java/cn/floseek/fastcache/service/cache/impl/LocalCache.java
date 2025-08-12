@@ -3,6 +3,7 @@ package cn.floseek.fastcache.service.cache.impl;
 import cn.floseek.fastcache.manager.LocalCacheManager;
 import cn.floseek.fastcache.model.CacheConfig;
 import cn.floseek.fastcache.model.CacheType;
+import cn.floseek.fastcache.service.broadcast.BroadcastService;
 import cn.floseek.fastcache.service.cache.Cache;
 
 import java.util.Collection;
@@ -18,9 +19,15 @@ import java.util.function.Supplier;
  */
 public class LocalCache<K, V> implements Cache<K, V> {
 
+    private final CacheConfig cacheConfig;
+    private final BroadcastService broadcastService;
+
     private final com.github.benmanes.caffeine.cache.Cache<K, V> cache;
 
-    public LocalCache(CacheConfig cacheConfig) {
+    public LocalCache(CacheConfig cacheConfig, BroadcastService broadcastService) {
+        this.cacheConfig = cacheConfig;
+        this.broadcastService = broadcastService;
+
         this.cache = LocalCacheManager.getInstance().getOrCreateCache(cacheConfig.getCacheName(), cacheConfig);
     }
 
@@ -51,21 +58,25 @@ public class LocalCache<K, V> implements Cache<K, V> {
     @Override
     public void put(K key, V value) {
         cache.put(key, value);
+        broadcastService.broadcast(cacheConfig.getCacheName(), key);
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
         cache.putAll(map);
+        broadcastService.broadcast(cacheConfig.getCacheName(), map.keySet());
     }
 
     @Override
     public void remove(K key) {
         cache.invalidate(key);
+        broadcastService.broadcast(cacheConfig.getCacheName(), key);
     }
 
     @Override
     public void removeAll(Collection<? extends K> keys) {
         cache.invalidateAll(keys);
+        broadcastService.broadcast(cacheConfig.getCacheName(), keys);
     }
 
     @Override
