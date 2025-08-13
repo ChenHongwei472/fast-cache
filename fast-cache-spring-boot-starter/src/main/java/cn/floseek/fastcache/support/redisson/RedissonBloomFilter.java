@@ -1,7 +1,7 @@
-package cn.floseek.fastcache.service.bloomfilter.impl;
+package cn.floseek.fastcache.support.redisson;
 
+import cn.floseek.fastcache.core.bloomfilter.BloomFilter;
 import cn.floseek.fastcache.model.BloomFilterConfig;
-import cn.floseek.fastcache.service.bloomfilter.BloomFilter;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import lombok.extern.slf4j.Slf4j;

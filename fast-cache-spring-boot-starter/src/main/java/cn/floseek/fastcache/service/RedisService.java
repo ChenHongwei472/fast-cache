@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.service.redis;
+package cn.floseek.fastcache.service;
 
 import cn.floseek.fastcache.model.SortedEntry;
 

@@ -1,7 +1,7 @@
-package cn.floseek.fastcache.service.redis.impl;
+package cn.floseek.fastcache.support.redisson;
 
 import cn.floseek.fastcache.model.SortedEntry;
-import cn.floseek.fastcache.service.redis.RedisService;
+import cn.floseek.fastcache.service.RedisService;
 import org.redisson.api.BatchResult;
 import org.redisson.api.RAtomicLong;
 import org.redisson.api.RBatch;
@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-;
 
 /**
  * Redisson 服务

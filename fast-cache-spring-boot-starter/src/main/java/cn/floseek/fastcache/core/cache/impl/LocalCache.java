@@ -1,11 +1,11 @@
-package cn.floseek.fastcache.service.cache.impl;
+package cn.floseek.fastcache.core.cache.impl;
 
+import cn.floseek.fastcache.core.cache.Cache;
 import cn.floseek.fastcache.manager.LocalCacheManager;
+import cn.floseek.fastcache.manager.broadcast.BroadcastManager;
 import cn.floseek.fastcache.model.CacheConfig;
 import cn.floseek.fastcache.model.CacheMessage;
 import cn.floseek.fastcache.model.CacheType;
-import cn.floseek.fastcache.manager.broadcast.BroadcastManager;
-import cn.floseek.fastcache.service.cache.Cache;
 
 import java.util.ArrayList;
 import java.util.Collection;

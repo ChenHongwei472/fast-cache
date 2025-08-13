@@ -1,8 +1,8 @@
 package cn.floseek.fastcache.manager;
 
+import cn.floseek.fastcache.core.bloomfilter.BloomFilter;
 import cn.floseek.fastcache.model.BloomFilterConfig;
-import cn.floseek.fastcache.service.bloomfilter.BloomFilter;
-import cn.floseek.fastcache.service.bloomfilter.impl.RedissonBloomFilter;
+import cn.floseek.fastcache.support.redisson.RedissonBloomFilter;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RedissonClient;
 

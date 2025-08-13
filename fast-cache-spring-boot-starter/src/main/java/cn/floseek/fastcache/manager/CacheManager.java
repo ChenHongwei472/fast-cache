@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.manager;
 
+import cn.floseek.fastcache.core.cache.Cache;
 import cn.floseek.fastcache.model.CacheConfig;
-import cn.floseek.fastcache.service.cache.Cache;
 
 /**
  * 缓存管理器接口

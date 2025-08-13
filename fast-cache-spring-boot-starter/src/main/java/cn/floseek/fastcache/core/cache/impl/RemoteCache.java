@@ -1,9 +1,9 @@
-package cn.floseek.fastcache.service.cache.impl;
+package cn.floseek.fastcache.core.cache.impl;
 
+import cn.floseek.fastcache.core.cache.Cache;
 import cn.floseek.fastcache.model.CacheConfig;
 import cn.floseek.fastcache.model.CacheType;
-import cn.floseek.fastcache.service.cache.Cache;
-import cn.floseek.fastcache.service.redis.RedisService;
+import cn.floseek.fastcache.service.RedisService;
 
 import java.util.ArrayList;
 import java.util.Collection;

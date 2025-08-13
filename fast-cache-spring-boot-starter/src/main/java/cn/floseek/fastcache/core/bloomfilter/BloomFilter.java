@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.service.bloomfilter;
+package cn.floseek.fastcache.core.bloomfilter;
 
 import java.util.Collection;
 import java.util.List;

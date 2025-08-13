@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.service.cache;
+package cn.floseek.fastcache.core.cache;
 
 import cn.floseek.fastcache.model.CacheType;
 
