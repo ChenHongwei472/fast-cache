@@ -93,6 +93,10 @@ public class LocalCache<K, V> implements Cache<K, V> {
      * @param key 缓存键
      */
     private void broadcast(K key) {
+        if (!cacheConfig.isSyncLocalCache()) {
+            return;
+        }
+
         CacheMessage cacheMessage = CacheMessage.builder()
                 .instanceId(broadcastManager.getInstanceId())
                 .cacheName(cacheConfig.getCacheName())
@@ -107,6 +111,10 @@ public class LocalCache<K, V> implements Cache<K, V> {
      * @param keys 缓存键
      */
     private void broadcast(Collection<? extends K> keys) {
+        if (!cacheConfig.isSyncLocalCache()) {
+            return;
+        }
+
         CacheMessage cacheMessage = CacheMessage.builder()
                 .instanceId(broadcastManager.getInstanceId())
                 .cacheName(cacheConfig.getCacheName())

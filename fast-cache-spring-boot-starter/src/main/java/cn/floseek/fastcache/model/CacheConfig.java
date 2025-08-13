@@ -46,6 +46,12 @@ public class CacheConfig {
     private Duration expireAfterAccess;
 
     /**
+     * 是否同步本地缓存
+     */
+    @Builder.Default
+    private boolean syncLocalCache = false;
+
+    /**
      * 分布式缓存过期时间
      */
     private Duration expireTime;
