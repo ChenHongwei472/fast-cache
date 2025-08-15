@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.model;
+package cn.floseek.fastcache.core.bloomfilter;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,10 +24,10 @@ public class BloomFilterConfig {
     /**
      * 预计插入元素数量
      */
-    private long expectedInsertions = 1000000;
+    private Long expectedInsertions;
 
     /**
      * 期望误差率
      */
-    private double falsePositiveProbability = 0.01;
+    private Double falsePositiveProbability;
 }

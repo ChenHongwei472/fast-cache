@@ -1,0 +1,59 @@
+package cn.floseek.fastcache.config;
+
+import cn.floseek.fastcache.config.properties.BloomFilterProperties;
+import cn.floseek.fastcache.core.bloomfilter.BloomFilterFactory;
+import cn.floseek.fastcache.core.bloomfilter.BloomFilterType;
+import cn.floseek.fastcache.manager.BloomFilterManager;
+import cn.floseek.fastcache.support.guava.GuavaBloomFilterFactory;
+import cn.floseek.fastcache.support.redisson.RedissonBloomFilterFactory;
+import org.redisson.api.RedissonClient;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+/**
+ * 布隆过滤器自动配置
+ *
+ * @author ChenHongwei472
+ */
+@Configuration
+@ConditionalOnClass(BloomFilterManager.class)
+@EnableConfigurationProperties(BloomFilterProperties.class)
+public class BloomFilterAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean
+    public BloomFilterManager bloomFilterManager(
+            BloomFilterProperties bloomFilterProperties,
+            List<BloomFilterFactory> bloomFilterFactoryList) {
+        Map<BloomFilterType, BloomFilterFactory> bloomFilterFactoryMap = bloomFilterFactoryList.stream()
+                .collect(Collectors.toMap(BloomFilterFactory::getType, Function.identity()));
+
+        BloomFilterFactory bloomFilterFactory = bloomFilterFactoryMap.get(bloomFilterProperties.getType());
+        if (bloomFilterFactory == null) {
+            throw new IllegalArgumentException(
+                    String.format("不支持的布隆过滤器类型: %s，请检查是否引入相关依赖", bloomFilterProperties.getType())
+            );
+        }
+
+        return new BloomFilterManager(bloomFilterFactory, bloomFilterProperties);
+    }
+
+    @Bean
+    @ConditionalOnClass(RedissonClient.class)
+    public RedissonBloomFilterFactory redissonBloomFilterFactory(RedissonClient redissonClient) {
+        return new RedissonBloomFilterFactory(redissonClient);
+    }
+
+    @Bean
+    public GuavaBloomFilterFactory guavaBloomFilterFactory() {
+        return new GuavaBloomFilterFactory();
+    }
+}

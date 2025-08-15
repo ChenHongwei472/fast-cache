@@ -1,10 +1,10 @@
 package cn.floseek.fastcache.manager;
 
+import cn.floseek.fastcache.config.properties.BloomFilterProperties;
 import cn.floseek.fastcache.core.bloomfilter.BloomFilter;
-import cn.floseek.fastcache.model.BloomFilterConfig;
-import cn.floseek.fastcache.support.redisson.RedissonBloomFilter;
-import lombok.RequiredArgsConstructor;
-import org.redisson.api.RedissonClient;
+import cn.floseek.fastcache.core.bloomfilter.BloomFilterConfig;
+import cn.floseek.fastcache.core.bloomfilter.BloomFilterFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,15 +14,21 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author ChenHongwei472
  */
-@RequiredArgsConstructor
+@Slf4j
 public class BloomFilterManager {
-
-    private final RedissonClient redissonClient;
 
     /**
      * 布隆过滤器映射，key：键名，value：布隆过滤器实例
      */
     private final Map<String, BloomFilter> bloomFilterMap = new ConcurrentHashMap<>();
+
+    private final BloomFilterFactory bloomFilterFactory;
+    private final BloomFilterProperties bloomFilterProperties;
+
+    public BloomFilterManager(BloomFilterFactory bloomFilterFactory, BloomFilterProperties bloomFilterProperties) {
+        this.bloomFilterFactory = bloomFilterFactory;
+        this.bloomFilterProperties = bloomFilterProperties;
+    }
 
     /**
      * 获取或创建布隆过滤器实例
@@ -31,14 +37,16 @@ public class BloomFilterManager {
      * @return 布隆过滤器实例
      */
     public BloomFilter getOrCreateBloomFilter(BloomFilterConfig bloomFilterConfig) {
-        String key = bloomFilterConfig.getKey();
-        if (bloomFilterMap.containsKey(key)) {
-            return bloomFilterMap.get(key);
+        if (bloomFilterConfig.getExpectedInsertions() == null) {
+            bloomFilterConfig.setExpectedInsertions(bloomFilterProperties.getExpectedInsertions());
         }
 
-        BloomFilter bloomFilter = new RedissonBloomFilter(redissonClient, bloomFilterConfig);
-        bloomFilterMap.put(key, bloomFilter);
-        return bloomFilter;
+        if (bloomFilterConfig.getFalsePositiveProbability() == null) {
+            bloomFilterConfig.setFalsePositiveProbability(bloomFilterProperties.getFalsePositiveProbability());
+        }
+
+        return bloomFilterMap.computeIfAbsent(bloomFilterConfig.getKey(),
+                k -> bloomFilterFactory.createBloomFilter(bloomFilterConfig));
     }
 
     /**

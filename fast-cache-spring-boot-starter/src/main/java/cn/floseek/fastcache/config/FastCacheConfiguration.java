@@ -2,7 +2,6 @@ package cn.floseek.fastcache.config;
 
 import cn.floseek.fastcache.config.properties.FastCacheProperties;
 import cn.floseek.fastcache.handler.RedisKeyPrefixHandler;
-import cn.floseek.fastcache.manager.BloomFilterManager;
 import cn.floseek.fastcache.manager.CacheManager;
 import cn.floseek.fastcache.manager.DefaultCacheManager;
 import cn.floseek.fastcache.manager.broadcast.BroadcastManager;
@@ -45,12 +44,6 @@ public class FastCacheConfiguration {
     public BroadcastManager broadcastManager(FastCacheProperties fastCacheProperties, RedissonClient redissonClient) {
         return new RedissonBroadcastManager(fastCacheProperties, redissonClient);
     }
-
-    @Bean
-    public BloomFilterManager bloomFilterManager(RedissonClient redissonClient) {
-        return new BloomFilterManager(redissonClient);
-    }
-
     @Bean(destroyMethod = "close")
     public CacheManager cacheManager(RedisService redisService, BroadcastManager broadcastManager) {
         return new DefaultCacheManager(redisService, broadcastManager);

@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.support.redisson;
 
 import cn.floseek.fastcache.core.bloomfilter.BloomFilter;
-import cn.floseek.fastcache.model.BloomFilterConfig;
+import cn.floseek.fastcache.core.bloomfilter.BloomFilterConfig;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -23,22 +23,10 @@ public class RedissonBloomFilter implements BloomFilter {
      * Redisson 客户端
      */
     private final RedissonClient redissonClient;
-
     /**
-     * 键名
+     * 布隆过滤器配置
      */
-    private final String key;
-
-    /**
-     * 预计插入元素数量
-     */
-    private final long expectedInsertions;
-
-    /**
-     * 期望误差率
-     */
-    private final double falsePositiveProbability;
-
+    private final BloomFilterConfig bloomFilterConfig;
     /**
      * 布隆过滤器
      */
@@ -46,11 +34,8 @@ public class RedissonBloomFilter implements BloomFilter {
 
     public RedissonBloomFilter(RedissonClient redissonClient, BloomFilterConfig bloomFilterConfig) {
         this.redissonClient = redissonClient;
-        this.key = bloomFilterConfig.getKey();
-        this.expectedInsertions = bloomFilterConfig.getExpectedInsertions();
-        this.falsePositiveProbability = bloomFilterConfig.getFalsePositiveProbability();
-
-        this.bloomFilter = this.getBloomFilter(key);
+        this.bloomFilterConfig = bloomFilterConfig;
+        this.bloomFilter = this.getBloomFilter(bloomFilterConfig.getKey());
     }
 
     @Override
@@ -79,6 +64,7 @@ public class RedissonBloomFilter implements BloomFilter {
 
     @Override
     public void rebuild(List<String> dataList) {
+        String key = bloomFilterConfig.getKey();
         log.info("开始重建布隆过滤器，key：{}", key);
         // 创建备份布隆过滤器
         String backupKey = key + "_backup";
@@ -102,7 +88,7 @@ public class RedissonBloomFilter implements BloomFilter {
     private RBloomFilter<String> getBloomFilter(String key) {
         RBloomFilter<String> bloomFilter = redissonClient.getBloomFilter(key);
         if (ObjUtil.isNotNull(bloomFilter) && !bloomFilter.isExists()) {
-            bloomFilter.tryInit(expectedInsertions, falsePositiveProbability);
+            bloomFilter.tryInit(bloomFilterConfig.getExpectedInsertions(), bloomFilterConfig.getFalsePositiveProbability());
         }
         return bloomFilter;
     }

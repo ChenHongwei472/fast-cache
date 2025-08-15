@@ -24,6 +24,12 @@
             <artifactId>caffeine</artifactId>
         </dependency>
 
+        <!-- Guava，在线文档：https://guava.dev -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
         <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
