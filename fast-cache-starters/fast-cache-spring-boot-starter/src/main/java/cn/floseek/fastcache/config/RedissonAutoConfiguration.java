@@ -1,12 +1,12 @@
 package cn.floseek.fastcache.config;
 
 import cn.floseek.fastcache.config.properties.FastCacheProperties;
-import cn.floseek.fastcache.manager.broadcast.BroadcastManager;
+import cn.floseek.fastcache.broadcast.BroadcastManager;
 import cn.floseek.fastcache.redisson.RedissonBloomFilterFactory;
 import cn.floseek.fastcache.redisson.RedissonBroadcastManager;
 import cn.floseek.fastcache.handler.RedissonKeyPrefixHandler;
 import cn.floseek.fastcache.redisson.RedissonService;
-import cn.floseek.fastcache.service.RedisService;
+import cn.floseek.fastcache.redis.RedisService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,6 +1,5 @@
-package cn.floseek.fastcache.manager;
+package cn.floseek.fastcache.cache;
 
-import cn.floseek.fastcache.model.CacheConfig;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 

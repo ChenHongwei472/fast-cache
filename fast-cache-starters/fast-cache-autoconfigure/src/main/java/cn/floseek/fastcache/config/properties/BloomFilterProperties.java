@@ -1,6 +1,6 @@
 package cn.floseek.fastcache.config.properties;
 
-import cn.floseek.fastcache.core.bloomfilter.BloomFilterType;
+import cn.floseek.fastcache.bloomfilter.BloomFilterType;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

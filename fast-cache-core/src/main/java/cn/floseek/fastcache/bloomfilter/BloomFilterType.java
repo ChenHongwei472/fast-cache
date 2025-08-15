@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.core.bloomfilter;
+package cn.floseek.fastcache.bloomfilter;
 
 /**
  * 布隆过滤器类型

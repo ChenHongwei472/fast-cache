@@ -1,9 +1,9 @@
-package cn.floseek.fastcache.support.guava;
+package cn.floseek.fastcache.bloomfilter.guava;
 
-import cn.floseek.fastcache.core.bloomfilter.BloomFilter;
-import cn.floseek.fastcache.core.bloomfilter.BloomFilterConfig;
-import cn.floseek.fastcache.core.bloomfilter.BloomFilterFactory;
-import cn.floseek.fastcache.core.bloomfilter.BloomFilterType;
+import cn.floseek.fastcache.bloomfilter.BloomFilter;
+import cn.floseek.fastcache.bloomfilter.BloomFilterConfig;
+import cn.floseek.fastcache.bloomfilter.BloomFilterFactory;
+import cn.floseek.fastcache.bloomfilter.BloomFilterType;
 
 /**
  * Guava 布隆过滤器工厂实现

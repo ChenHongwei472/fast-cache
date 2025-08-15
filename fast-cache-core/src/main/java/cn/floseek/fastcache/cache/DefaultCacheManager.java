@@ -1,12 +1,10 @@
-package cn.floseek.fastcache.manager;
+package cn.floseek.fastcache.cache;
 
-import cn.floseek.fastcache.core.cache.Cache;
-import cn.floseek.fastcache.core.cache.impl.LocalCache;
-import cn.floseek.fastcache.core.cache.impl.MultiLevelCache;
-import cn.floseek.fastcache.core.cache.impl.RemoteCache;
-import cn.floseek.fastcache.manager.broadcast.BroadcastManager;
-import cn.floseek.fastcache.model.CacheConfig;
-import cn.floseek.fastcache.service.RedisService;
+import cn.floseek.fastcache.cache.impl.LocalCache;
+import cn.floseek.fastcache.cache.impl.MultiLevelCache;
+import cn.floseek.fastcache.cache.impl.RemoteCache;
+import cn.floseek.fastcache.broadcast.BroadcastManager;
+import cn.floseek.fastcache.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;

@@ -1,6 +1,4 @@
-package cn.floseek.fastcache.core.cache;
-
-import cn.floseek.fastcache.model.CacheType;
+package cn.floseek.fastcache.cache;
 
 import java.util.Collection;
 import java.util.Map;

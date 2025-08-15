@@ -1,7 +1,7 @@
-package cn.floseek.fastcache.support.guava;
+package cn.floseek.fastcache.bloomfilter.guava;
 
-import cn.floseek.fastcache.core.bloomfilter.BloomFilter;
-import cn.floseek.fastcache.core.bloomfilter.BloomFilterConfig;
+import cn.floseek.fastcache.bloomfilter.BloomFilter;
+import cn.floseek.fastcache.bloomfilter.BloomFilterConfig;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import com.google.common.hash.Funnels;

@@ -1,6 +1,4 @@
-package cn.floseek.fastcache.service;
-
-import cn.floseek.fastcache.model.SortedEntry;
+package cn.floseek.fastcache.redis;
 
 import java.time.Duration;
 import java.util.Collection;

@@ -1,7 +1,6 @@
-package cn.floseek.fastcache.manager.broadcast;
+package cn.floseek.fastcache.broadcast;
 
-import cn.floseek.fastcache.manager.LocalCacheManager;
-import cn.floseek.fastcache.model.CacheMessage;
+import cn.floseek.fastcache.cache.LocalCacheManager;
 import cn.hutool.core.util.ObjUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;

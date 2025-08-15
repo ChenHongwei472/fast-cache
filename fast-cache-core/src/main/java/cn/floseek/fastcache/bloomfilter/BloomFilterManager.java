@@ -1,8 +1,5 @@
-package cn.floseek.fastcache.manager;
+package cn.floseek.fastcache.bloomfilter;
 
-import cn.floseek.fastcache.core.bloomfilter.BloomFilter;
-import cn.floseek.fastcache.core.bloomfilter.BloomFilterConfig;
-import cn.floseek.fastcache.core.bloomfilter.BloomFilterFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;

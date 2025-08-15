@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.redisson;
 
-import cn.floseek.fastcache.model.SortedEntry;
-import cn.floseek.fastcache.service.RedisService;
+import cn.floseek.fastcache.redis.SortedEntry;
+import cn.floseek.fastcache.redis.RedisService;
 import org.redisson.api.BatchResult;
 import org.redisson.api.RAtomicLong;
 import org.redisson.api.RBatch;

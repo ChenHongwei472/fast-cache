@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.model;
+package cn.floseek.fastcache.cache;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

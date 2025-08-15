@@ -1,6 +1,4 @@
-package cn.floseek.fastcache.manager.broadcast;
-
-import cn.floseek.fastcache.model.CacheMessage;
+package cn.floseek.fastcache.broadcast;
 
 /**
  * 广播管理器接口

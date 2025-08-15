@@ -1,10 +1,10 @@
 package cn.floseek.fastcache.config;
 
 import cn.floseek.fastcache.config.properties.FastCacheProperties;
-import cn.floseek.fastcache.manager.CacheManager;
-import cn.floseek.fastcache.manager.DefaultCacheManager;
-import cn.floseek.fastcache.manager.broadcast.BroadcastManager;
-import cn.floseek.fastcache.service.RedisService;
+import cn.floseek.fastcache.cache.CacheManager;
+import cn.floseek.fastcache.cache.DefaultCacheManager;
+import cn.floseek.fastcache.broadcast.BroadcastManager;
+import cn.floseek.fastcache.redis.RedisService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

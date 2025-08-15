@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.redisson;
 
-import cn.floseek.fastcache.manager.broadcast.AbstractBroadcastManager;
-import cn.floseek.fastcache.model.CacheMessage;
+import cn.floseek.fastcache.broadcast.AbstractBroadcastManager;
+import cn.floseek.fastcache.broadcast.CacheMessage;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
