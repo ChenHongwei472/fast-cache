@@ -1,10 +1,8 @@
 package cn.floseek.fastcache.manager.broadcast;
 
-import cn.floseek.fastcache.config.properties.FastCacheProperties;
 import cn.floseek.fastcache.manager.LocalCacheManager;
 import cn.floseek.fastcache.model.CacheMessage;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.StrUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,17 +24,6 @@ public abstract class AbstractBroadcastManager implements BroadcastManager {
     @Override
     public String getInstanceId() {
         return instanceId;
-    }
-
-    /**
-     * 检查配置属性
-     *
-     * @param fastCacheProperties 配置属性
-     */
-    protected void checkProperties(FastCacheProperties fastCacheProperties) {
-        if (StrUtil.isBlank(fastCacheProperties.getBroadcastChannel())) {
-            throw new IllegalArgumentException("广播通道不能为空");
-        }
     }
 
     /**

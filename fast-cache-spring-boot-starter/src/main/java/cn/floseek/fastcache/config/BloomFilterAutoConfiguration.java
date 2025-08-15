@@ -43,7 +43,9 @@ public class BloomFilterAutoConfiguration {
             );
         }
 
-        return new BloomFilterManager(bloomFilterFactory, bloomFilterProperties);
+        return new BloomFilterManager(bloomFilterFactory,
+                bloomFilterProperties.getExpectedInsertions(),
+                bloomFilterProperties.getFalsePositiveProbability());
     }
 
     @Bean

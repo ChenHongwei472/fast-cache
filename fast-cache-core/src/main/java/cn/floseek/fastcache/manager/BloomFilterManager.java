@@ -1,6 +1,5 @@
 package cn.floseek.fastcache.manager;
 
-import cn.floseek.fastcache.config.properties.BloomFilterProperties;
 import cn.floseek.fastcache.core.bloomfilter.BloomFilter;
 import cn.floseek.fastcache.core.bloomfilter.BloomFilterConfig;
 import cn.floseek.fastcache.core.bloomfilter.BloomFilterFactory;
@@ -23,11 +22,21 @@ public class BloomFilterManager {
     private final Map<String, BloomFilter> bloomFilterMap = new ConcurrentHashMap<>();
 
     private final BloomFilterFactory bloomFilterFactory;
-    private final BloomFilterProperties bloomFilterProperties;
 
-    public BloomFilterManager(BloomFilterFactory bloomFilterFactory, BloomFilterProperties bloomFilterProperties) {
+    /**
+     * 默认预计插入元素数量
+     */
+    private final long defaultExpectedInsertions;
+
+    /**
+     * 默认期望误差率
+     */
+    private final double defaultFalsePositiveProbability;
+
+    public BloomFilterManager(BloomFilterFactory bloomFilterFactory, long defaultExpectedInsertions, double defaultFalsePositiveProbability) {
         this.bloomFilterFactory = bloomFilterFactory;
-        this.bloomFilterProperties = bloomFilterProperties;
+        this.defaultExpectedInsertions = defaultExpectedInsertions;
+        this.defaultFalsePositiveProbability = defaultFalsePositiveProbability;
     }
 
     /**
@@ -38,11 +47,11 @@ public class BloomFilterManager {
      */
     public BloomFilter getOrCreateBloomFilter(BloomFilterConfig bloomFilterConfig) {
         if (bloomFilterConfig.getExpectedInsertions() == null) {
-            bloomFilterConfig.setExpectedInsertions(bloomFilterProperties.getExpectedInsertions());
+            bloomFilterConfig.setExpectedInsertions(defaultExpectedInsertions);
         }
 
         if (bloomFilterConfig.getFalsePositiveProbability() == null) {
-            bloomFilterConfig.setFalsePositiveProbability(bloomFilterProperties.getFalsePositiveProbability());
+            bloomFilterConfig.setFalsePositiveProbability(defaultFalsePositiveProbability);
         }
 
         return bloomFilterMap.computeIfAbsent(bloomFilterConfig.getKey(),

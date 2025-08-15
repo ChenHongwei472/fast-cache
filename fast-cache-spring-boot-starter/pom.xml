@@ -12,34 +12,16 @@
     <artifactId>fast-cache-spring-boot-starter</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>cn.floseek</groupId>
+            <artifactId>fast-cache-core</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
         <!-- Redisson，在线文档：https://redisson.pro/docs -->
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson-spring-boot-starter</artifactId>
-        </dependency>
-
-        <!-- Caffeine，在线文档：https://github.com/ben-manes/caffeine -->
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-        </dependency>
-
-        <!-- Guava，在线文档：https://guava.dev -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-
-        <!-- Jackson -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-
-        <!-- Hutool，在线文档：https://hutool.cn -->
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
         </dependency>
     </dependencies>
 

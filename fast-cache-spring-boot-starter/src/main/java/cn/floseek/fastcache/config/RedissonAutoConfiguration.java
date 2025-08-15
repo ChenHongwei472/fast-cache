@@ -40,7 +40,7 @@ public class RedissonAutoConfiguration {
 
     @Bean
     public BroadcastManager broadcastManager(FastCacheProperties fastCacheProperties, RedissonClient redissonClient) {
-        return new RedissonBroadcastManager(fastCacheProperties, redissonClient);
+        return new RedissonBroadcastManager(fastCacheProperties.getBroadcastChannel(), redissonClient);
     }
 
     @Bean

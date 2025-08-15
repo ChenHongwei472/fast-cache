@@ -5,14 +5,12 @@ import cn.floseek.fastcache.core.bloomfilter.BloomFilterConfig;
 import cn.floseek.fastcache.core.bloomfilter.BloomFilterFactory;
 import cn.floseek.fastcache.core.bloomfilter.BloomFilterType;
 import org.redisson.api.RedissonClient;
-import org.springframework.stereotype.Component;
 
 /**
  * Redisson 布隆过滤器工厂实现
  *
  * @author ChenHongwei472
  */
-@Component
 public class RedissonBloomFilterFactory implements BloomFilterFactory {
 
     private final RedissonClient redissonClient;

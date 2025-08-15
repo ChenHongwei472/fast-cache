@@ -1,8 +1,7 @@
 package cn.floseek.fastcache.support.redisson;
 
-import cn.floseek.fastcache.config.properties.FastCacheProperties;
-import cn.floseek.fastcache.model.CacheMessage;
 import cn.floseek.fastcache.manager.broadcast.AbstractBroadcastManager;
+import cn.floseek.fastcache.model.CacheMessage;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +23,8 @@ public class RedissonBroadcastManager extends AbstractBroadcastManager {
 
     private final ReentrantLock reentrantLock = new ReentrantLock();
 
-    public RedissonBroadcastManager(FastCacheProperties fastCacheProperties, RedissonClient redissonClient) {
-        this.checkProperties(fastCacheProperties);
-        this.channel = fastCacheProperties.getBroadcastChannel();
+    public RedissonBroadcastManager(String channel, RedissonClient redissonClient) {
+        this.channel = channel;
         this.redissonClient = redissonClient;
     }
 
