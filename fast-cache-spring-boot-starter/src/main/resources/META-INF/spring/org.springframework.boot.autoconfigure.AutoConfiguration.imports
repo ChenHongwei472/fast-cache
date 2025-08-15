@@ -1,2 +1,3 @@
 cn.floseek.fastcache.config.BloomFilterAutoConfiguration
-cn.floseek.fastcache.config.FastCacheConfiguration
+cn.floseek.fastcache.config.FastCacheAutoConfiguration
+cn.floseek.fastcache.config.RedissonAutoConfiguration

@@ -19,7 +19,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * 布隆过滤器自动配置
+ * 布隆过滤器自动配置类
  *
  * @author ChenHongwei472
  */

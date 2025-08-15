@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.manager.broadcast.impl;
+package cn.floseek.fastcache.support.redisson;
 
 import cn.floseek.fastcache.config.properties.FastCacheProperties;
 import cn.floseek.fastcache.model.CacheMessage;

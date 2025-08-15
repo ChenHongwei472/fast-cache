@@ -4,15 +4,15 @@ import cn.hutool.core.util.StrUtil;
 import org.redisson.api.NameMapper;
 
 /**
- * Redis Key 前缀处理器
+ * Redisson Key 前缀处理器
  *
  * @author ChenHongwei472
  */
-public class RedisKeyPrefixHandler implements NameMapper {
+public class RedissonKeyPrefixHandler implements NameMapper {
 
     private final String keyPrefix;
 
-    public RedisKeyPrefixHandler(String keyPrefix) {
+    public RedissonKeyPrefixHandler(String keyPrefix) {
         // 如果前缀为空，则返回空字符串
         this.keyPrefix = StrUtil.isBlank(keyPrefix) ? StrUtil.EMPTY : keyPrefix.concat(StrUtil.COLON);
     }

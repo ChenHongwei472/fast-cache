@@ -1,12 +1,10 @@
 package cn.floseek.fastcache.config;
 
 import cn.floseek.fastcache.config.properties.FastCacheProperties;
-import cn.floseek.fastcache.handler.RedisKeyPrefixHandler;
-import cn.floseek.fastcache.manager.CacheManager;
-import cn.floseek.fastcache.manager.DefaultCacheManager;
+import cn.floseek.fastcache.handler.RedissonKeyPrefixHandler;
 import cn.floseek.fastcache.manager.broadcast.BroadcastManager;
-import cn.floseek.fastcache.manager.broadcast.impl.RedissonBroadcastManager;
 import cn.floseek.fastcache.service.RedisService;
+import cn.floseek.fastcache.support.redisson.RedissonBroadcastManager;
 import cn.floseek.fastcache.support.redisson.RedissonService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -26,14 +24,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * FastCache 配置类
+ * Redisson 自动配置类
  *
  * @author ChenHongwei472
  */
 @Slf4j
 @Configuration
 @EnableConfigurationProperties(FastCacheProperties.class)
-public class FastCacheConfiguration {
+public class RedissonAutoConfiguration {
 
     @Bean
     public RedisService redisService(RedissonClient redissonClient) {
@@ -43,10 +41,6 @@ public class FastCacheConfiguration {
     @Bean
     public BroadcastManager broadcastManager(FastCacheProperties fastCacheProperties, RedissonClient redissonClient) {
         return new RedissonBroadcastManager(fastCacheProperties, redissonClient);
-    }
-    @Bean(destroyMethod = "close")
-    public CacheManager cacheManager(RedisService redisService, BroadcastManager broadcastManager) {
-        return new DefaultCacheManager(redisService, broadcastManager);
     }
 
     @Bean
@@ -62,7 +56,7 @@ public class FastCacheConfiguration {
             CompositeCodec codec = new CompositeCodec(StringCodec.INSTANCE, jsonCodec, jsonCodec);
             config.setCodec(codec);
 
-            RedisKeyPrefixHandler keyPrefixHandler = new RedisKeyPrefixHandler(fastCacheProperties.getKeyPrefix());
+            RedissonKeyPrefixHandler keyPrefixHandler = new RedissonKeyPrefixHandler(fastCacheProperties.getKeyPrefix());
             if (redisProperties.getCluster() != null) {
                 config.useSingleServer().setNameMapper(keyPrefixHandler);
             } else if (redisProperties.getSentinel() != null) {
