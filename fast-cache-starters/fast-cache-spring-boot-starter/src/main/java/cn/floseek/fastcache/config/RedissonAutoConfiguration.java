@@ -1,9 +1,10 @@
 package cn.floseek.fastcache.config;
 
 import cn.floseek.fastcache.config.properties.FastCacheProperties;
-import cn.floseek.fastcache.handler.RedissonKeyPrefixHandler;
 import cn.floseek.fastcache.manager.broadcast.BroadcastManager;
+import cn.floseek.fastcache.redisson.RedissonBloomFilterFactory;
 import cn.floseek.fastcache.redisson.RedissonBroadcastManager;
+import cn.floseek.fastcache.handler.RedissonKeyPrefixHandler;
 import cn.floseek.fastcache.redisson.RedissonService;
 import cn.floseek.fastcache.service.RedisService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -41,6 +42,11 @@ public class RedissonAutoConfiguration {
     @Bean
     public BroadcastManager broadcastManager(FastCacheProperties fastCacheProperties, RedissonClient redissonClient) {
         return new RedissonBroadcastManager(fastCacheProperties.getBroadcastChannel(), redissonClient);
+    }
+
+    @Bean
+    public RedissonBloomFilterFactory redissonBloomFilterFactory(RedissonClient redissonClient) {
+        return new RedissonBloomFilterFactory(redissonClient);
     }
 
     @Bean

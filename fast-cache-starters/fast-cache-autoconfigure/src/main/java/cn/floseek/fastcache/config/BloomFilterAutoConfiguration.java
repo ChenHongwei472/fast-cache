@@ -4,9 +4,7 @@ import cn.floseek.fastcache.config.properties.BloomFilterProperties;
 import cn.floseek.fastcache.core.bloomfilter.BloomFilterFactory;
 import cn.floseek.fastcache.core.bloomfilter.BloomFilterType;
 import cn.floseek.fastcache.manager.BloomFilterManager;
-import cn.floseek.fastcache.redisson.RedissonBloomFilterFactory;
 import cn.floseek.fastcache.support.guava.GuavaBloomFilterFactory;
-import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -46,12 +44,6 @@ public class BloomFilterAutoConfiguration {
         return new BloomFilterManager(bloomFilterFactory,
                 bloomFilterProperties.getExpectedInsertions(),
                 bloomFilterProperties.getFalsePositiveProbability());
-    }
-
-    @Bean
-    @ConditionalOnClass(RedissonClient.class)
-    public RedissonBloomFilterFactory redissonBloomFilterFactory(RedissonClient redissonClient) {
-        return new RedissonBloomFilterFactory(redissonClient);
     }
 
     @Bean

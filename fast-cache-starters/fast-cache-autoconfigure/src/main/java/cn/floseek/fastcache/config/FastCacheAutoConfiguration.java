@@ -5,6 +5,7 @@ import cn.floseek.fastcache.manager.CacheManager;
 import cn.floseek.fastcache.manager.DefaultCacheManager;
 import cn.floseek.fastcache.manager.broadcast.BroadcastManager;
 import cn.floseek.fastcache.service.RedisService;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -20,8 +21,14 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(FastCacheProperties.class)
 public class FastCacheAutoConfiguration {
 
+    @Resource
+    private RedisService redisService;
+
+    @Resource
+    private BroadcastManager broadcastManager;
+
     @Bean(destroyMethod = "close")
-    public CacheManager cacheManager(RedisService redisService, BroadcastManager broadcastManager) {
+    public CacheManager cacheManager() {
         return new DefaultCacheManager(redisService, broadcastManager);
     }
 }
