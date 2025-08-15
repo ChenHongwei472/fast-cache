@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.support.redisson;
+package cn.floseek.fastcache.redisson;
 
 import cn.floseek.fastcache.core.bloomfilter.BloomFilter;
 import cn.floseek.fastcache.core.bloomfilter.BloomFilterConfig;

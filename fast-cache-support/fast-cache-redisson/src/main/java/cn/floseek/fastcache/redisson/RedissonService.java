@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.support.redisson;
+package cn.floseek.fastcache.redisson;
 
 import cn.floseek.fastcache.model.SortedEntry;
 import cn.floseek.fastcache.service.RedisService;

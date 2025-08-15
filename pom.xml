@@ -18,7 +18,8 @@
     <modules>
         <module>fast-cache-bom</module>
         <module>fast-cache-core</module>
-        <module>fast-cache-spring-boot-starter</module>
+        <module>fast-cache-starters</module>
+        <module>fast-cache-support</module>
     </modules>
 
     <properties>

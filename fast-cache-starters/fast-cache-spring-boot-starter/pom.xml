@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.floseek</groupId>
-        <artifactId>fast-cache</artifactId>
+        <artifactId>fast-cache-starters</artifactId>
         <version>0.0.1</version>
     </parent>
 
@@ -15,6 +15,12 @@
         <dependency>
             <groupId>cn.floseek</groupId>
             <artifactId>fast-cache-core</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.floseek</groupId>
+            <artifactId>fast-cache-redisson</artifactId>
             <version>0.0.1</version>
         </dependency>
 
