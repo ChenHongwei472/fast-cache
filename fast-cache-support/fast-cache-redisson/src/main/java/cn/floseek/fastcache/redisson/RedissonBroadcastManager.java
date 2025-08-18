@@ -1,11 +1,11 @@
 package cn.floseek.fastcache.redisson;
 
+import cn.floseek.fastcache.cache.CacheManager;
 import cn.floseek.fastcache.cache.broadcast.AbstractBroadcastManager;
 import cn.floseek.fastcache.cache.broadcast.CacheMessage;
-import cn.floseek.fastcache.cache.CacheManager;
-import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RedissonClient;
 
 import java.util.concurrent.locks.ReentrantLock;
@@ -33,7 +33,7 @@ public class RedissonBroadcastManager extends AbstractBroadcastManager {
     @Override
     public void publish(CacheMessage cacheMessage) {
         try {
-            if (StrUtil.isNotBlank(this.channel) && ObjUtil.isNotNull(cacheMessage)) {
+            if (StringUtils.isNotBlank(this.channel) && ObjectUtils.isNotEmpty(cacheMessage)) {
                 this.redissonClient.getTopic(this.channel).publish(cacheMessage);
             }
         } catch (Throwable e) {
@@ -45,7 +45,7 @@ public class RedissonBroadcastManager extends AbstractBroadcastManager {
     public void startSubscribe() {
         reentrantLock.lock();
         try {
-            if (this.subscribeId == 0 && StrUtil.isNotBlank(this.channel)) {
+            if (this.subscribeId == 0 && StringUtils.isNotBlank(this.channel)) {
                 this.subscribeId = this.redissonClient.getTopic(this.channel)
                         .addListener(CacheMessage.class, (channel, message) -> this.processMessage(message));
             }
@@ -59,7 +59,7 @@ public class RedissonBroadcastManager extends AbstractBroadcastManager {
         reentrantLock.lock();
         try {
             final int id;
-            if ((id = this.subscribeId) > 0 && StrUtil.isNotBlank(this.channel)) {
+            if ((id = this.subscribeId) > 0 && StringUtils.isNotBlank(this.channel)) {
                 this.subscribeId = 0;
                 try {
                     this.redissonClient.getTopic(this.channel).removeListener(id);

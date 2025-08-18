@@ -30,7 +30,8 @@
 
         <redisson.version>3.41.0</redisson.version>
         <guava.version>33.3.0-jre</guava.version>
-        <hutool.version>5.8.36</hutool.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
     </properties>
 
     <dependencyManagement>
@@ -54,11 +55,17 @@
                 <version>${guava.version}</version>
             </dependency>
 
-            <!-- Hutool，在线文档：https://hutool.cn -->
+            <!-- Apache Commons Lang，在线文档：https://commons.apache.org/proper/commons-lang -->
             <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-all</artifactId>
-                <version>${hutool.version}</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+            <!-- Apache Commons Collections，在线文档：https://commons.apache.org/proper/commons-collections -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections4.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

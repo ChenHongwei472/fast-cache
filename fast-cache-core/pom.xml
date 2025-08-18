@@ -36,10 +36,15 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
-        <!-- Hutool，在线文档：https://hutool.cn -->
+        <!-- Apache Commons Lang，在线文档：https://commons.apache.org/proper/commons-lang -->
         <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <!-- Apache Commons Collections，在线文档：https://commons.apache.org/proper/commons-collections -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
         </dependency>
     </dependencies>
 

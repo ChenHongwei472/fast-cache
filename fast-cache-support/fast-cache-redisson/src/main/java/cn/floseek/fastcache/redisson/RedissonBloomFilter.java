@@ -2,9 +2,9 @@ package cn.floseek.fastcache.redisson;
 
 import cn.floseek.fastcache.bloomfilter.BloomFilter;
 import cn.floseek.fastcache.bloomfilter.BloomFilterConfig;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RedissonClient;
 
@@ -40,7 +40,7 @@ public class RedissonBloomFilter implements BloomFilter {
 
     @Override
     public boolean add(String object) {
-        if (ObjUtil.isNull(object)) {
+        if (ObjectUtils.isEmpty(object)) {
             return false;
         }
         return bloomFilter.add(object);
@@ -48,7 +48,7 @@ public class RedissonBloomFilter implements BloomFilter {
 
     @Override
     public long add(Collection<String> elements) {
-        if (CollUtil.isEmpty(elements)) {
+        if (CollectionUtils.isEmpty(elements)) {
             return 0;
         }
         return bloomFilter.add(elements);
@@ -56,7 +56,7 @@ public class RedissonBloomFilter implements BloomFilter {
 
     @Override
     public boolean mightContain(String object) {
-        if (ObjUtil.isNull(object)) {
+        if (ObjectUtils.isEmpty(object)) {
             return false;
         }
         return bloomFilter.contains(object);
@@ -69,7 +69,7 @@ public class RedissonBloomFilter implements BloomFilter {
         // 创建备份布隆过滤器
         String backupKey = key + "_backup";
         RBloomFilter<String> backupBloomFilter = this.getBloomFilter(backupKey);
-        if (CollUtil.isNotEmpty(dataList)) {
+        if (CollectionUtils.isNotEmpty(dataList)) {
             backupBloomFilter.add(dataList);
         }
         log.info("创建备份布隆过滤器成功，key：{}，数据量：{}", backupKey, dataList.size());
@@ -87,7 +87,7 @@ public class RedissonBloomFilter implements BloomFilter {
      */
     private RBloomFilter<String> getBloomFilter(String key) {
         RBloomFilter<String> bloomFilter = redissonClient.getBloomFilter(key);
-        if (ObjUtil.isNotNull(bloomFilter) && !bloomFilter.isExists()) {
+        if (ObjectUtils.isNotEmpty(bloomFilter) && !bloomFilter.isExists()) {
             bloomFilter.tryInit(bloomFilterConfig.getExpectedInsertions(), bloomFilterConfig.getFalsePositiveProbability());
         }
         return bloomFilter;

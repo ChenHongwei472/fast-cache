@@ -1,6 +1,7 @@
 package cn.floseek.fastcache.handler;
 
-import cn.hutool.core.util.StrUtil;
+import cn.floseek.fastcache.constant.CacheConstant;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.NameMapper;
 
 /**
@@ -14,15 +15,15 @@ public class RedissonKeyPrefixHandler implements NameMapper {
 
     public RedissonKeyPrefixHandler(String keyPrefix) {
         // 如果前缀为空，则返回空字符串
-        this.keyPrefix = StrUtil.isBlank(keyPrefix) ? StrUtil.EMPTY : keyPrefix.concat(StrUtil.COLON);
+        this.keyPrefix = StringUtils.isBlank(keyPrefix) ? StringUtils.EMPTY : keyPrefix.concat(CacheConstant.COLON);
     }
 
     @Override
     public String map(String name) {
-        if (StrUtil.isBlank(name)) {
+        if (StringUtils.isBlank(name)) {
             return null;
         }
-        if (StrUtil.isNotBlank(keyPrefix) && !name.startsWith(keyPrefix)) {
+        if (StringUtils.isNotBlank(keyPrefix) && !name.startsWith(keyPrefix)) {
             return keyPrefix.concat(name);
         }
         return name;
@@ -30,10 +31,10 @@ public class RedissonKeyPrefixHandler implements NameMapper {
 
     @Override
     public String unmap(String name) {
-        if (StrUtil.isBlank(name)) {
+        if (StringUtils.isBlank(name)) {
             return null;
         }
-        if (StrUtil.isNotBlank(keyPrefix) && name.startsWith(keyPrefix)) {
+        if (StringUtils.isNotBlank(keyPrefix) && name.startsWith(keyPrefix)) {
             return name.substring(keyPrefix.length());
         }
         return name;

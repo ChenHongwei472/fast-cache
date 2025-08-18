@@ -2,17 +2,17 @@ package cn.floseek.fastcache.bloomfilter.impl;
 
 import cn.floseek.fastcache.bloomfilter.BloomFilter;
 import cn.floseek.fastcache.bloomfilter.BloomFilterConfig;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjUtil;
 import com.google.common.hash.Funnels;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.List;
 
 /**
- * Hutool 布隆过滤器
+ * Guava 布隆过滤器
  *
  * @author ChenHongwei472
  */
@@ -30,7 +30,7 @@ public class GuavaBloomFilter implements BloomFilter {
 
     @Override
     public boolean add(String object) {
-        if (ObjUtil.isNull(object)) {
+        if (ObjectUtils.isEmpty(object)) {
             return false;
         }
         return bloomFilter.put(object);
@@ -38,7 +38,7 @@ public class GuavaBloomFilter implements BloomFilter {
 
     @Override
     public long add(Collection<String> elements) {
-        if (CollUtil.isEmpty(elements)) {
+        if (CollectionUtils.isEmpty(elements)) {
             return 0;
         }
 
@@ -54,7 +54,7 @@ public class GuavaBloomFilter implements BloomFilter {
 
     @Override
     public boolean mightContain(String object) {
-        if (ObjUtil.isNull(object)) {
+        if (ObjectUtils.isEmpty(object)) {
             return false;
         }
         return bloomFilter.mightContain(object);
@@ -64,7 +64,7 @@ public class GuavaBloomFilter implements BloomFilter {
     public void rebuild(List<String> dataList) {
         log.info("开始重建布隆过滤器，key：{}", bloomFilterConfig.getKey());
         com.google.common.hash.BloomFilter<String> backupBloomFilter = this.createBloomFilter();
-        if (CollUtil.isNotEmpty(dataList)) {
+        if (CollectionUtils.isNotEmpty(dataList)) {
             for (String data : dataList) {
                 backupBloomFilter.put(data);
             }

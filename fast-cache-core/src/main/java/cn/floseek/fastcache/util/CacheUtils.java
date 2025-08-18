@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.util;
 
-import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjUtil;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * 缓存工具类
@@ -18,9 +18,9 @@ public class CacheUtils {
      */
     public static String generateKey(Object... params) {
         StringBuilder sb = new StringBuilder();
-        if (ArrayUtil.isNotEmpty(params)) {
+        if (ArrayUtils.isNotEmpty(params)) {
             for (Object param : params) {
-                if (ObjUtil.isNotNull(param)) {
+                if (ObjectUtils.isNotEmpty(param)) {
                     sb.append(":").append(param);
                 }
             }

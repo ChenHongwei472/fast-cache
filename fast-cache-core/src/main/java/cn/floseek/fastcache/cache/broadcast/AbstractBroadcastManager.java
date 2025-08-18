@@ -3,11 +3,11 @@ package cn.floseek.fastcache.cache.broadcast;
 import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.CacheManager;
 import cn.floseek.fastcache.cache.config.CacheType;
-import cn.floseek.fastcache.cache.impl.multi.MultiLevelCache;
 import cn.floseek.fastcache.cache.decorator.BroadcastDecorator;
 import cn.floseek.fastcache.cache.decorator.CacheDecorator;
-import cn.hutool.core.util.ObjUtil;
+import cn.floseek.fastcache.cache.impl.multi.MultiLevelCache;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.UUID;
 
@@ -41,7 +41,7 @@ public abstract class AbstractBroadcastManager implements BroadcastManager {
      * @param cacheMessage 缓存消息
      */
     protected void processMessage(CacheMessage cacheMessage) {
-        if (ObjUtil.isNull(cacheMessage)) {
+        if (ObjectUtils.isEmpty(cacheMessage)) {
             log.info("接收到的缓存消息为空");
             return;
         }
