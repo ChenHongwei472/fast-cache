@@ -79,7 +79,7 @@ public abstract class AbstractBroadcastManager implements BroadcastManager {
             return;
         }
 
-        // 获取最原始被装饰的缓存实例
+        // 获取被装饰的原始缓存实例
         Cache<Object, Object> cache = cacheDecorator.unwrapAll();
         if (cache.getCacheType() == CacheType.REMOTE) {
             log.debug("Skip broadcast for remote cache: {}", broadcastMessage.getCacheName());

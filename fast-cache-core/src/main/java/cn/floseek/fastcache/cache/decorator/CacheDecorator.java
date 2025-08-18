@@ -5,22 +5,28 @@ import cn.floseek.fastcache.cache.config.CacheConfig;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 缓存装饰器
+ * 缓存装饰器抽象类
+ * <p>
+ * 提供装饰器模式的基本实现，实现对缓存实例的装饰，继承该抽象类实现具体的装饰逻辑
+ * </p>
  *
  * @author ChenHongwei472
  */
 @Slf4j
 public abstract class CacheDecorator<K, V> implements Cache<K, V> {
 
-    protected final Cache<K, V> cache;
+    /**
+     * 被装饰的缓存实例
+     */
+    protected final Cache<K, V> decoratedCache;
 
-    public CacheDecorator(Cache<K, V> cache) {
-        this.cache = cache;
+    public CacheDecorator(Cache<K, V> decoratedCache) {
+        this.decoratedCache = decoratedCache;
     }
 
     @Override
     public CacheConfig getConfig() {
-        return cache.getConfig();
+        return decoratedCache.getConfig();
     }
 
     /**
@@ -29,16 +35,16 @@ public abstract class CacheDecorator<K, V> implements Cache<K, V> {
      * @return 缓存实例
      */
     public Cache<K, V> unwrap() {
-        return cache;
+        return decoratedCache;
     }
 
     /**
-     * 获取最原始被装饰的缓存实例
+     * 获取被装饰的原始缓存实例
      *
      * @return 缓存实例
      */
     public Cache<K, V> unwrapAll() {
-        Cache<K, V> current = cache;
+        Cache<K, V> current = decoratedCache;
         while (current instanceof CacheDecorator) {
             current = ((CacheDecorator<K, V>) current).unwrapAll();
         }
@@ -46,7 +52,7 @@ public abstract class CacheDecorator<K, V> implements Cache<K, V> {
     }
 
     /**
-     * 检查是否包含特定类型的装饰器
+     * 检查装饰链中是否包含指定类型的装饰器
      *
      * @param clazz 装饰器类
      * @return boolean
