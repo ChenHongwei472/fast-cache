@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.bloomfilter.impl;
 
-import cn.floseek.fastcache.bloomfilter.BloomFilter;
-import cn.floseek.fastcache.bloomfilter.BloomFilterConfig;
+import cn.floseek.fastcache.bloomfilter.AbstractBloomFilter;
+import cn.floseek.fastcache.bloomfilter.config.BloomFilterConfig;
 import com.google.common.hash.Funnels;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -12,19 +12,21 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Guava 布隆过滤器
+ * 基于 Google Guava 的布隆过滤器实现
  *
  * @author ChenHongwei472
  */
 @Slf4j
 @SuppressWarnings("UnstableApiUsage")
-public class GuavaBloomFilter implements BloomFilter {
+public class GuavaBloomFilter extends AbstractBloomFilter {
 
-    private final BloomFilterConfig bloomFilterConfig;
+    /**
+     * 布隆过滤器
+     */
     private com.google.common.hash.BloomFilter<String> bloomFilter;
 
-    public GuavaBloomFilter(BloomFilterConfig bloomFilterConfig) {
-        this.bloomFilterConfig = bloomFilterConfig;
+    public GuavaBloomFilter(BloomFilterConfig config) {
+        super(config);
         this.bloomFilter = this.createBloomFilter();
     }
 
@@ -62,7 +64,7 @@ public class GuavaBloomFilter implements BloomFilter {
 
     @Override
     public void rebuild(List<String> dataList) {
-        log.info("开始重建布隆过滤器，key：{}", bloomFilterConfig.getKey());
+        log.info("Start rebuild bloom filter, key: {}", config.getKey());
         com.google.common.hash.BloomFilter<String> backupBloomFilter = this.createBloomFilter();
         if (CollectionUtils.isNotEmpty(dataList)) {
             for (String data : dataList) {
@@ -70,7 +72,7 @@ public class GuavaBloomFilter implements BloomFilter {
             }
         }
         this.bloomFilter = backupBloomFilter;
-        log.info("重建布隆过滤器完成，key：{}，数据量：{}", bloomFilterConfig.getKey(), dataList.size());
+        log.info("Rebuild bloom filter complete, key: {}, data size: {}", config.getKey(), dataList.size());
     }
 
     /**
@@ -81,8 +83,8 @@ public class GuavaBloomFilter implements BloomFilter {
     private com.google.common.hash.BloomFilter<String> createBloomFilter() {
         return com.google.common.hash.BloomFilter.create(
                 Funnels.stringFunnel(Charset.defaultCharset()),
-                bloomFilterConfig.getExpectedInsertions(),
-                bloomFilterConfig.getFalsePositiveProbability()
+                config.getExpectedInsertions(),
+                config.getFalsePositiveProbability()
         );
     }
 }

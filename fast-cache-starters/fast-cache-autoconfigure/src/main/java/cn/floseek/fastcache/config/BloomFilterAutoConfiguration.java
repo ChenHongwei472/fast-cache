@@ -1,10 +1,10 @@
 package cn.floseek.fastcache.config;
 
-import cn.floseek.fastcache.config.properties.BloomFilterProperties;
 import cn.floseek.fastcache.bloomfilter.BloomFilterFactory;
-import cn.floseek.fastcache.bloomfilter.BloomFilterType;
 import cn.floseek.fastcache.bloomfilter.BloomFilterManager;
 import cn.floseek.fastcache.bloomfilter.impl.GuavaBloomFilterFactory;
+import cn.floseek.fastcache.bloomfilter.template.BloomFilterTemplate;
+import cn.floseek.fastcache.config.properties.BloomFilterProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -12,9 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * 布隆过滤器自动配置类
@@ -30,15 +27,11 @@ public class BloomFilterAutoConfiguration {
     @ConditionalOnMissingBean
     public BloomFilterManager bloomFilterManager(
             BloomFilterProperties bloomFilterProperties,
-            List<BloomFilterFactory> bloomFilterFactoryList) {
-        Map<BloomFilterType, BloomFilterFactory> bloomFilterFactoryMap = bloomFilterFactoryList.stream()
-                .collect(Collectors.toMap(BloomFilterFactory::getType, Function.identity()));
-
-        BloomFilterFactory bloomFilterFactory = bloomFilterFactoryMap.get(bloomFilterProperties.getType());
+            BloomFilterTemplate bloomFilterTemplate) {
+        BloomFilterFactory bloomFilterFactory = bloomFilterTemplate.get(bloomFilterProperties.getType());
         if (bloomFilterFactory == null) {
-            throw new IllegalArgumentException(
-                    String.format("不支持的布隆过滤器类型: %s，请检查是否引入相关依赖", bloomFilterProperties.getType())
-            );
+            String message = String.format("Unsupported bloom filter type: %s, please check the dependency", bloomFilterProperties.getType());
+            throw new IllegalArgumentException(message);
         }
 
         return new BloomFilterManager(bloomFilterFactory,
@@ -47,7 +40,16 @@ public class BloomFilterAutoConfiguration {
     }
 
     @Bean
-    public GuavaBloomFilterFactory guavaBloomFilterFactory() {
+    public BloomFilterTemplate bloomFilterTemplate(List<BloomFilterFactory> bloomFilterFactoryList) {
+        BloomFilterTemplate bloomFilterTemplate = new BloomFilterTemplate();
+        for (BloomFilterFactory bloomFilterFactory : bloomFilterFactoryList) {
+            bloomFilterTemplate.register(bloomFilterFactory.getType(), bloomFilterFactory);
+        }
+        return bloomFilterTemplate;
+    }
+
+    @Bean
+    public BloomFilterFactory guavaBloomFilterFactory() {
         return new GuavaBloomFilterFactory();
     }
 }

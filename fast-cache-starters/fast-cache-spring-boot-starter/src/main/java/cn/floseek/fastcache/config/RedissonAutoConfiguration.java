@@ -1,5 +1,6 @@
 package cn.floseek.fastcache.config;
 
+import cn.floseek.fastcache.bloomfilter.BloomFilterFactory;
 import cn.floseek.fastcache.cache.builder.RemoteCacheBuilder;
 import cn.floseek.fastcache.config.properties.FastCacheProperties;
 import cn.floseek.fastcache.handler.RedissonKeyPrefixHandler;
@@ -40,7 +41,7 @@ public class RedissonAutoConfiguration {
     }
 
     @Bean
-    public RedissonBloomFilterFactory redissonBloomFilterFactory(RedissonClient redissonClient) {
+    public BloomFilterFactory redissonBloomFilterFactory(RedissonClient redissonClient) {
         return new RedissonBloomFilterFactory(redissonClient);
     }
 

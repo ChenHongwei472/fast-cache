@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.bloomfilter;
+package cn.floseek.fastcache.bloomfilter.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.redisson;
 
-import cn.floseek.fastcache.bloomfilter.BloomFilter;
-import cn.floseek.fastcache.bloomfilter.BloomFilterConfig;
+import cn.floseek.fastcache.bloomfilter.AbstractBloomFilter;
+import cn.floseek.fastcache.bloomfilter.config.BloomFilterConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -12,30 +12,27 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Redisson 布隆过滤器
+ * 基于 Redisson 的布隆过滤器实现
  *
  * @author ChenHongwei472
  */
 @Slf4j
-public class RedissonBloomFilter implements BloomFilter {
+public class RedissonBloomFilter extends AbstractBloomFilter {
 
     /**
      * Redisson 客户端
      */
     private final RedissonClient redissonClient;
-    /**
-     * 布隆过滤器配置
-     */
-    private final BloomFilterConfig bloomFilterConfig;
+
     /**
      * 布隆过滤器
      */
     private RBloomFilter<String> bloomFilter;
 
-    public RedissonBloomFilter(RedissonClient redissonClient, BloomFilterConfig bloomFilterConfig) {
+    public RedissonBloomFilter(RedissonClient redissonClient, BloomFilterConfig config) {
+        super(config);
         this.redissonClient = redissonClient;
-        this.bloomFilterConfig = bloomFilterConfig;
-        this.bloomFilter = this.getBloomFilter(bloomFilterConfig.getKey());
+        this.bloomFilter = this.getBloomFilter(config.getKey());
     }
 
     @Override
@@ -64,19 +61,21 @@ public class RedissonBloomFilter implements BloomFilter {
 
     @Override
     public void rebuild(List<String> dataList) {
-        String key = bloomFilterConfig.getKey();
-        log.info("开始重建布隆过滤器，key：{}", key);
+        String key = config.getKey();
+        log.info("Start rebuild bloom filter, key: {}", config.getKey());
+
         // 创建备份布隆过滤器
         String backupKey = key + "_backup";
         RBloomFilter<String> backupBloomFilter = this.getBloomFilter(backupKey);
         if (CollectionUtils.isNotEmpty(dataList)) {
             backupBloomFilter.add(dataList);
         }
-        log.info("创建备份布隆过滤器成功，key：{}，数据量：{}", backupKey, dataList.size());
+        log.info("Create backup bloom filter success, key: {}, data size: {}", backupKey, dataList.size());
+
         // 切换布隆过滤器
         redissonClient.getKeys().rename(backupKey, key);
         this.bloomFilter = this.getBloomFilter(key);
-        log.info("重建布隆过滤器完成，key：{}", key);
+        log.info("Rebuild bloom filter complete, key: {}, data size: {}", key, dataList.size());
     }
 
     /**
@@ -88,7 +87,7 @@ public class RedissonBloomFilter implements BloomFilter {
     private RBloomFilter<String> getBloomFilter(String key) {
         RBloomFilter<String> bloomFilter = redissonClient.getBloomFilter(key);
         if (ObjectUtils.isNotEmpty(bloomFilter) && !bloomFilter.isExists()) {
-            bloomFilter.tryInit(bloomFilterConfig.getExpectedInsertions(), bloomFilterConfig.getFalsePositiveProbability());
+            bloomFilter.tryInit(config.getExpectedInsertions(), config.getFalsePositiveProbability());
         }
         return bloomFilter;
     }

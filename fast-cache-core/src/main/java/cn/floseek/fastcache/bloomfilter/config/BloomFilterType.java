@@ -1,7 +1,7 @@
-package cn.floseek.fastcache.bloomfilter;
+package cn.floseek.fastcache.bloomfilter.config;
 
 /**
- * 布隆过滤器类型
+ * 布隆过滤器类型枚举
  *
  * @author ChenHongwei472
  */
