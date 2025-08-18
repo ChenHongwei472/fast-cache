@@ -108,14 +108,4 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
         keys.forEach(key -> redissonClient.getBucket(this.getCacheKey(key)).deleteAsync());
         batch.execute();
     }
-
-    /**
-     * 获取缓存键
-     *
-     * @param key 缓存键
-     * @return 缓存键
-     */
-    private String getCacheKey(K key) {
-        return config.getCacheName() + ":" + key.toString();
-    }
 }
