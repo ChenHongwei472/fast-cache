@@ -1,5 +1,8 @@
 package cn.floseek.fastcache.cache;
 
+import cn.floseek.fastcache.cache.config.CacheConfig;
+import cn.floseek.fastcache.cache.config.CacheType;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -73,4 +76,11 @@ public interface Cache<K, V> {
      * @return 缓存类型
      */
     CacheType getCacheType();
+
+    /**
+     * 获取缓存配置
+     *
+     * @return 缓存配置
+     */
+    CacheConfig getConfig();
 }

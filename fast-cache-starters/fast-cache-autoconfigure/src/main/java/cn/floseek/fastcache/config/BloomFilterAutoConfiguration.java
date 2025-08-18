@@ -4,7 +4,7 @@ import cn.floseek.fastcache.config.properties.BloomFilterProperties;
 import cn.floseek.fastcache.bloomfilter.BloomFilterFactory;
 import cn.floseek.fastcache.bloomfilter.BloomFilterType;
 import cn.floseek.fastcache.bloomfilter.BloomFilterManager;
-import cn.floseek.fastcache.bloomfilter.guava.GuavaBloomFilterFactory;
+import cn.floseek.fastcache.bloomfilter.impl.GuavaBloomFilterFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

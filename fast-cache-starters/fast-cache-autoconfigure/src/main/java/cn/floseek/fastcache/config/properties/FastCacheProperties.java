@@ -1,6 +1,8 @@
 package cn.floseek.fastcache.config.properties;
 
+import cn.floseek.fastcache.config.GlobalProperties;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -9,8 +11,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author ChenHongwei472
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties(prefix = FastCacheProperties.PREFIX)
-public class FastCacheProperties {
+public class FastCacheProperties extends GlobalProperties {
 
     public static final String PREFIX = "fast-cache";
 
@@ -18,9 +21,4 @@ public class FastCacheProperties {
      * Key 前缀
      */
     private String keyPrefix;
-
-    /**
-     * 广播通道
-     */
-    private String broadcastChannel = "default_broadcast_channel";
 }

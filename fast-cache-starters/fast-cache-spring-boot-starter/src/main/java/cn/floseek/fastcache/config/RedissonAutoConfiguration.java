@@ -1,12 +1,12 @@
 package cn.floseek.fastcache.config;
 
+import cn.floseek.fastcache.cache.builder.RemoteCacheBuilder;
 import cn.floseek.fastcache.config.properties.FastCacheProperties;
-import cn.floseek.fastcache.broadcast.BroadcastManager;
-import cn.floseek.fastcache.redisson.RedissonBloomFilterFactory;
-import cn.floseek.fastcache.redisson.RedissonBroadcastManager;
 import cn.floseek.fastcache.handler.RedissonKeyPrefixHandler;
-import cn.floseek.fastcache.redisson.RedissonService;
 import cn.floseek.fastcache.redis.RedisService;
+import cn.floseek.fastcache.redisson.RedissonBloomFilterFactory;
+import cn.floseek.fastcache.redisson.RedissonCacheBuilder;
+import cn.floseek.fastcache.redisson.RedissonService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,13 +40,13 @@ public class RedissonAutoConfiguration {
     }
 
     @Bean
-    public BroadcastManager broadcastManager(FastCacheProperties fastCacheProperties, RedissonClient redissonClient) {
-        return new RedissonBroadcastManager(fastCacheProperties.getBroadcastChannel(), redissonClient);
+    public RedissonBloomFilterFactory redissonBloomFilterFactory(RedissonClient redissonClient) {
+        return new RedissonBloomFilterFactory(redissonClient);
     }
 
     @Bean
-    public RedissonBloomFilterFactory redissonBloomFilterFactory(RedissonClient redissonClient) {
-        return new RedissonBloomFilterFactory(redissonClient);
+    public <K, V> RemoteCacheBuilder<K, V> remoteCacheBuilder(RedissonClient redissonClient) {
+        return new RedissonCacheBuilder<>(redissonClient);
     }
 
     @Bean

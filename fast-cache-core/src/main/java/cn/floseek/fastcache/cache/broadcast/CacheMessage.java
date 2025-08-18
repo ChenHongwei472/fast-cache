@@ -1,5 +1,6 @@
-package cn.floseek.fastcache.broadcast;
+package cn.floseek.fastcache.cache.broadcast;
 
+import cn.floseek.fastcache.cache.config.CacheType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +35,12 @@ public class CacheMessage implements Serializable {
     private String cacheName;
 
     /**
-     * 缓存键集合
+     * 缓存类型
+     */
+    private CacheType cacheType;
+
+    /**
+     * 缓存键列表
      */
     private List<Object> keys;
 }

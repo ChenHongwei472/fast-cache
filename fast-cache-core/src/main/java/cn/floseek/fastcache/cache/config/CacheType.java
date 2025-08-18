@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.cache;
+package cn.floseek.fastcache.cache.config;
 
 /**
  * 缓存类型枚举

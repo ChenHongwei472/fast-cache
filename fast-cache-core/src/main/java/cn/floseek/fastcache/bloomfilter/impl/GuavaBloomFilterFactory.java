@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.bloomfilter.guava;
+package cn.floseek.fastcache.bloomfilter.impl;
 
 import cn.floseek.fastcache.bloomfilter.BloomFilter;
 import cn.floseek.fastcache.bloomfilter.BloomFilterConfig;

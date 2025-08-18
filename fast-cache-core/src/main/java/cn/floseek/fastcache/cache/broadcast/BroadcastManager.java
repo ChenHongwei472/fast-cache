@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.broadcast;
+package cn.floseek.fastcache.cache.broadcast;
 
 /**
  * 广播管理器接口

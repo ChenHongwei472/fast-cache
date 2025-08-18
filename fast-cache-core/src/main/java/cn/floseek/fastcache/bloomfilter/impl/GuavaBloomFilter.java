@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.bloomfilter.guava;
+package cn.floseek.fastcache.bloomfilter.impl;
 
 import cn.floseek.fastcache.bloomfilter.BloomFilter;
 import cn.floseek.fastcache.bloomfilter.BloomFilterConfig;
@@ -63,7 +63,6 @@ public class GuavaBloomFilter implements BloomFilter {
     @Override
     public void rebuild(List<String> dataList) {
         log.info("开始重建布隆过滤器，key：{}", bloomFilterConfig.getKey());
-        log.info("{}", bloomFilterConfig);
         com.google.common.hash.BloomFilter<String> backupBloomFilter = this.createBloomFilter();
         if (CollUtil.isNotEmpty(dataList)) {
             for (String data : dataList) {

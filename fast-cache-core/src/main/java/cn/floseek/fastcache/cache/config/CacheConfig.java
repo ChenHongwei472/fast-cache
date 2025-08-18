@@ -1,5 +1,6 @@
-package cn.floseek.fastcache.cache;
+package cn.floseek.fastcache.cache.config;
 
+import cn.floseek.fastcache.cache.broadcast.BroadcastManager;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,6 +31,19 @@ public class CacheConfig {
     private CacheType cacheType = CacheType.REMOTE;
 
     /**
+     * 是否同步本地缓存
+     */
+    @Builder.Default
+    private boolean syncLocalCache = false;
+
+    /**
+     * 广播管理器
+     */
+    private BroadcastManager broadcastManager;
+
+    // region 本地缓存配置
+
+    /**
      * 本地缓存最大容量
      */
     @Builder.Default
@@ -45,14 +59,14 @@ public class CacheConfig {
      */
     private Duration expireAfterAccess;
 
-    /**
-     * 是否同步本地缓存
-     */
-    @Builder.Default
-    private boolean syncLocalCache = false;
+    // endregion
+
+    // region 分布式缓存配置
 
     /**
      * 分布式缓存过期时间
      */
     private Duration expireTime;
+
+    // endregion
 }
