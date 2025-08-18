@@ -2,6 +2,7 @@ package cn.floseek.fastcache.redisson;
 
 import cn.floseek.fastcache.redis.SortedEntry;
 import cn.floseek.fastcache.redis.RedisService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.redisson.api.BatchResult;
 import org.redisson.api.RAtomicLong;
 import org.redisson.api.RBatch;
@@ -416,7 +417,7 @@ public class RedissonService implements RedisService {
      * @return {@link SortedEntry} 列表
      */
     private <T> List<SortedEntry<T>> convertToSortedEntryList(Collection<ScoredEntry<T>> scoredEntryCollection) {
-        if (scoredEntryCollection == null || scoredEntryCollection.isEmpty()) {
+        if (CollectionUtils.isEmpty(scoredEntryCollection)) {
             return Collections.emptyList();
         }
 

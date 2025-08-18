@@ -7,7 +7,6 @@ import cn.floseek.fastcache.cache.decorator.BroadcastDecorator;
 import cn.floseek.fastcache.cache.decorator.CacheDecorator;
 import cn.floseek.fastcache.cache.impl.multi.MultiLevelCache;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.UUID;
 
@@ -45,7 +44,7 @@ public abstract class AbstractBroadcastManager implements BroadcastManager {
      */
     protected void processMessage(BroadcastMessage broadcastMessage) {
         // 验证消息是否为空
-        if (ObjectUtils.isEmpty(broadcastMessage)) {
+        if (broadcastMessage == null) {
             log.debug("Received empty broadcast message, skip processing");
             return;
         }

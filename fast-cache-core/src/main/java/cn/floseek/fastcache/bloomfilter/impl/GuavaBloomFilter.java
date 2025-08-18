@@ -32,7 +32,7 @@ public class GuavaBloomFilter extends AbstractBloomFilter {
 
     @Override
     public boolean add(String object) {
-        if (ObjectUtils.isEmpty(object)) {
+        if (object == null) {
             return false;
         }
         return bloomFilter.put(object);
@@ -56,7 +56,7 @@ public class GuavaBloomFilter extends AbstractBloomFilter {
 
     @Override
     public boolean mightContain(String object) {
-        if (ObjectUtils.isEmpty(object)) {
+        if (object == null) {
             return false;
         }
         return bloomFilter.mightContain(object);

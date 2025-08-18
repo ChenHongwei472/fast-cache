@@ -25,13 +25,13 @@ public interface Cache<K, V> {
     V get(K key);
 
     /**
-     * 获取缓存值
+     * 获取缓存值，未命中时通过加载器获取
      *
-     * @param key      缓存键
-     * @param dbLoader 数据库加载器
+     * @param key         缓存键
+     * @param valueLoader 值加载器
      * @return 缓存值
      */
-    V get(K key, Supplier<V> dbLoader);
+    V get(K key, Supplier<V> valueLoader);
 
     /**
      * 批量获取缓存值
@@ -80,7 +80,7 @@ public interface Cache<K, V> {
     /**
      * 获取缓存配置
      *
-     * @return 缓存配置
+     * @return 缓存配置对象
      */
     CacheConfig getConfig();
 }

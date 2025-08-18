@@ -3,6 +3,8 @@ package cn.floseek.fastcache.redisson;
 import cn.floseek.fastcache.cache.AbstractRemoteCache;
 import cn.floseek.fastcache.cache.config.CacheConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.redisson.api.BatchResult;
 import org.redisson.api.RBatch;
 import org.redisson.api.RBucket;
@@ -17,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Redisson 缓存
+ * Redisson 缓存实现
  *
  * @author ChenHongwei472
  */
@@ -33,21 +35,21 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
 
     @Override
     public V get(K key) {
-        RBucket<V> bucket = redissonClient.getBucket(this.getCacheKey(key));
+        RBucket<V> bucket = redissonClient.getBucket(this.generateCacheKey(key));
         return bucket.get();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public Map<K, V> getAll(Collection<? extends K> keys) {
-        if (keys == null || keys.isEmpty()) {
+        if (CollectionUtils.isEmpty(keys)) {
             return Collections.emptyMap();
         }
 
         List<K> keyList = new ArrayList<>(keys);
 
         RBatch batch = redissonClient.createBatch();
-        keyList.forEach(k -> batch.getBucket(this.getCacheKey(k)).getAsync());
+        keyList.forEach(k -> batch.getBucket(this.generateCacheKey(k)).getAsync());
         BatchResult<?> batchResult = batch.execute();
 
         List<V> objectList = batchResult.getResponses().stream()
@@ -67,7 +69,7 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
 
     @Override
     public void put(K key, V value) {
-        RBucket<V> bucket = redissonClient.getBucket(this.getCacheKey(key));
+        RBucket<V> bucket = redissonClient.getBucket(this.generateCacheKey(key));
         if (config.getExpireTime() == null) {
             bucket.set(value);
         } else {
@@ -77,13 +79,13 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
 
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
-        if (map == null || map.isEmpty()) {
+        if (MapUtils.isEmpty(map)) {
             return;
         }
 
         RBatch batch = redissonClient.createBatch();
         map.forEach((key, value) -> {
-            RBucketAsync<V> bucket = batch.getBucket(this.getCacheKey(key));
+            RBucketAsync<V> bucket = batch.getBucket(this.generateCacheKey(key));
             if (config.getExpireTime() == null) {
                 bucket.setAsync(value);
             } else {
@@ -95,17 +97,17 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
 
     @Override
     public void remove(K key) {
-        redissonClient.getBucket(this.getCacheKey(key)).delete();
+        redissonClient.getBucket(this.generateCacheKey(key)).delete();
     }
 
     @Override
     public void removeAll(Collection<? extends K> keys) {
-        if (keys == null || keys.isEmpty()) {
+        if (CollectionUtils.isEmpty(keys)) {
             return;
         }
 
         RBatch batch = redissonClient.createBatch();
-        keys.forEach(key -> redissonClient.getBucket(this.getCacheKey(key)).deleteAsync());
+        keys.forEach(key -> redissonClient.getBucket(this.generateCacheKey(key)).deleteAsync());
         batch.execute();
     }
 }

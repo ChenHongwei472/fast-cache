@@ -6,6 +6,9 @@ import cn.floseek.fastcache.config.GlobalProperties;
 
 /**
  * 缓存管理器接口
+ * <p>
+ * 负责缓存的创建、获取和管理
+ * </p>
  *
  * @author ChenHongwei472
  */
@@ -14,7 +17,7 @@ public interface CacheManager extends AutoCloseable {
     /**
      * 获取或创建缓存实例
      *
-     * @param config 缓存配置
+     * @param config 缓存配置对象
      * @param <K>    缓存键类型
      * @param <V>    缓存值类型
      * @return 缓存实例
@@ -35,7 +38,7 @@ public interface CacheManager extends AutoCloseable {
     /**
      * 获取全局配置
      *
-     * @return 全局配置
+     * @return 全局配置对象
      */
     GlobalProperties getGlobalProperties();
 }

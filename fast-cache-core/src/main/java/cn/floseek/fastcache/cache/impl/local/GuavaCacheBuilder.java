@@ -6,7 +6,7 @@ import cn.floseek.fastcache.cache.builder.LocalCacheBuilder;
 import cn.floseek.fastcache.cache.config.LocalCacheProvider;
 
 /**
- * Guava 缓存构建者
+ * Guava 缓存构建器实现
  *
  * @param <K> 缓存键类型
  * @param <V> 缓存值类型

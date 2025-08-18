@@ -8,11 +8,16 @@ import java.util.function.Supplier;
 /**
  * 缓存抽象类
  *
+ * @param <K> 缓存键类型
+ * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
 @Slf4j
 public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
+    /**
+     * 缓存配置
+     */
     protected CacheConfig config;
 
     public AbstractCache(CacheConfig config) {
@@ -20,13 +25,15 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     @Override
-    public V get(K key, Supplier<V> dbLoader) {
+    public V get(K key, Supplier<V> valueLoader) {
+        // 首先尝试从缓存中获取数据
         V value = this.get(key);
         if (value != null) {
             return value;
         }
 
-        value = dbLoader.get();
+        // 缓存未命中，则从数据源中加载数据
+        value = valueLoader.get();
         if (value != null) {
             this.put(key, value);
         }

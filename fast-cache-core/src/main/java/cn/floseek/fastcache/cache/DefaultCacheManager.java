@@ -3,19 +3,23 @@ package cn.floseek.fastcache.cache;
 import cn.floseek.fastcache.cache.broadcast.BroadcastManager;
 import cn.floseek.fastcache.cache.builder.CacheBuilderManager;
 import cn.floseek.fastcache.cache.builder.LocalCacheBuilder;
-import cn.floseek.fastcache.cache.builder.MultiLevelCacheBuilder;
 import cn.floseek.fastcache.cache.builder.RemoteCacheBuilder;
 import cn.floseek.fastcache.cache.config.CacheConfig;
-import cn.floseek.fastcache.cache.decorator.BroadcastDecorator;
 import cn.floseek.fastcache.cache.config.CacheType;
+import cn.floseek.fastcache.cache.config.LocalCacheProvider;
+import cn.floseek.fastcache.cache.config.RemoteCacheProvider;
+import cn.floseek.fastcache.cache.decorator.BroadcastDecorator;
+import cn.floseek.fastcache.cache.impl.multi.MultiLevelCacheBuilder;
 import cn.floseek.fastcache.config.GlobalProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 默认缓存管理类
+ * 默认缓存管理实现
  *
  * @author ChenHongwei472
  */
@@ -43,43 +47,39 @@ public class DefaultCacheManager implements CacheManager {
 
     @Override
     public <K, V> Cache<K, V> getOrCreateCache(CacheConfig config) {
+        // 参数校验
         if (cacheBuilderManager == null) {
-            throw new IllegalStateException("缓存构建器模板未初始化");
+            throw new IllegalStateException("CacheBuilderManager is not initialized");
         }
-
         String cacheName = config.getCacheName();
-        if (cacheName == null || cacheName.isEmpty()) {
-            throw new IllegalArgumentException("缓存名称不能为空");
+        if (StringUtils.isBlank(cacheName)) {
+            throw new IllegalArgumentException("Cache name must not be empty");
         }
 
-        String cacheKey = this.buildMapKey(config.getCacheType(), cacheName);
-        if (cacheMap.containsKey(cacheKey)) {
-            return (Cache<K, V>) cacheMap.get(cacheKey);
+        // 生成映射的 key
+        String cacheMapKey = this.generateMapKey(config.getCacheType(), cacheName);
+
+        // 使用双重检查锁定模式获取缓存
+        Cache<K, V> cache = (Cache<K, V>) cacheMap.get(cacheMapKey);
+        if (cache == null) {
+            synchronized (cacheMap) {
+                cache = (Cache<K, V>) cacheMap.get(cacheMapKey);
+                if (cache == null) {
+                    cache = this.createCache(config);
+                    cacheMap.put(cacheMapKey, cache);
+                }
+            }
         }
 
-        Cache<K, V> cache;
-        if (config.getCacheType() == CacheType.LOCAL) {
-            cache = new BroadcastDecorator<>(this.buildLocalCache(config));
-        } else if (config.getCacheType() == CacheType.REMOTE) {
-            cache = this.buildRemoteCache(config);
-        } else {
-            Cache<K, V> localCache = this.buildLocalCache(config);
-            Cache<K, V> remoteCache = this.buildRemoteCache(config);
-
-            MultiLevelCacheBuilder<K, V> cacheBuilder = new MultiLevelCacheBuilder<>(localCache, remoteCache);
-            cache = new BroadcastDecorator<>(cacheBuilder.build(config));
-        }
-        cacheMap.put(cacheKey, cache);
-
-        this.buildBroadcastManager(config);
-
+        // 初始化广播管理器
+        this.initBroadcastManager(config);
         return cache;
     }
 
     @Override
     public <K, V> Cache<K, V> getCache(CacheType cacheType, String cacheName) {
-        String cacheKey = this.buildMapKey(cacheType, cacheName);
-        return (Cache<K, V>) cacheMap.get(cacheKey);
+        String cacheMapKey = this.generateMapKey(cacheType, cacheName);
+        return (Cache<K, V>) cacheMap.get(cacheMapKey);
     }
 
     @Override
@@ -101,14 +101,37 @@ public class DefaultCacheManager implements CacheManager {
     }
 
     /**
-     * 构建映射的 key
+     * 生成映射的 key
      *
      * @param cacheType 缓存类型
      * @param cacheName 缓存名称
      * @return 映射的 key
      */
-    private String buildMapKey(CacheType cacheType, String cacheName) {
+    private String generateMapKey(CacheType cacheType, String cacheName) {
         return cacheName + "_" + cacheType;
+    }
+
+    /**
+     * 创建缓存实例
+     *
+     * @param config 缓存配置对象
+     * @param <K>    缓存键类型
+     * @param <V>    缓存值类型
+     * @return 缓存实例
+     */
+    private <K, V> Cache<K, V> createCache(CacheConfig config) {
+        if (Objects.requireNonNull(config.getCacheType()) == CacheType.LOCAL) {
+            Cache<K, V> localCache = this.createLocalCache(config);
+            return new BroadcastDecorator<>(localCache);
+        } else if (config.getCacheType() == CacheType.REMOTE) {
+            return this.createRemoteCache(config);
+        } else {
+            Cache<K, V> localCache = this.createLocalCache(config);
+            Cache<K, V> remoteCache = this.createRemoteCache(config);
+            MultiLevelCacheBuilder<K, V> builder = new MultiLevelCacheBuilder<>(localCache, remoteCache);
+
+            return new BroadcastDecorator<>(builder.build(config));
+        }
     }
 
     /**
@@ -119,13 +142,15 @@ public class DefaultCacheManager implements CacheManager {
      * @param <V>    缓存值类型
      * @return 本地缓存
      */
-    private <K, V> Cache<K, V> buildLocalCache(CacheConfig config) {
-        LocalCacheBuilder<K, V> cacheBuilder = (LocalCacheBuilder<K, V>) cacheBuilderManager.getLocalCacheBuilder(globalProperties.getLocal().getProvider());
-        if (cacheBuilder == null) {
-            throw new IllegalArgumentException("本地缓存构建器不存在");
+    private <K, V> Cache<K, V> createLocalCache(CacheConfig config) {
+        LocalCacheProvider provider = globalProperties.getLocal().getProvider();
+        LocalCacheBuilder<K, V> builder = (LocalCacheBuilder<K, V>) cacheBuilderManager.getLocalCacheBuilder(provider);
+
+        if (builder == null) {
+            throw new IllegalArgumentException("LocalCacheBuilder not found for provider: " + provider);
         }
 
-        return cacheBuilder.build(config);
+        return builder.build(config);
     }
 
     /**
@@ -136,52 +161,57 @@ public class DefaultCacheManager implements CacheManager {
      * @param <V>    缓存值类型
      * @return 分布式缓存
      */
-    private <K, V> Cache<K, V> buildRemoteCache(CacheConfig config) {
-        RemoteCacheBuilder<K, V> cacheBuilder = (RemoteCacheBuilder<K, V>) cacheBuilderManager.getRemoteCacheBuilder(globalProperties.getRemote().getProvider());
-        if (cacheBuilder == null) {
-            throw new IllegalArgumentException("分布式缓存构建器不存在");
+    private <K, V> Cache<K, V> createRemoteCache(CacheConfig config) {
+        RemoteCacheProvider provider = globalProperties.getRemote().getProvider();
+        RemoteCacheBuilder<K, V> builder = (RemoteCacheBuilder<K, V>) cacheBuilderManager.getRemoteCacheBuilder(provider);
+
+        if (builder == null) {
+            throw new IllegalArgumentException("Remote cache builder not found for provider: " + provider);
         }
 
-        return cacheBuilder.build(config);
+        return builder.build(config);
     }
 
     /**
-     * 创建广播管理器
+     * 初始化广播管理器
      *
      * @param config 缓存配置
      * @param <K>    缓存键类型
      * @param <V>    缓存值类型
      */
-    private <K, V> void buildBroadcastManager(CacheConfig config) {
-        log.info("开始创建广播管理器...");
+    private <K, V> void initBroadcastManager(CacheConfig config) {
+        // 检查是否启用本地缓存同步
         if (!config.isSyncLocalCache()) {
-            log.info("当前已关闭同步本地缓存，将不创建广播管理器");
+            log.debug("Local cache sync disabled, skip init BroadcastManager");
             config.setBroadcastManager(null);
             return;
         }
 
+        // 检查是否配置广播管理器
         if (config.getBroadcastManager() == null) {
-            log.info("当前未配置广播管理器，将重新创建广播管理器");
-            RemoteCacheBuilder<K, V> cacheBuilder = (RemoteCacheBuilder<K, V>) cacheBuilderManager.getRemoteCacheBuilder(globalProperties.getRemote().getProvider());
-            if (cacheBuilder == null) {
-                throw new IllegalArgumentException("分布式缓存构建者不存在");
-            }
-
-            if (!cacheBuilder.supportBroadcast()) {
-                log.info("当前分布式缓存构建者不支持创建广播");
+            log.info("BroadcastManager not configured, starting to create BroadcastManager");
+            RemoteCacheProvider provider = globalProperties.getRemote().getProvider();
+            RemoteCacheBuilder<K, V> builder = (RemoteCacheBuilder<K, V>) cacheBuilderManager.getRemoteCacheBuilder(provider);
+            if (builder == null) {
+                log.warn("Remote cache builder not available, skip init BroadcastManager");
                 return;
             }
 
-            broadcastManager = cacheBuilder.createBroadcastManager(this);
+            if (!builder.supportBroadcast()) {
+                log.debug("RemoteCacheBuilder not support broadcast, init BroadcastManager");
+                return;
+            }
+
+            broadcastManager = builder.createBroadcastManager(this);
             config.setBroadcastManager(broadcastManager);
-            log.info("创建广播管理器成功");
+            log.info("BroadcastManager has been successfully created");
         } else {
-            log.info("当前已配置广播管理器，将使用已配置的广播管理器");
+            log.info("BroadcastManager configured, using existing instance");
             broadcastManager = config.getBroadcastManager();
         }
 
         // 订阅消息
         broadcastManager.subscribe();
-        log.info("已成功启动广播管理器订阅");
+        log.info("Initialized and subscribed BroadcastManager");
     }
 }

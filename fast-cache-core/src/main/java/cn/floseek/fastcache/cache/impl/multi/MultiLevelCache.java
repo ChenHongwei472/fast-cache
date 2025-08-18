@@ -5,25 +5,36 @@ import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.config.CacheConfig;
 import cn.floseek.fastcache.cache.config.CacheType;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * 多级缓存
+ * 多级缓存实现
  *
+ * @param <K> 缓存键类型
+ * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
+@Slf4j
 @Getter
 public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
 
+    /**
+     * 本地缓存
+     */
     private final Cache<K, V> localCache;
+
+    /**
+     * 分布式缓存
+     */
     private final Cache<K, V> remoteCache;
 
     public MultiLevelCache(CacheConfig config, Cache<K, V> localCache, Cache<K, V> remoteCache) {
@@ -34,11 +45,13 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
 
     @Override
     public V get(K key) {
+        // 首先尝试从本地缓存中获取数据
         V value = localCache.get(key);
         if (value != null) {
             return value;
         }
 
+        // 缓存未命中，则从分布式缓存中获取数据
         value = remoteCache.get(key);
         if (value != null) {
             localCache.put(key, value);
@@ -49,30 +62,29 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
 
     @Override
     public Map<K, V> getAll(Collection<? extends K> keys) {
-        if (keys == null || keys.isEmpty()) {
+        if (CollectionUtils.isEmpty(keys)) {
             return Collections.emptyMap();
         }
 
-        List<K> keyList = new ArrayList<>(keys);
+        // 缓存结果
+        Map<K, V> resultMap = new HashMap<>(keys.size());
+        // 未命中的键
+        Set<K> missingKeys = new HashSet<>(keys);
 
-        Map<K, V> resultMap = new HashMap<>(keyList.size());
-        Set<K> missingKeys = new HashSet<>(keyList);
+        // 首先尝试从本地缓存中获取数据
+        Map<K, V> valueMap = localCache.getAll(keys);
 
-        Map<K, V> valueMap = localCache.getAll(keyList);
-        if (valueMap != null && !valueMap.isEmpty()) {
-            for (Map.Entry<K, V> entry : valueMap.entrySet()) {
-                K key = entry.getKey();
-                V value = entry.getValue();
-                if (value != null) {
-                    resultMap.put(key, value);
-                    missingKeys.remove(key);
-                }
-            }
+        // 如果获取到数据，则添加到缓存结果中，并移除未命中的键
+        if (MapUtils.isNotEmpty(valueMap)) {
+            resultMap.putAll(valueMap);
+            missingKeys.removeAll(valueMap.keySet());
         }
 
-        if (!missingKeys.isEmpty()) {
+        // 如果有未命中的键，则尝试从分布式缓存中获取数据
+        if (CollectionUtils.isNotEmpty(missingKeys)) {
             valueMap = remoteCache.getAll(missingKeys);
-            if (valueMap != null && !valueMap.isEmpty()) {
+            // 如果获取到数据，则添加到缓存结果中，并回填到本地缓存中
+            if (MapUtils.isNotEmpty(valueMap)) {
                 resultMap.putAll(valueMap);
                 localCache.putAll(valueMap);
             }

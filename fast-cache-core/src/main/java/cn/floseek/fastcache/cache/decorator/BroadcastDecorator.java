@@ -35,8 +35,8 @@ public class BroadcastDecorator<K, V> extends CacheDecorator<K, V> {
     }
 
     @Override
-    public V get(K key, Supplier<V> dbLoader) {
-        return decoratedCache.get(key, dbLoader);
+    public V get(K key, Supplier<V> valueLoader) {
+        return decoratedCache.get(key, valueLoader);
     }
 
     @Override

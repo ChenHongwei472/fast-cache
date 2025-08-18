@@ -6,7 +6,7 @@ import cn.floseek.fastcache.cache.builder.LocalCacheBuilder;
 import cn.floseek.fastcache.cache.config.LocalCacheProvider;
 
 /**
- * Caffeine 缓存构建者
+ * Caffeine 缓存构建器
  *
  * @param <K> 缓存键类型
  * @param <V> 缓存值类型

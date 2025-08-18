@@ -9,7 +9,7 @@ import cn.floseek.fastcache.cache.builder.RemoteCacheBuilder;
 import org.redisson.api.RedissonClient;
 
 /**
- * Redisson 缓存构建者
+ * Redisson 缓存构建器实现
  *
  * @param <K> 缓存键类型
  * @param <V> 缓存值类型

@@ -11,6 +11,8 @@ import java.util.Map;
 /**
  * Caffeine 缓存
  *
+ * @param <K> 缓存键类型
+ * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
 public class CaffeineCache<K, V> extends AbstractLocalCache<K, V> {

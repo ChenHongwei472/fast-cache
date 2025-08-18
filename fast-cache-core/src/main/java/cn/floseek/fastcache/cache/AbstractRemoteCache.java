@@ -7,6 +7,8 @@ import cn.floseek.fastcache.util.CacheUtils;
 /**
  * 本地缓存抽象类
  *
+ * @param <K> 缓存键类型
+ * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
 public abstract class AbstractRemoteCache<K, V> extends AbstractCache<K, V> {
@@ -21,12 +23,12 @@ public abstract class AbstractRemoteCache<K, V> extends AbstractCache<K, V> {
     }
 
     /**
-     * 获取缓存键
+     * 生成分布式缓存键
      *
      * @param key 键
-     * @return 缓存键
+     * @return 分布式缓存键
      */
-    public String getCacheKey(K key) {
+    public String generateCacheKey(K key) {
         return CacheUtils.generateKey(config.getCacheName(), key.toString());
     }
 }

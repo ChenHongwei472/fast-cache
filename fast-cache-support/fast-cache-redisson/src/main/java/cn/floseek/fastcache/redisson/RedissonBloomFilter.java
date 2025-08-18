@@ -37,7 +37,7 @@ public class RedissonBloomFilter extends AbstractBloomFilter {
 
     @Override
     public boolean add(String object) {
-        if (ObjectUtils.isEmpty(object)) {
+        if (object == null) {
             return false;
         }
         return bloomFilter.add(object);
@@ -53,7 +53,7 @@ public class RedissonBloomFilter extends AbstractBloomFilter {
 
     @Override
     public boolean mightContain(String object) {
-        if (ObjectUtils.isEmpty(object)) {
+        if (object == null) {
             return false;
         }
         return bloomFilter.contains(object);
