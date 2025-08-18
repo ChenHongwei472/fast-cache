@@ -12,12 +12,6 @@
     <artifactId>fast-cache-core</artifactId>
 
     <dependencies>
-        <!-- Redisson，在线文档：https://redisson.pro/docs -->
-        <dependency>
-            <groupId>org.redisson</groupId>
-            <artifactId>redisson</artifactId>
-        </dependency>
-
         <!-- Caffeine，在线文档：https://github.com/ben-manes/caffeine -->
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
@@ -34,6 +28,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+        <!-- SLF4J：https://www.slf4j.org -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
 
         <!-- Hutool，在线文档：https://hutool.cn -->

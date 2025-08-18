@@ -6,8 +6,14 @@ import cn.floseek.fastcache.cache.config.CacheConfig;
 import cn.floseek.fastcache.cache.config.CacheType;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 多级缓存
@@ -43,16 +49,36 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
 
     @Override
     public Map<K, V> getAll(Collection<? extends K> keys) {
-        Map<K, V> valueMap = localCache.getAll(keys);
-        if (valueMap != null && !valueMap.isEmpty()) {
-            return valueMap;
+        if (keys == null || keys.isEmpty()) {
+            return Collections.emptyMap();
         }
 
-        valueMap = remoteCache.getAll(keys);
+        List<K> keyList = new ArrayList<>(keys);
+
+        Map<K, V> resultMap = new HashMap<>(keyList.size());
+        Set<K> missingKeys = new HashSet<>(keyList);
+
+        Map<K, V> valueMap = localCache.getAll(keyList);
         if (valueMap != null && !valueMap.isEmpty()) {
-            localCache.putAll(valueMap);
+            for (Map.Entry<K, V> entry : valueMap.entrySet()) {
+                K key = entry.getKey();
+                V value = entry.getValue();
+                if (value != null) {
+                    resultMap.put(key, value);
+                    missingKeys.remove(key);
+                }
+            }
         }
-        return valueMap;
+
+        if (!missingKeys.isEmpty()) {
+            valueMap = remoteCache.getAll(missingKeys);
+            if (valueMap != null && !valueMap.isEmpty()) {
+                resultMap.putAll(valueMap);
+                localCache.putAll(valueMap);
+            }
+        }
+
+        return resultMap;
     }
 
     @Override
