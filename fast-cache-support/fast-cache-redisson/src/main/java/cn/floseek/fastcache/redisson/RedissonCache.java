@@ -3,6 +3,7 @@ package cn.floseek.fastcache.redisson;
 import cn.floseek.fastcache.cache.AbstractRemoteCache;
 import cn.floseek.fastcache.cache.config.CacheConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.BatchResult;
 import org.redisson.api.RBatch;
 import org.redisson.api.RBucket;
 import org.redisson.api.RBucketAsync;
@@ -37,6 +38,7 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Map<K, V> getAll(Collection<? extends K> keys) {
         if (keys == null || keys.isEmpty()) {
             return Collections.emptyMap();
@@ -44,15 +46,13 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
 
         List<K> keyList = new ArrayList<>(keys);
 
-        List<String> cacheKeys = keyList.stream()
-                .map(this::getCacheKey)
-                .toList();
-        Map<String, V> kvMap = redissonClient.getBuckets().get(cacheKeys.toArray(new String[0]));
-        if (kvMap == null || kvMap.isEmpty()) {
-            return Collections.emptyMap();
-        }
-        List<V> objectList = new ArrayList<>(kvMap.values());
+        RBatch batch = redissonClient.createBatch();
+        keyList.forEach(k -> batch.getBucket(this.getCacheKey(k)).getAsync());
+        BatchResult<?> batchResult = batch.execute();
 
+        List<V> objectList = batchResult.getResponses().stream()
+                .map(response -> (V) response)
+                .toList();
 
         Map<K, V> valueMap = new HashMap<>();
         for (int i = 0; i < keyList.size(); i++) {
