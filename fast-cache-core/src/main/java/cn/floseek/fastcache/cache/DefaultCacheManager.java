@@ -180,8 +180,8 @@ public class DefaultCacheManager implements CacheManager {
             broadcastManager = config.getBroadcastManager();
         }
 
-        // 启动订阅
-        broadcastManager.startSubscribe();
+        // 订阅消息
+        broadcastManager.subscribe();
         log.info("已成功启动广播管理器订阅");
     }
 }

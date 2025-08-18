@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.cache.decorator;
 
 import cn.floseek.fastcache.cache.broadcast.BroadcastManager;
-import cn.floseek.fastcache.cache.broadcast.CacheMessage;
+import cn.floseek.fastcache.cache.broadcast.BroadcastMessage;
 import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.config.CacheConfig;
 import cn.floseek.fastcache.cache.config.CacheType;
@@ -87,11 +87,11 @@ public class BroadcastDecorator<K, V> extends CacheDecorator<K, V> {
         }
 
         BroadcastManager broadcastManager = config.getBroadcastManager();
-        CacheMessage cacheMessage = CacheMessage.builder()
+        BroadcastMessage broadcastMessage = BroadcastMessage.builder()
                 .instanceId(broadcastManager.getInstanceId())
                 .cacheName(config.getCacheName())
                 .keys(new ArrayList<>(keys))
                 .build();
-        broadcastManager.publish(cacheMessage);
+        broadcastManager.publish(broadcastMessage);
     }
 }

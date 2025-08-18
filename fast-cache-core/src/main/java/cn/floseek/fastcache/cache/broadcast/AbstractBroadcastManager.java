@@ -13,6 +13,9 @@ import java.util.UUID;
 
 /**
  * 广播管理器抽象类
+ * <p>
+ * 提供广播消息处理的基本实现，具体广播机制由子类实现
+ * </p>
  *
  * @author ChenHongwei472
  */
@@ -20,7 +23,7 @@ import java.util.UUID;
 public abstract class AbstractBroadcastManager implements BroadcastManager {
 
     /**
-     * 实例 ID
+     * 当前实例 ID
      */
     private final String instanceId = UUID.randomUUID().toString();
 
@@ -36,50 +39,62 @@ public abstract class AbstractBroadcastManager implements BroadcastManager {
     }
 
     /**
-     * 处理缓存消息
+     * 处理接收到的广播消息
      *
-     * @param cacheMessage 缓存消息
+     * @param broadcastMessage 广播消息对象
      */
-    protected void processMessage(CacheMessage cacheMessage) {
-        if (ObjectUtils.isEmpty(cacheMessage)) {
-            log.info("接收到的缓存消息为空");
+    protected void processMessage(BroadcastMessage broadcastMessage) {
+        // 验证消息是否为空
+        if (ObjectUtils.isEmpty(broadcastMessage)) {
+            log.debug("Received empty broadcast message, skip processing");
+            return;
+        }
+        log.debug("Received broadcast message: {}", broadcastMessage);
+
+        // 忽略本实例发出的消息
+        if (this.instanceId.equals(broadcastMessage.getInstanceId())) {
+            log.debug("Received broadcast message from current instance, skip processing");
             return;
         }
 
-        if (this.instanceId.equals(cacheMessage.getInstanceId())) {
-            log.info("缓存消息来自本实例：{}，目标实例：{}，已忽略该消息", this.instanceId, cacheMessage.getInstanceId());
-            return;
-        }
-
+        // 获取被装饰的缓存实例
         CacheDecorator<Object, Object> cacheDecorator = null;
         for (CacheType value : CacheType.values()) {
-            Cache<Object, Object> cache = cacheManager.getCache(value, cacheMessage.getCacheName());
+            Cache<Object, Object> cache = cacheManager.getCache(value, broadcastMessage.getCacheName());
             if (cache instanceof CacheDecorator<Object, Object>) {
                 cacheDecorator = (CacheDecorator<Object, Object>) cache;
+                break;
             }
         }
 
+        // 检查缓存实例是否存在
         if (cacheDecorator == null) {
-            log.info("缓存实例不存在：{}，已忽略该消息", cacheMessage.getCacheName());
+            log.warn("Cache does not exist: {}", broadcastMessage.getCacheName());
             return;
         }
 
+        // 检查缓存实例是否支持广播
         if (!cacheDecorator.containsDecorator(BroadcastDecorator.class)) {
-            log.info("缓存实例：{}，未添加广播装饰器，已忽略该消息", cacheMessage.getCacheName());
+            log.debug("Cache does not support broadcast: {}", broadcastMessage.getCacheName());
             return;
         }
 
+        // 获取最原始被装饰的缓存实例
         Cache<Object, Object> cache = cacheDecorator.unwrapAll();
         if (cache.getCacheType() == CacheType.REMOTE) {
-            log.info("缓存实例：{}，为远程缓存实例，已忽略该消息", cacheMessage.getCacheName());
+            log.debug("Skip broadcast for remote cache: {}", broadcastMessage.getCacheName());
             return;
         }
 
+        // 获取本地缓存实例
         Cache<Object, Object> localCache = cache;
         if (cache instanceof MultiLevelCache<Object, Object> multiLevelCache) {
+            // 如果是多级缓存实例，则获取本地缓存实例
             localCache = multiLevelCache.getLocalCache();
         }
-        localCache.removeAll(cacheMessage.getKeys());
-        log.info("已删除本地缓存：{}", cacheMessage.getKeys());
+
+        // 清理本地缓存
+        localCache.removeAll(broadcastMessage.getKeys());
+        log.info("Clear local cache success, cacheName: {}, keys: {}", broadcastMessage.getCacheName(), broadcastMessage.getKeys());
     }
 }

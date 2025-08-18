@@ -11,7 +11,10 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 缓存消息
+ * 广播消息
+ * <p>
+ * 用于在分布式环境中多个实例之间的数据同步
+ * </p>
  *
  * @author ChenHongwei472
  */
@@ -19,13 +22,13 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CacheMessage implements Serializable {
+public class BroadcastMessage implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 实例 ID
+     * 来源实例 ID
      */
     private String instanceId;
 

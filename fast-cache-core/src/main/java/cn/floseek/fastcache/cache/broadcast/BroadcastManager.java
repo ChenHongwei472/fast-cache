@@ -2,30 +2,33 @@ package cn.floseek.fastcache.cache.broadcast;
 
 /**
  * 广播管理器接口
+ * <p>
+ * 定义了缓存广播功能的核心方法，用于在分布式环境中同步缓存数据
+ * </p>
  *
  * @author ChenHongwei472
  */
 public interface BroadcastManager {
 
     /**
-     * 发布消息
+     * 发布广播消息
      *
-     * @param cacheMessage 缓存消息
+     * @param broadcastMessage 广播消息对象
      */
-    void publish(CacheMessage cacheMessage);
+    void publish(BroadcastMessage broadcastMessage);
 
     /**
-     * 启动订阅
+     * 订阅广播频道
      */
-    void startSubscribe();
+    void subscribe();
 
     /**
-     * 关闭
+     * 关闭广播管理器
      */
     void close();
 
     /**
-     * 获取实例 ID
+     * 获取当前实例 ID
      *
      * @return 实例 ID
      */

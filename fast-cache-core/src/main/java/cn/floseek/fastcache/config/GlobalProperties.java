@@ -40,7 +40,7 @@ public class GlobalProperties {
         private RemoteCacheProvider provider = RemoteCacheProvider.REDISSON;
 
         /**
-         * 广播通道
+         * 广播频道
          */
         private String broadcastChannel = "default_broadcast_channel";
     }
