@@ -4,7 +4,6 @@ import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.broadcast.BroadcastManager;
 import cn.floseek.fastcache.cache.broadcast.BroadcastMessage;
 import cn.floseek.fastcache.cache.config.CacheConfig;
-import cn.floseek.fastcache.cache.config.CacheType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * 广播功能装饰器
@@ -20,6 +18,8 @@ import java.util.function.Supplier;
  * 为缓存实例添加广播功能，用于实现分布式环境下的缓存同步
  * </p>
  *
+ * @param <K> 缓存键类型
+ * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
 @Slf4j
@@ -30,47 +30,27 @@ public class BroadcastDecorator<K, V> extends CacheDecorator<K, V> {
     }
 
     @Override
-    public V get(K key) {
-        return decoratedCache.get(key);
-    }
-
-    @Override
-    public V get(K key, Supplier<V> valueLoader) {
-        return decoratedCache.get(key, valueLoader);
-    }
-
-    @Override
-    public Map<K, V> getAll(Collection<? extends K> keys) {
-        return decoratedCache.getAll(keys);
-    }
-
-    @Override
     public void put(K key, V value) {
-        decoratedCache.put(key, value);
+        super.put(key, value);
         this.broadcast(key);
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
-        decoratedCache.putAll(map);
+        super.putAll(map);
         this.broadcast(map.keySet());
     }
 
     @Override
     public void remove(K key) {
-        decoratedCache.remove(key);
+        super.remove(key);
         this.broadcast(key);
     }
 
     @Override
     public void removeAll(Collection<? extends K> keys) {
-        decoratedCache.removeAll(keys);
+        super.removeAll(keys);
         this.broadcast(keys);
-    }
-
-    @Override
-    public CacheType getCacheType() {
-        return decoratedCache.getCacheType();
     }
 
     /**

@@ -2,7 +2,11 @@ package cn.floseek.fastcache.cache.decorator;
 
 import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.config.CacheConfig;
+import cn.floseek.fastcache.cache.config.CacheType;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * 缓存装饰器抽象类
@@ -10,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
  * 提供装饰器模式的基本实现，实现对缓存实例的装饰，继承该抽象类实现具体的装饰逻辑
  * </p>
  *
+ * @param <K> 缓存键类型
+ * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
 @Slf4j
@@ -22,6 +28,41 @@ public abstract class CacheDecorator<K, V> implements Cache<K, V> {
 
     public CacheDecorator(Cache<K, V> decoratedCache) {
         this.decoratedCache = decoratedCache;
+    }
+
+    @Override
+    public V get(K key) {
+        return decoratedCache.get(key);
+    }
+
+    @Override
+    public Map<K, V> getAll(Collection<? extends K> keys) {
+        return decoratedCache.getAll(keys);
+    }
+
+    @Override
+    public void put(K key, V value) {
+        decoratedCache.put(key, value);
+    }
+
+    @Override
+    public void putAll(Map<? extends K, ? extends V> map) {
+        decoratedCache.putAll(map);
+    }
+
+    @Override
+    public void remove(K key) {
+        decoratedCache.remove(key);
+    }
+
+    @Override
+    public void removeAll(Collection<? extends K> keys) {
+        decoratedCache.removeAll(keys);
+    }
+
+    @Override
+    public CacheType getCacheType() {
+        return decoratedCache.getCacheType();
     }
 
     @Override

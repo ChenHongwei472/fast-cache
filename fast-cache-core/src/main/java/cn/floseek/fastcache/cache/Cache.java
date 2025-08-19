@@ -5,7 +5,6 @@ import cn.floseek.fastcache.cache.config.CacheType;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * 缓存接口
@@ -23,15 +22,6 @@ public interface Cache<K, V> {
      * @return 缓存值
      */
     V get(K key);
-
-    /**
-     * 获取缓存值，未命中时通过加载器获取
-     *
-     * @param key         缓存键
-     * @param valueLoader 值加载器
-     * @return 缓存值
-     */
-    V get(K key, Supplier<V> valueLoader);
 
     /**
      * 批量获取缓存值

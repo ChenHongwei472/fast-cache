@@ -42,6 +42,11 @@ public class CacheConfig implements Serializable {
     private boolean syncLocalCache = false;
 
     /**
+     * 缓存加载器
+     */
+    private CacheLoader<?, ?> loader;
+
+    /**
      * 广播管理器
      */
     private BroadcastManager broadcastManager;

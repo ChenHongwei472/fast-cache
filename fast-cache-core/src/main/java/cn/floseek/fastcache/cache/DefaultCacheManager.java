@@ -9,6 +9,7 @@ import cn.floseek.fastcache.cache.config.CacheType;
 import cn.floseek.fastcache.cache.config.LocalCacheProvider;
 import cn.floseek.fastcache.cache.config.RemoteCacheProvider;
 import cn.floseek.fastcache.cache.decorator.BroadcastDecorator;
+import cn.floseek.fastcache.cache.decorator.CacheLoaderDecorator;
 import cn.floseek.fastcache.cache.impl.multi.MultiLevelCacheBuilder;
 import cn.floseek.fastcache.config.GlobalProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -120,18 +121,25 @@ public class DefaultCacheManager implements CacheManager {
      * @return 缓存实例
      */
     private <K, V> Cache<K, V> createCache(CacheConfig config) {
-        if (Objects.requireNonNull(config.getCacheType()) == CacheType.LOCAL) {
+        Cache<K, V> cache;
+        if (config.getCacheType() == CacheType.LOCAL) {
             Cache<K, V> localCache = this.createLocalCache(config);
-            return new BroadcastDecorator<>(localCache);
+            cache = new BroadcastDecorator<>(localCache);
         } else if (config.getCacheType() == CacheType.REMOTE) {
-            return this.createRemoteCache(config);
+            cache = this.createRemoteCache(config);
         } else {
             Cache<K, V> localCache = this.createLocalCache(config);
             Cache<K, V> remoteCache = this.createRemoteCache(config);
             MultiLevelCacheBuilder<K, V> builder = new MultiLevelCacheBuilder<>(localCache, remoteCache);
 
-            return new BroadcastDecorator<>(builder.build(config));
+            cache = new BroadcastDecorator<>(builder.build(config));
         }
+
+        if (Objects.nonNull(config.getLoader())) {
+            cache = new CacheLoaderDecorator<>(cache);
+        }
+
+        return cache;
     }
 
     /**
