@@ -36,10 +36,10 @@ public class CacheConfig implements Serializable {
     private CacheType cacheType = CacheType.REMOTE;
 
     /**
-     * 是否同步本地缓存
+     * 是否同步缓存
      */
     @Builder.Default
-    private boolean syncLocalCache = false;
+    private boolean syncCache = false;
 
     /**
      * 缓存加载器

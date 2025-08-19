@@ -190,9 +190,9 @@ public class DefaultCacheManager implements CacheManager {
      * @param <V>    缓存值类型
      */
     private <K, V> void initBroadcastManager(CacheConfig config) {
-        // 检查是否启用本地缓存同步
-        if (!config.isSyncLocalCache()) {
-            log.debug("Local cache sync disabled, skip init BroadcastManager");
+        // 检查是否启用缓存同步
+        if (!config.isSyncCache()) {
+            log.debug("Cache sync is disabled, skip init BroadcastManager");
             config.setBroadcastManager(null);
             return;
         }

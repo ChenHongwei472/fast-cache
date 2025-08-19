@@ -76,8 +76,8 @@ public class BroadcastDecorator<K, V> extends CacheDecorator<K, V> {
             log.debug("Skip broadcast for empty key set");
             return;
         }
-        if (!config.isSyncLocalCache()) {
-            log.debug("Local cache sync is disabled, skip broadcast");
+        if (!config.isSyncCache()) {
+            log.debug("Cache sync is disabled, skip broadcast");
             return;
         }
         if (broadcastManager == null) {
