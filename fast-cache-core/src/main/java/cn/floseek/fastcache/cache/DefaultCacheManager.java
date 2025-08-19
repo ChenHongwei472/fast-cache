@@ -121,10 +121,10 @@ public class DefaultCacheManager implements CacheManager {
      * @return 缓存实例
      */
     private <K, V> Cache<K, V> createCache(CacheConfig config) {
+        // 创建缓存实例
         Cache<K, V> cache;
         if (config.getCacheType() == CacheType.LOCAL) {
-            Cache<K, V> localCache = this.createLocalCache(config);
-            cache = new BroadcastDecorator<>(localCache);
+            cache = this.createLocalCache(config);
         } else if (config.getCacheType() == CacheType.REMOTE) {
             cache = this.createRemoteCache(config);
         } else {
@@ -132,14 +132,16 @@ public class DefaultCacheManager implements CacheManager {
             Cache<K, V> remoteCache = this.createRemoteCache(config);
             MultiLevelCacheBuilder<K, V> builder = new MultiLevelCacheBuilder<>(localCache, remoteCache);
 
-            cache = new BroadcastDecorator<>(builder.build(config));
+            cache = builder.build(config);
         }
 
+        // 添加缓存加载器装饰器
         if (Objects.nonNull(config.getLoader())) {
             cache = new CacheLoaderDecorator<>(cache);
         }
 
-        return cache;
+        // 添加广播装饰器
+        return new BroadcastDecorator<>(cache);
     }
 
     /**

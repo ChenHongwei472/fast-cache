@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 广播功能装饰器
+ * 广播装饰器
  * <p>
  * 为缓存实例添加广播功能，用于实现分布式环境下的缓存同步
  * </p>
