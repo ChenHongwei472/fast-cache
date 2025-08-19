@@ -25,6 +25,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Objects;
+
 /**
  * Redisson 自动配置类
  *
@@ -64,9 +66,9 @@ public class RedissonAutoConfiguration {
             config.setCodec(codec);
 
             RedissonKeyPrefixHandler keyPrefixHandler = new RedissonKeyPrefixHandler(fastCacheProperties.getKeyPrefix());
-            if (redisProperties.getCluster() != null) {
+            if (Objects.nonNull(redisProperties.getCluster())) {
                 config.useSingleServer().setNameMapper(keyPrefixHandler);
-            } else if (redisProperties.getSentinel() != null) {
+            } else if (Objects.nonNull(redisProperties.getSentinel())) {
                 config.useSentinelServers().setNameMapper(keyPrefixHandler);
             } else {
                 config.useSingleServer().setNameMapper(keyPrefixHandler);

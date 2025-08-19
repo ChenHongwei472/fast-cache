@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -315,7 +316,7 @@ public class RedissonService implements RedisService {
 
     @Override
     public <K, V> void setMap(final String key, final Map<K, V> dataMap) {
-        if (dataMap != null) {
+        if (Objects.nonNull(dataMap)) {
             RMap<K, V> rMap = redissonClient.getMap(key);
             rMap.putAll(dataMap);
         }

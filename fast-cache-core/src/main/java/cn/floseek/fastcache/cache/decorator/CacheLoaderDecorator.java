@@ -37,7 +37,7 @@ public class CacheLoaderDecorator<K, V> extends CacheDecorator<K, V> {
 
         if (loaderEnabled) {
             value = loader.apply(key);
-            if (value != null) {
+            if (Objects.nonNull(value)) {
                 super.put(key, value);
             }
         }

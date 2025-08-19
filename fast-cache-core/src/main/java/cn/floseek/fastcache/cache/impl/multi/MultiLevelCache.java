@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -47,13 +48,13 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
     public V get(K key) {
         // 首先尝试从本地缓存中获取数据
         V value = localCache.get(key);
-        if (value != null) {
+        if (Objects.nonNull(value)) {
             return value;
         }
 
         // 缓存未命中，则从分布式缓存中获取数据
         value = remoteCache.get(key);
-        if (value != null) {
+        if (Objects.nonNull(value)) {
             localCache.put(key, value);
             return value;
         }

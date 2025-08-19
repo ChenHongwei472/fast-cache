@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Redisson 缓存实现
@@ -60,7 +61,7 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
         for (int i = 0; i < keyList.size(); i++) {
             K key = keyList.get(i);
             V value = objectList.get(i);
-            if (value != null) {
+            if (Objects.nonNull(value)) {
                 valueMap.put(key, value);
             }
         }

@@ -90,7 +90,7 @@ public class DefaultCacheManager implements CacheManager {
 
     @Override
     public void close() throws Exception {
-        if (broadcastManager != null) {
+        if (Objects.nonNull(broadcastManager)) {
             try {
                 broadcastManager.close();
             } catch (Exception e) {
