@@ -7,6 +7,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Caffeine 缓存
@@ -22,12 +23,14 @@ public class CaffeineCache<K, V> extends AbstractLocalCache<K, V> {
     public CaffeineCache(CacheConfig config) {
         super(config);
 
-        Caffeine<Object, Object> caffeine = Caffeine.newBuilder()
-                .maximumSize(config.getMaximumSize());
-        if (config.getExpireAfterWrite() != null) {
+        Caffeine<Object, Object> caffeine = Caffeine.newBuilder();
+        if (Objects.nonNull(config.getMaximumSize())) {
+            caffeine.maximumSize(config.getMaximumSize());
+        }
+        if (Objects.nonNull(config.getExpireAfterWrite())) {
             caffeine.expireAfterWrite(config.getExpireAfterWrite());
         }
-        if (config.getExpireAfterAccess() != null) {
+        if (Objects.nonNull(config.getExpireAfterAccess())) {
             caffeine.expireAfterAccess(config.getExpireAfterAccess());
         }
         this.cache = caffeine.build();

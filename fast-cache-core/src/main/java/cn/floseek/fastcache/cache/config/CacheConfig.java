@@ -56,8 +56,7 @@ public class CacheConfig implements Serializable {
     /**
      * 本地缓存最大容量
      */
-    @Builder.Default
-    private long maximumSize = 1000;
+    private Long maximumSize;
 
     /**
      * 本地缓存写入后过期时间

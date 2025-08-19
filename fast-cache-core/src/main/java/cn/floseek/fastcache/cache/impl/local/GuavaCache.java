@@ -7,6 +7,7 @@ import com.google.common.cache.CacheBuilder;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Guava 缓存
@@ -22,12 +23,14 @@ public class GuavaCache<K, V> extends AbstractLocalCache<K, V> {
     public GuavaCache(CacheConfig config) {
         super(config);
 
-        CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder()
-                .maximumSize(config.getMaximumSize());
-        if (config.getExpireAfterWrite() != null) {
+        CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder();
+        if (Objects.nonNull(config.getMaximumSize())) {
+            cacheBuilder.maximumSize(config.getMaximumSize());
+        }
+        if (Objects.nonNull(config.getExpireAfterWrite())) {
             cacheBuilder.expireAfterWrite(config.getExpireAfterWrite());
         }
-        if (config.getExpireAfterAccess() != null) {
+        if (Objects.nonNull(config.getExpireAfterAccess())) {
             cacheBuilder.expireAfterAccess(config.getExpireAfterAccess());
         }
         this.cache = cacheBuilder.build();
