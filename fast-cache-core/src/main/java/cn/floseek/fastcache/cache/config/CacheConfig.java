@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Duration;
+import java.util.Objects;
 
 /**
  * 缓存配置类
@@ -80,4 +81,13 @@ public class CacheConfig<K, V> implements Serializable {
     private Duration expireTime;
 
     // endregion
+
+    /**
+     * 是否启用缓存加载器
+     *
+     * @return boolean
+     */
+    public boolean loaderEnabled() {
+        return Objects.nonNull(this.loader);
+    }
 }

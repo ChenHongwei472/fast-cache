@@ -30,9 +30,8 @@ public class CacheLoaderDecorator<K, V> extends CacheDecorator<K, V> {
 
     public CacheLoaderDecorator(Cache<K, V> decoratedCache) {
         super(decoratedCache);
-        CacheLoader<K, V> loader = decoratedCache.getConfig().getLoader();
-        this.loader = loader;
-        this.loaderEnabled = Objects.nonNull(loader);
+        this.loader = decoratedCache.getConfig().getLoader();
+        this.loaderEnabled = decoratedCache.getConfig().loaderEnabled();
     }
 
     @Override
