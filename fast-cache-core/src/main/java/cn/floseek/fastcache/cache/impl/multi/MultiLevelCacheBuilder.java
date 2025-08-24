@@ -30,7 +30,7 @@ public class MultiLevelCacheBuilder<K, V> implements CacheBuilder<K, V> {
     }
 
     @Override
-    public Cache<K, V> build(CacheConfig config) {
+    public Cache<K, V> build(CacheConfig<K, V> config) {
         return new MultiLevelCache<>(config, this.localCache, this.remoteCache);
     }
 }

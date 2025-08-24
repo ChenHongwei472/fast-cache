@@ -66,7 +66,7 @@ public abstract class CacheDecorator<K, V> implements Cache<K, V> {
     }
 
     @Override
-    public CacheConfig getConfig() {
+    public CacheConfig<K, V> getConfig() {
         return decoratedCache.getConfig();
     }
 

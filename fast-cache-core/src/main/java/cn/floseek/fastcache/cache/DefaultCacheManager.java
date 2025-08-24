@@ -47,7 +47,7 @@ public class DefaultCacheManager implements CacheManager {
     }
 
     @Override
-    public <K, V> Cache<K, V> getOrCreateCache(CacheConfig config) {
+    public <K, V> Cache<K, V> getOrCreateCache(CacheConfig<K, V> config) {
         // 参数校验
         if (cacheBuilderManager == null) {
             throw new IllegalStateException("CacheBuilderManager is not initialized");
@@ -120,7 +120,7 @@ public class DefaultCacheManager implements CacheManager {
      * @param <V>    缓存值类型
      * @return 缓存实例
      */
-    private <K, V> Cache<K, V> createCache(CacheConfig config) {
+    private <K, V> Cache<K, V> createCache(CacheConfig<K, V> config) {
         // 创建缓存实例
         Cache<K, V> cache;
         if (config.getCacheType() == CacheType.LOCAL) {
@@ -152,7 +152,7 @@ public class DefaultCacheManager implements CacheManager {
      * @param <V>    缓存值类型
      * @return 本地缓存
      */
-    private <K, V> Cache<K, V> createLocalCache(CacheConfig config) {
+    private <K, V> Cache<K, V> createLocalCache(CacheConfig<K, V> config) {
         LocalCacheProvider provider = globalProperties.getLocal().getProvider();
         LocalCacheBuilder<K, V> builder = (LocalCacheBuilder<K, V>) cacheBuilderManager.getLocalCacheBuilder(provider);
 
@@ -171,7 +171,7 @@ public class DefaultCacheManager implements CacheManager {
      * @param <V>    缓存值类型
      * @return 分布式缓存
      */
-    private <K, V> Cache<K, V> createRemoteCache(CacheConfig config) {
+    private <K, V> Cache<K, V> createRemoteCache(CacheConfig<K, V> config) {
         RemoteCacheProvider provider = globalProperties.getRemote().getProvider();
         RemoteCacheBuilder<K, V> builder = (RemoteCacheBuilder<K, V>) cacheBuilderManager.getRemoteCacheBuilder(provider);
 
@@ -189,7 +189,7 @@ public class DefaultCacheManager implements CacheManager {
      * @param <K>    缓存键类型
      * @param <V>    缓存值类型
      */
-    private <K, V> void initBroadcastManager(CacheConfig config) {
+    private <K, V> void initBroadcastManager(CacheConfig<K, V> config) {
         // 检查是否启用缓存同步
         if (!config.isSyncCache()) {
             log.debug("Cache sync is disabled, skip init BroadcastManager");

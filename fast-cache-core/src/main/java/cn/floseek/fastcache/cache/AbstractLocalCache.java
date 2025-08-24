@@ -12,7 +12,7 @@ import cn.floseek.fastcache.cache.config.CacheType;
  */
 public abstract class AbstractLocalCache<K, V> extends AbstractCache<K, V> {
 
-    public AbstractLocalCache(CacheConfig config) {
+    public AbstractLocalCache(CacheConfig<K, V> config) {
         super(config);
     }
 

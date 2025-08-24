@@ -39,7 +39,7 @@ public class RedissonCacheBuilder<K, V> extends RemoteCacheBuilder<K, V> {
     }
 
     @Override
-    public Cache<K, V> build(CacheConfig config) {
+    public Cache<K, V> build(CacheConfig<K, V> config) {
         return new RedissonCache<>(config, redissonClient);
     }
 }

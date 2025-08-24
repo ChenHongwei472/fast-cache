@@ -22,7 +22,7 @@ public interface CacheManager extends AutoCloseable {
      * @param <V>    缓存值类型
      * @return 缓存实例
      */
-    <K, V> Cache<K, V> getOrCreateCache(CacheConfig config);
+    <K, V> Cache<K, V> getOrCreateCache(CacheConfig<K, V> config);
 
     /**
      * 获取缓存实例

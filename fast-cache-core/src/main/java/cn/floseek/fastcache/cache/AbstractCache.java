@@ -16,14 +16,14 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     /**
      * 缓存配置
      */
-    protected CacheConfig config;
+    protected CacheConfig<K, V> config;
 
-    public AbstractCache(CacheConfig config) {
+    public AbstractCache(CacheConfig<K, V> config) {
         this.config = config;
     }
 
     @Override
-    public CacheConfig getConfig() {
+    public CacheConfig<K, V> getConfig() {
         return config;
     }
 }

@@ -13,7 +13,7 @@ import cn.floseek.fastcache.util.CacheUtils;
  */
 public abstract class AbstractRemoteCache<K, V> extends AbstractCache<K, V> {
 
-    public AbstractRemoteCache(CacheConfig config) {
+    public AbstractRemoteCache(CacheConfig<K, V> config) {
         super(config);
     }
 

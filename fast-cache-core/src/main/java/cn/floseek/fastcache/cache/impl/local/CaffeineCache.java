@@ -20,7 +20,7 @@ public class CaffeineCache<K, V> extends AbstractLocalCache<K, V> {
 
     private final Cache<K, V> cache;
 
-    public CaffeineCache(CacheConfig config) {
+    public CaffeineCache(CacheConfig<K, V> config) {
         super(config);
 
         Caffeine<Object, Object> caffeine = Caffeine.newBuilder();

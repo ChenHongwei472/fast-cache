@@ -20,7 +20,7 @@ public class GuavaCache<K, V> extends AbstractLocalCache<K, V> {
 
     private final Cache<K, V> cache;
 
-    public GuavaCache(CacheConfig config) {
+    public GuavaCache(CacheConfig<K, V> config) {
         super(config);
 
         CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder();

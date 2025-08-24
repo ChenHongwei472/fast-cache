@@ -68,7 +68,7 @@ public class BroadcastDecorator<K, V> extends CacheDecorator<K, V> {
      * @param keys 缓存键集合
      */
     private void broadcast(Collection<? extends K> keys) {
-        CacheConfig config = getConfig();
+        CacheConfig<K, V> config = getConfig();
         BroadcastManager broadcastManager = config.getBroadcastManager();
 
         // 参数校验

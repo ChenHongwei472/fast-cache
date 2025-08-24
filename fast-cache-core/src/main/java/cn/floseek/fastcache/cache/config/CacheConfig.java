@@ -13,13 +13,15 @@ import java.time.Duration;
 /**
  * 缓存配置类
  *
+ * @param <K> 缓存键类型
+ * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CacheConfig implements Serializable {
+public class CacheConfig<K, V> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -44,7 +46,7 @@ public class CacheConfig implements Serializable {
     /**
      * 缓存加载器
      */
-    private CacheLoader<?, ?> loader;
+    private CacheLoader<K, V> loader;
 
     /**
      * 广播管理器

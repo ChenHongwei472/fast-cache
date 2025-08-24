@@ -38,7 +38,7 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
      */
     private final Cache<K, V> remoteCache;
 
-    public MultiLevelCache(CacheConfig config, Cache<K, V> localCache, Cache<K, V> remoteCache) {
+    public MultiLevelCache(CacheConfig<K, V> config, Cache<K, V> localCache, Cache<K, V> remoteCache) {
         super(config);
         this.localCache = localCache;
         this.remoteCache = remoteCache;

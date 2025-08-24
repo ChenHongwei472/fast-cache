@@ -72,5 +72,5 @@ public interface Cache<K, V> {
      *
      * @return 缓存配置对象
      */
-    CacheConfig getConfig();
+    CacheConfig<K, V> getConfig();
 }

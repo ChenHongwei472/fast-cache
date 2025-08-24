@@ -29,7 +29,7 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
 
     protected final RedissonClient redissonClient;
 
-    public RedissonCache(CacheConfig config, RedissonClient redissonClient) {
+    public RedissonCache(CacheConfig<K, V> config, RedissonClient redissonClient) {
         super(config);
         this.redissonClient = redissonClient;
     }

@@ -18,5 +18,5 @@ public interface CacheBuilder<K, V> {
      * @param config 缓存配置
      * @return 缓存实例
      */
-    Cache<K, V> build(CacheConfig config);
+    Cache<K, V> build(CacheConfig<K, V> config);
 }

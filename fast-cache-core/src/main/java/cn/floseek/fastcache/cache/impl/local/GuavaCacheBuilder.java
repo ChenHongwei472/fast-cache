@@ -15,7 +15,7 @@ import cn.floseek.fastcache.cache.config.LocalCacheProvider;
 public class GuavaCacheBuilder<K, V> extends LocalCacheBuilder<K, V> {
 
     @Override
-    public Cache<K, V> build(CacheConfig config) {
+    public Cache<K, V> build(CacheConfig<K, V> config) {
         return new GuavaCache<>(config);
     }
 
