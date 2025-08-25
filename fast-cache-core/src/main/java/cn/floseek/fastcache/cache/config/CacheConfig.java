@@ -40,6 +40,21 @@ public class CacheConfig<K, V> implements Serializable {
     private CacheType cacheType = CacheType.REMOTE;
 
     /**
+     * 缓存过期时间
+     */
+    private Duration expireTime;
+
+    /**
+     * 本地缓存过期时间
+     */
+    private Duration localExpireTime;
+
+    /**
+     * 本地缓存最大容量
+     */
+    private Long localMaximumSize;
+
+    /**
      * 是否同步缓存
      */
     @Builder.Default
@@ -64,34 +79,6 @@ public class CacheConfig<K, V> implements Serializable {
      * 分布式锁模板
      */
     private LockTemplate lockTemplate;
-
-    // region 本地缓存配置
-
-    /**
-     * 本地缓存最大容量
-     */
-    private Long maximumSize;
-
-    /**
-     * 本地缓存写入后过期时间
-     */
-    private Duration expireAfterWrite;
-
-    /**
-     * 本地缓存访问后过期时间
-     */
-    private Duration expireAfterAccess;
-
-    // endregion
-
-    // region 分布式缓存配置
-
-    /**
-     * 分布式缓存过期时间
-     */
-    private Duration expireTime;
-
-    // endregion
 
     /**
      * 是否启用缓存加载器

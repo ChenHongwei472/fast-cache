@@ -24,14 +24,13 @@ public class GuavaCache<K, V> extends AbstractLocalCache<K, V> {
         super(config);
 
         CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder();
-        if (Objects.nonNull(config.getMaximumSize())) {
-            cacheBuilder.maximumSize(config.getMaximumSize());
+        if (Objects.nonNull(config.getLocalMaximumSize())) {
+            cacheBuilder.maximumSize(config.getLocalMaximumSize());
         }
-        if (Objects.nonNull(config.getExpireAfterWrite())) {
-            cacheBuilder.expireAfterWrite(config.getExpireAfterWrite());
-        }
-        if (Objects.nonNull(config.getExpireAfterAccess())) {
-            cacheBuilder.expireAfterAccess(config.getExpireAfterAccess());
+        if (Objects.nonNull(config.getLocalExpireTime())) {
+            cacheBuilder.expireAfterWrite(config.getLocalExpireTime());
+        } else if (Objects.nonNull(config.getExpireTime())) {
+            cacheBuilder.expireAfterWrite(config.getExpireTime());
         }
         this.cache = cacheBuilder.build();
     }

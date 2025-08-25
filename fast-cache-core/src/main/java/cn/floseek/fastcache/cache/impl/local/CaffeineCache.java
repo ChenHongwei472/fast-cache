@@ -24,14 +24,13 @@ public class CaffeineCache<K, V> extends AbstractLocalCache<K, V> {
         super(config);
 
         Caffeine<Object, Object> caffeine = Caffeine.newBuilder();
-        if (Objects.nonNull(config.getMaximumSize())) {
-            caffeine.maximumSize(config.getMaximumSize());
+        if (Objects.nonNull(config.getLocalMaximumSize())) {
+            caffeine.maximumSize(config.getLocalMaximumSize());
         }
-        if (Objects.nonNull(config.getExpireAfterWrite())) {
-            caffeine.expireAfterWrite(config.getExpireAfterWrite());
-        }
-        if (Objects.nonNull(config.getExpireAfterAccess())) {
-            caffeine.expireAfterAccess(config.getExpireAfterAccess());
+        if (Objects.nonNull(config.getLocalExpireTime())) {
+            caffeine.expireAfterWrite(config.getLocalExpireTime());
+        } else if (Objects.nonNull(config.getExpireTime())) {
+            caffeine.expireAfterWrite(config.getExpireTime());
         }
         this.cache = caffeine.build();
     }
