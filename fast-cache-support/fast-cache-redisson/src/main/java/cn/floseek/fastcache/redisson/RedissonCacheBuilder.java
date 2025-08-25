@@ -7,6 +7,7 @@ import cn.floseek.fastcache.cache.CacheManager;
 import cn.floseek.fastcache.cache.config.RemoteCacheProvider;
 import cn.floseek.fastcache.cache.builder.RemoteCacheBuilder;
 import org.redisson.api.RedissonClient;
+import cn.floseek.fastcache.lock.LockTemplate;
 
 /**
  * Redisson 缓存构建器实现
@@ -18,9 +19,11 @@ import org.redisson.api.RedissonClient;
 public class RedissonCacheBuilder<K, V> extends RemoteCacheBuilder<K, V> {
 
     private final RedissonClient redissonClient;
+    private final LockTemplate lockTemplate;
 
-    public RedissonCacheBuilder(RedissonClient redissonClient) {
+    public RedissonCacheBuilder(RedissonClient redissonClient, LockTemplate lockTemplate) {
         this.redissonClient = redissonClient;
+        this.lockTemplate = lockTemplate;
     }
 
     @Override
@@ -40,6 +43,7 @@ public class RedissonCacheBuilder<K, V> extends RemoteCacheBuilder<K, V> {
 
     @Override
     public Cache<K, V> build(CacheConfig<K, V> config) {
+        config.setLockTemplate(lockTemplate);
         return new RedissonCache<>(config, redissonClient);
     }
 }

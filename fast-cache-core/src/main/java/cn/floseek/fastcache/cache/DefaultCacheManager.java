@@ -10,6 +10,7 @@ import cn.floseek.fastcache.cache.config.LocalCacheProvider;
 import cn.floseek.fastcache.cache.config.RemoteCacheProvider;
 import cn.floseek.fastcache.cache.decorator.BroadcastDecorator;
 import cn.floseek.fastcache.cache.decorator.CacheLoaderDecorator;
+import cn.floseek.fastcache.cache.decorator.RefreshCacheDecorator;
 import cn.floseek.fastcache.cache.impl.multi.MultiLevelCacheBuilder;
 import cn.floseek.fastcache.config.GlobalProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -135,9 +136,14 @@ public class DefaultCacheManager implements CacheManager {
             cache = builder.build(config);
         }
 
-        // 添加缓存加载器装饰器
         if (Objects.nonNull(config.getLoader())) {
-            cache = new CacheLoaderDecorator<>(cache);
+            if (Objects.nonNull(config.getRefreshPolicy())) {
+                // 添加缓存刷新装饰器
+                cache = new RefreshCacheDecorator<>(cache);
+            } else {
+                // 添加缓存加载器装饰器
+                cache = new CacheLoaderDecorator<>(cache);
+            }
         }
 
         // 添加广播装饰器

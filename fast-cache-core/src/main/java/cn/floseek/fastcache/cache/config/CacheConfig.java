@@ -1,6 +1,7 @@
 package cn.floseek.fastcache.cache.config;
 
 import cn.floseek.fastcache.cache.broadcast.BroadcastManager;
+import cn.floseek.fastcache.lock.LockTemplate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -45,6 +46,11 @@ public class CacheConfig<K, V> implements Serializable {
     private boolean syncCache = false;
 
     /**
+     * 缓存刷新策略
+     */
+    private RefreshPolicy refreshPolicy;
+
+    /**
      * 缓存加载器
      */
     private CacheLoader<K, V> loader;
@@ -53,6 +59,11 @@ public class CacheConfig<K, V> implements Serializable {
      * 广播管理器
      */
     private BroadcastManager broadcastManager;
+
+    /**
+     * 分布式锁模板
+     */
+    private LockTemplate lockTemplate;
 
     // region 本地缓存配置
 

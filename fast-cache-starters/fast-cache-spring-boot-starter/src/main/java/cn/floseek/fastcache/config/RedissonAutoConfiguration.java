@@ -1,11 +1,13 @@
 package cn.floseek.fastcache.config;
 
 import cn.floseek.fastcache.bloomfilter.BloomFilterFactory;
+import cn.floseek.fastcache.cache.builder.RemoteCacheBuilder;
 import cn.floseek.fastcache.config.properties.FastCacheProperties;
 import cn.floseek.fastcache.handler.RedissonKeyPrefixHandler;
 import cn.floseek.fastcache.lock.LockTemplate;
 import cn.floseek.fastcache.redis.RedisService;
 import cn.floseek.fastcache.redisson.RedissonBloomFilterFactory;
+import cn.floseek.fastcache.redisson.RedissonCacheBuilder;
 import cn.floseek.fastcache.redisson.RedissonLockTemplate;
 import cn.floseek.fastcache.redisson.RedissonService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -45,6 +47,11 @@ public class RedissonAutoConfiguration {
     @Bean
     public BloomFilterFactory redissonBloomFilterFactory(RedissonClient redissonClient) {
         return new RedissonBloomFilterFactory(redissonClient);
+    }
+
+    @Bean
+    public <K, V> RemoteCacheBuilder<K, V> remoteCacheBuilder(RedissonClient redissonClient, LockTemplate lockTemplate) {
+        return new RedissonCacheBuilder<>(redissonClient, lockTemplate);
     }
 
     @Bean
