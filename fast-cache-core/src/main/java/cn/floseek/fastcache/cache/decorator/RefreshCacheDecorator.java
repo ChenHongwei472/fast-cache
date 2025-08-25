@@ -1,6 +1,6 @@
 package cn.floseek.fastcache.cache.decorator;
 
-import cn.floseek.fastcache.cache.AbstractRemoteCache;
+import cn.floseek.fastcache.cache.AbstractLocalCache;
 import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.config.CacheConfig;
 import cn.floseek.fastcache.cache.config.CacheLoader;
@@ -9,6 +9,7 @@ import cn.floseek.fastcache.cache.impl.multi.MultiLevelCache;
 import cn.floseek.fastcache.lock.LockTemplate;
 import cn.floseek.fastcache.util.CacheUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 
 import java.util.Collection;
 import java.util.Map;
@@ -24,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 缓存刷新装饰器
  * <p>
- * 提供了自动刷新缓存的能力，主要作用是防止缓存失效时造成的缓存雪崩
+ * 提供了自动刷新缓存的能力，主要作用是防止缓存失效时造成的缓存雪崩，支持分布式环境下的刷新锁机制
  * </p>
  *
  * @param <K> 缓存键类型
@@ -34,26 +35,47 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class RefreshCacheDecorator<K, V> extends CacheLoaderDecorator<K, V> {
 
-    private final ConcurrentHashMap<Object, RefreshTask> taskMap = new ConcurrentHashMap<>();
+    /**
+     * 缓存刷新线程名称前缀
+     */
+    private static final String THREAD_NAME_PREFIX = "fast-cache-refresh-";
+    /**
+     * 缓存刷新锁键
+     */
+    private static final String REFRESH_LOCK_KEY = "refresh_lock";
+    /**
+     * 缓存刷新时间戳键
+     */
+    private static final String REFRESH_TIMESTAMP_KEY = "refresh_timestamp";
 
+    /**
+     * 缓存刷新任务映射
+     */
+    private final ConcurrentHashMap<Object, RefreshTask> refreshTaskMap = new ConcurrentHashMap<>();
+    /**
+     * 缓存刷新调度器
+     */
     private static final ScheduledThreadPoolExecutor SCHEDULER;
-
+    /**
+     * 缓存刷新任务计数器
+     */
     private static final AtomicInteger THREAD_COUNT = new AtomicInteger(0);
 
     private final CacheConfig<K, V> config;
 
     static {
-        log.info("Init cache refresh scheduler");
+        log.info("Initializing cache refresh scheduler");
         ThreadFactory threadFactory = runnable -> {
-            Thread thread = new Thread(runnable, "fast-cache-refresh-" + THREAD_COUNT.getAndIncrement());
+            Thread thread = new Thread(runnable, THREAD_NAME_PREFIX + THREAD_COUNT.getAndIncrement());
             thread.setDaemon(true);
             return thread;
         };
+
         SCHEDULER = new ScheduledThreadPoolExecutor(
                 10, threadFactory, new ThreadPoolExecutor.DiscardPolicy());
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            log.info("Shutdown cache refresh scheduler");
+            log.info("Shutting down cache refresh scheduler");
             SCHEDULER.shutdownNow();
         }));
     }
@@ -67,7 +89,7 @@ public class RefreshCacheDecorator<K, V> extends CacheLoaderDecorator<K, V> {
     public V get(K key) {
         V value = super.get(key);
         if (Objects.nonNull(value)) {
-            this.addOrUpdateRefreshTask(key, config.getLoader());
+            this.addOrUpdateRefreshTask(key);
         }
         return value;
     }
@@ -75,8 +97,8 @@ public class RefreshCacheDecorator<K, V> extends CacheLoaderDecorator<K, V> {
     @Override
     public Map<K, V> getAll(Collection<? extends K> keys) {
         Map<K, V> valueMap = super.getAll(keys);
-        if (Objects.nonNull(valueMap)) {
-            valueMap.keySet().forEach(key -> this.addOrUpdateRefreshTask(key, config.getLoader()));
+        if (MapUtils.isNotEmpty(valueMap)) {
+            valueMap.keySet().forEach(this::addOrUpdateRefreshTask);
         }
         return valueMap;
     }
@@ -85,32 +107,35 @@ public class RefreshCacheDecorator<K, V> extends CacheLoaderDecorator<K, V> {
      * 停止刷新缓存
      */
     protected void stopRefresh() {
-        taskMap.values().forEach(RefreshTask::cancel);
+        refreshTaskMap.values().forEach(RefreshTask::cancel);
+        refreshTaskMap.clear();
     }
 
     /**
      * 添加或更新缓存刷新任务
      *
-     * @param key    缓存键
-     * @param loader 缓存加载器
+     * @param key 缓存键
      */
-    protected void addOrUpdateRefreshTask(K key, CacheLoader<K, V> loader) {
+    protected void addOrUpdateRefreshTask(K key) {
         RefreshPolicy refreshPolicy = config.getRefreshPolicy();
         if (Objects.isNull(refreshPolicy)) {
             return;
         }
 
         long refreshMillis = refreshPolicy.getRefreshMillis();
-        if (refreshMillis > 0) {
-            RefreshTask refreshTask = taskMap.computeIfAbsent(key, obj -> {
-                log.debug("Add refresh cache task, key: {}, interval: {}", key, refreshMillis);
-                RefreshTask task = new RefreshTask(key, loader);
-                task.lastAccessTime = System.currentTimeMillis();
-                task.future = SCHEDULER.scheduleWithFixedDelay(task, refreshMillis, refreshMillis, TimeUnit.MILLISECONDS);
-                return task;
-            });
-            refreshTask.lastAccessTime = System.currentTimeMillis();
+        if (refreshMillis <= 0) {
+            return;
         }
+
+        RefreshTask refreshTask = refreshTaskMap.computeIfAbsent(key, obj -> {
+            log.debug("Adding cache refresh task for key: {}, interval: {}ms", key, refreshMillis);
+            RefreshTask task = new RefreshTask(key);
+            task.lastAccessTime = System.currentTimeMillis();
+            task.future = SCHEDULER.scheduleWithFixedDelay(task, refreshMillis, refreshMillis, TimeUnit.MILLISECONDS);
+            return task;
+        });
+
+        refreshTask.lastAccessTime = System.currentTimeMillis();
     }
 
     /**
@@ -119,25 +144,48 @@ public class RefreshCacheDecorator<K, V> extends CacheLoaderDecorator<K, V> {
     class RefreshTask implements Runnable {
 
         private final K key;
-        private final CacheLoader<K, V> loader;
-
         private long lastAccessTime;
         private ScheduledFuture<?> future;
 
-        public RefreshTask(K key, CacheLoader<K, V> loader) {
+        public RefreshTask(K key) {
             this.key = key;
-            this.loader = loader;
+        }
+
+        @Override
+        public void run() {
+            RefreshPolicy refreshPolicy = config.getRefreshPolicy();
+            if (Objects.isNull(refreshPolicy) || !config.loaderEnabled()) {
+                cancel();
+                return;
+            }
+
+            long currentTime = System.currentTimeMillis();
+            long stopRefreshAfterLastAccessMillis = refreshPolicy.getStopRefreshAfterLastAccessMillis();
+
+            if (stopRefreshAfterLastAccessMillis > 0 && (lastAccessTime + stopRefreshAfterLastAccessMillis < currentTime)) {
+                cancel();
+                return;
+            }
+
+            log.debug("Refreshing cache for key: {}", key);
+            Cache<K, V> cache = unwrapAll();
+
+            if (cache instanceof AbstractLocalCache<K, V>) {
+                this.refreshCache(cache);
+            } else {
+                this.refreshRemoteOrMultiLevelCache(cache, currentTime);
+            }
         }
 
         /**
          * 取消缓存刷新任务
          */
         private void cancel() {
-            log.debug("Cancel refresh task, key: {}", key);
+            log.debug("Canceling cache refresh task for key: {}", key);
             if (Objects.nonNull(future)) {
                 future.cancel(false);
             }
-            taskMap.remove(key);
+            refreshTaskMap.remove(key);
         }
 
         /**
@@ -145,92 +193,86 @@ public class RefreshCacheDecorator<K, V> extends CacheLoaderDecorator<K, V> {
          *
          * @param cache 缓存实例
          */
-        private void refresh(Cache<K, V> cache) {
-            if (Objects.nonNull(loader)) {
-                try {
-                    V value = loader.load(key);
-                    if (Objects.nonNull(value)) {
-                        cache.put(key, value);
-                    }
-                } catch (Exception e) {
-                    log.warn("Refresh task failed for key: {}", key, e);
-                }
-            }
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public void run() {
-            if (config.getRefreshPolicy() == null || !config.loaderEnabled()) {
-                cancel();
+        private void refreshCache(Cache<K, V> cache) {
+            CacheLoader<K, V> loader = config.getLoader();
+            if (Objects.isNull(loader)) {
                 return;
             }
 
-            long now = System.currentTimeMillis();
-            long refreshMillis = config.getRefreshPolicy().getRefreshMillis();
-            long stopRefreshAfterLastAccessMillis = config.getRefreshPolicy().getStopRefreshAfterLastAccessMillis();
-            if (stopRefreshAfterLastAccessMillis > 0) {
-                if (lastAccessTime + stopRefreshAfterLastAccessMillis < now) {
-                    cancel();
-                    return;
+            try {
+                V value = loader.load(key);
+                if (Objects.nonNull(value)) {
+                    cache.put(key, value);
+                    log.trace("Refreshed cache value for key: {}", key);
                 }
+            } catch (Exception e) {
+                log.warn("Failed to refresh cache for key: {}", key, e);
+            }
+        }
+
+        /**
+         * 刷新分布式或多级缓存
+         *
+         * @param cache       缓存实例
+         * @param currentTime 当前时间
+         */
+        @SuppressWarnings("unchecked")
+        private void refreshRemoteOrMultiLevelCache(Cache<K, V> cache, long currentTime) {
+            // 获取本地缓存和分布式缓存
+            Cache<K, V> localCache = null;
+            Cache<K, V> remoteCache;
+            if (cache instanceof MultiLevelCache<K, V> multiLevelCache) {
+                localCache = multiLevelCache.getLocalCache();
+                remoteCache = multiLevelCache.getRemoteCache();
+            } else {
+                remoteCache = cache;
             }
 
-            log.debug("Refresh key: {}", key);
-            Cache<K, V> cache = unwrapAll();
-            if (cache instanceof AbstractRemoteCache<K, V> || cache instanceof MultiLevelCache<K, V>) {
-                String timestampKey = CacheUtils.generateKey("refresh-lock-timestamp", key);
+            // 获取刷新策略
+            RefreshPolicy refreshPolicy = config.getRefreshPolicy();
+            long refreshMillis = refreshPolicy.getRefreshMillis();
+            long refreshLockTimeoutMillis = refreshPolicy.getRefreshLockTimeoutMillis();
 
-                Cache<String, Long> timestampCache = (Cache<String, Long>) (cache instanceof MultiLevelCache<K, V> multiLevelCache
-                        ? multiLevelCache.getRemoteCache()
-                        : cache);
-                Long timestamp = timestampCache.get(timestampKey);
+            // 检查时间戳确定是否需要刷新
+            String timestampKey = CacheUtils.generateKey(REFRESH_TIMESTAMP_KEY, key.toString());
+            Cache<String, Long> timestampCache = (Cache<String, Long>) remoteCache;
+            Long lastRefreshTime = timestampCache.get(timestampKey);
+            boolean shouldRefresh = Objects.isNull(lastRefreshTime) || (currentTime >= lastRefreshTime + refreshMillis);
 
-                boolean shouldRefresh;
-                if (Objects.nonNull(timestamp)) {
-                    shouldRefresh = now >= timestamp + refreshMillis;
-                } else {
-                    shouldRefresh = true;
+            log.debug("Should refresh for key {}: {}", key, shouldRefresh);
+
+            if (!shouldRefresh) {
+                // 如果本地缓存不为空，则从分布式缓存中同步数据到本地缓存中
+                if (Objects.nonNull(localCache)) {
+                    V value = remoteCache.get(key);
+                    localCache.put(key, value);
+                    log.debug("Synchronized from remote to local cache, key: {}", key);
                 }
+                return;
+            }
 
-                log.debug("Should refresh cache: {}", shouldRefresh);
+            // 获取分布式锁模板
+            LockTemplate lockTemplate = config.getLockTemplate();
+            if (Objects.isNull(lockTemplate)) {
+                log.debug("Lock template not available, skipping refresh for key: {}", key);
+                return;
+            }
 
-                if (!shouldRefresh) {
-                    if (cache instanceof MultiLevelCache<K, V> multiLevelCache) {
-                        Cache<K, V> remoteCache = multiLevelCache.getRemoteCache();
-                        Cache<K, V> localCache = multiLevelCache.getLocalCache();
-                        V value = remoteCache.get(key);
-                        localCache.put(key, value);
-                        log.debug("Refresh cache from remote cache to local cache, key: {}", key);
-                    }
+            String lockKey = CacheUtils.generateKey(REFRESH_LOCK_KEY, key.toString());
+            try {
+                boolean locked = lockTemplate.tryLock(lockKey, 0, refreshLockTimeoutMillis, TimeUnit.MILLISECONDS);
+                if (!locked) {
+                    log.debug("Refresh skipped, another instance is refreshing key: {}", key);
                     return;
                 }
 
-                LockTemplate lockTemplate = config.getLockTemplate();
-                if (Objects.isNull(lockTemplate)) {
-                    log.debug("No LockTemplate available, skip refresh cache, key: {}", key);
-                    return;
-                }
-
-                String lockKey = CacheUtils.generateKey("refresh-lock", key);
-                try {
-                    long leaseMillis = config.getRefreshPolicy().getRefreshLockTimeoutMillis();
-                    boolean locked = lockTemplate.tryLock(lockKey, 0, leaseMillis, TimeUnit.MILLISECONDS);
-
-                    if (!locked) {
-                        log.debug("Refresh cache failed, perhaps another thread is refreshing, key: {}", key);
-                        return;
-                    }
-
-                    this.refresh(cache);
-                    timestampCache.put(timestampKey, System.currentTimeMillis());
-                } catch (InterruptedException e) {
-                    log.error("Refresh cache task interrupted, key: {}", key, e);
-                } finally {
-                    lockTemplate.unlock(lockKey);
-                }
-            } else {
-                this.refresh(cache);
+                this.refreshCache(cache);
+                timestampCache.put(timestampKey, System.currentTimeMillis());
+            } catch (InterruptedException e) {
+                log.error("Refresh task interrupted for key: {}", key, e);
+                Thread.currentThread().interrupt();
+            } finally {
+                lockTemplate.unlock(lockKey);
             }
         }
     }
