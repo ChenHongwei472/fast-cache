@@ -1,6 +1,7 @@
 package cn.floseek.fastcache.cache.decorator;
 
 import cn.floseek.fastcache.cache.Cache;
+import cn.floseek.fastcache.cache.config.CacheConfig;
 import cn.floseek.fastcache.cache.config.CacheLoader;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -24,13 +25,13 @@ import java.util.Set;
  */
 public class CacheLoaderDecorator<K, V> extends CacheDecorator<K, V> {
 
+    protected final CacheConfig<K, V> config;
     private final CacheLoader<K, V> loader;
-    private final boolean loaderEnabled;
 
     public CacheLoaderDecorator(Cache<K, V> decoratedCache) {
         super(decoratedCache);
+        this.config = decoratedCache.getConfig();
         this.loader = decoratedCache.getConfig().getLoader();
-        this.loaderEnabled = decoratedCache.getConfig().loaderEnabled();
     }
 
     @Override
@@ -40,7 +41,7 @@ public class CacheLoaderDecorator<K, V> extends CacheDecorator<K, V> {
             return value;
         }
 
-        if (loaderEnabled) {
+        if (config.loaderEnabled()) {
             value = loader.load(key);
             if (Objects.nonNull(value)) {
                 super.put(key, value);
@@ -63,7 +64,7 @@ public class CacheLoaderDecorator<K, V> extends CacheDecorator<K, V> {
 
         // 如果有未命中的键，则尝试从分布式缓存中获取数据
         if (CollectionUtils.isNotEmpty(missingKeys)) {
-            if (loaderEnabled) {
+            if (config.loaderEnabled()) {
                 Map<K, V> kvMap = loader.loadAll(missingKeys);
                 // 如果获取到数据，则添加到缓存结果中，并回填到缓存中
                 if (MapUtils.isNotEmpty(kvMap)) {

@@ -2,7 +2,6 @@ package cn.floseek.fastcache.cache.decorator;
 
 import cn.floseek.fastcache.cache.AbstractLocalCache;
 import cn.floseek.fastcache.cache.Cache;
-import cn.floseek.fastcache.cache.config.CacheConfig;
 import cn.floseek.fastcache.cache.config.CacheLoader;
 import cn.floseek.fastcache.cache.config.RefreshPolicy;
 import cn.floseek.fastcache.cache.impl.multi.MultiLevelCache;
@@ -61,8 +60,6 @@ public class RefreshCacheDecorator<K, V> extends CacheLoaderDecorator<K, V> {
      */
     private static final AtomicInteger THREAD_COUNT = new AtomicInteger(0);
 
-    private final CacheConfig<K, V> config;
-
     static {
         log.info("Initializing cache refresh scheduler");
         ThreadFactory threadFactory = runnable -> {
@@ -82,7 +79,6 @@ public class RefreshCacheDecorator<K, V> extends CacheLoaderDecorator<K, V> {
 
     public RefreshCacheDecorator(Cache<K, V> decoratedCache) {
         super(decoratedCache);
-        this.config = decoratedCache.getConfig();
     }
 
     @Override
