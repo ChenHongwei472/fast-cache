@@ -2,15 +2,14 @@ package cn.floseek.fastcache.cache.config;
 
 import cn.floseek.fastcache.cache.broadcast.BroadcastManager;
 import cn.floseek.fastcache.lock.LockTemplate;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Duration;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 缓存配置类
@@ -19,10 +18,8 @@ import java.util.Objects;
  * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class CacheConfig<K, V> implements Serializable {
 
     @Serial
@@ -36,7 +33,6 @@ public class CacheConfig<K, V> implements Serializable {
     /**
      * 缓存类型
      */
-    @Builder.Default
     private CacheType cacheType = CacheType.REMOTE;
 
     /**
@@ -57,7 +53,6 @@ public class CacheConfig<K, V> implements Serializable {
     /**
      * 是否同步缓存
      */
-    @Builder.Default
     private boolean syncCache = false;
 
     /**
@@ -81,11 +76,161 @@ public class CacheConfig<K, V> implements Serializable {
     private LockTemplate lockTemplate;
 
     /**
+     * 创建缓存配置
+     *
+     * @param <K> 缓存键类型
+     * @param <V> 缓存值类型
+     * @return 缓存配置构建器
+     */
+    public static <K, V> CacheConfigBuilder<K, V> newBuilder(String cacheName) {
+        return new CacheConfigBuilder<>(cacheName);
+    }
+
+    /**
      * 是否启用缓存加载器
      *
      * @return boolean
      */
     public boolean loaderEnabled() {
         return Objects.nonNull(this.loader);
+    }
+
+    /**
+     * 缓存配置构建器
+     *
+     * @param <K> 缓存键类型
+     * @param <V> 缓存值类型
+     */
+    public static class CacheConfigBuilder<K, V> {
+
+        /**
+         * 缓存名称
+         */
+        private String cacheName;
+
+        /**
+         * 缓存类型
+         */
+        private CacheType cacheType = CacheType.REMOTE;
+
+        /**
+         * 缓存过期时间
+         */
+        private Duration expireTime;
+
+        /**
+         * 本地缓存过期时间
+         */
+        private Duration localExpireTime;
+
+        /**
+         * 本地缓存最大容量
+         */
+        private Long localMaximumSize;
+
+        /**
+         * 是否同步缓存
+         */
+        private boolean syncCache = false;
+
+        /**
+         * 缓存刷新策略
+         */
+        private RefreshPolicy refreshPolicy;
+
+        /**
+         * 缓存加载器
+         */
+        private CacheLoader<K, V> loader;
+
+        /**
+         * 广播管理器
+         */
+        private BroadcastManager broadcastManager;
+
+        /**
+         * 分布式锁模板
+         */
+        private LockTemplate lockTemplate;
+
+        public CacheConfigBuilder(String cacheName) {
+            Objects.requireNonNull(cacheName);
+            this.cacheName = cacheName;
+        }
+
+        public CacheConfigBuilder<K, V> cacheName(String cacheName) {
+            this.cacheName = cacheName;
+            return this;
+        }
+
+        public CacheConfigBuilder<K, V> cacheType(CacheType cacheType) {
+            this.cacheType = cacheType;
+            return this;
+        }
+
+        public CacheConfigBuilder<K, V> expireTime(Duration expireTime) {
+            this.expireTime = expireTime;
+            return this;
+        }
+
+        public CacheConfigBuilder<K, V> expireTime(long time, TimeUnit timeUnit) {
+            this.expireTime = Duration.ofMillis(timeUnit.toMillis(time));
+            return this;
+        }
+
+        public CacheConfigBuilder<K, V> localExpireTime(Duration localExpireTime) {
+            this.localExpireTime = localExpireTime;
+            return this;
+        }
+
+        public CacheConfigBuilder<K, V> localExpireTime(long time, TimeUnit timeUnit) {
+            this.localExpireTime = Duration.ofMillis(timeUnit.toMillis(time));
+            return this;
+        }
+
+        public CacheConfigBuilder<K, V> localMaximumSize(Long localMaximumSize) {
+            this.localMaximumSize = localMaximumSize;
+            return this;
+        }
+
+        public CacheConfigBuilder<K, V> syncCache(boolean syncCache) {
+            this.syncCache = syncCache;
+            return this;
+        }
+
+        public CacheConfigBuilder<K, V> refreshPolicy(RefreshPolicy refreshPolicy) {
+            this.refreshPolicy = refreshPolicy;
+            return this;
+        }
+
+        public CacheConfigBuilder<K, V> loader(CacheLoader<K, V> loader) {
+            this.loader = loader;
+            return this;
+        }
+
+        public CacheConfigBuilder<K, V> broadcastManager(BroadcastManager broadcastManager) {
+            this.broadcastManager = broadcastManager;
+            return this;
+        }
+
+        public CacheConfigBuilder<K, V> lockTemplate(LockTemplate lockTemplate) {
+            this.lockTemplate = lockTemplate;
+            return this;
+        }
+
+        public CacheConfig<K, V> build() {
+            CacheConfig<K, V> cacheConfig = new CacheConfig<>();
+            cacheConfig.cacheName = cacheName;
+            cacheConfig.cacheType = cacheType;
+            cacheConfig.expireTime = expireTime;
+            cacheConfig.localExpireTime = localExpireTime;
+            cacheConfig.localMaximumSize = localMaximumSize;
+            cacheConfig.syncCache = syncCache;
+            cacheConfig.refreshPolicy = refreshPolicy;
+            cacheConfig.loader = loader;
+            cacheConfig.broadcastManager = broadcastManager;
+            cacheConfig.lockTemplate = lockTemplate;
+            return cacheConfig;
+        }
     }
 }
