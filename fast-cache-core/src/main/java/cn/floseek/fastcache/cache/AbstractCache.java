@@ -23,6 +23,10 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     @Override
+    public void close() {
+    }
+
+    @Override
     public CacheConfig<K, V> getConfig() {
         return config;
     }

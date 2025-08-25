@@ -61,6 +61,11 @@ public abstract class CacheDecorator<K, V> implements Cache<K, V> {
     }
 
     @Override
+    public void close() {
+        decoratedCache.close();
+    }
+
+    @Override
     public CacheType getCacheType() {
         return decoratedCache.getCacheType();
     }

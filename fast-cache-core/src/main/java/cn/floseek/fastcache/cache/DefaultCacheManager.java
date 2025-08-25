@@ -14,6 +14,7 @@ import cn.floseek.fastcache.cache.decorator.RefreshCacheDecorator;
 import cn.floseek.fastcache.cache.impl.multi.MultiLevelCacheBuilder;
 import cn.floseek.fastcache.config.GlobalProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
@@ -95,11 +96,21 @@ public class DefaultCacheManager implements CacheManager {
             try {
                 broadcastManager.close();
             } catch (Exception e) {
-                log.error("关闭广播管理器失败", e);
+                log.error("Closing broadcast service failed", e);
             }
+            broadcastManager = null;
         }
 
-        cacheMap.clear();
+        if (MapUtils.isNotEmpty(cacheMap)) {
+            cacheMap.forEach((key, cache) -> {
+                try {
+                    cache.close();
+                } catch (Exception e) {
+                    log.error("Closing cache failed, key: {}", key, e);
+                }
+            });
+            cacheMap.clear();
+        }
     }
 
     /**

@@ -99,12 +99,19 @@ public class RefreshCacheDecorator<K, V> extends CacheLoaderDecorator<K, V> {
         return valueMap;
     }
 
+    @Override
+    public void close() {
+        this.stopRefresh();
+        super.close();
+    }
+
     /**
      * 停止刷新缓存
      */
     protected void stopRefresh() {
         refreshTaskMap.values().forEach(RefreshTask::cancel);
         refreshTaskMap.clear();
+        log.info("All cache refresh tasks stopped");
     }
 
     /**

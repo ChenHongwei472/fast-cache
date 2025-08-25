@@ -3,6 +3,7 @@ package cn.floseek.fastcache.cache;
 import cn.floseek.fastcache.cache.config.CacheConfig;
 import cn.floseek.fastcache.cache.config.CacheType;
 
+import java.io.Closeable;
 import java.util.Collection;
 import java.util.Map;
 
@@ -13,7 +14,7 @@ import java.util.Map;
  * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
-public interface Cache<K, V> {
+public interface Cache<K, V> extends Closeable {
 
     /**
      * 获取缓存值
@@ -59,6 +60,12 @@ public interface Cache<K, V> {
      * @param keys 缓存键集合
      */
     void removeAll(Collection<? extends K> keys);
+
+    /**
+     * 关闭缓存
+     */
+    @Override
+    void close();
 
     /**
      * 获取缓存类型
