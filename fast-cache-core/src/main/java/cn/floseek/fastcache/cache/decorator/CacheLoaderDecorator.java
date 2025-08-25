@@ -6,7 +6,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -53,9 +52,6 @@ public class CacheLoaderDecorator<K, V> extends CacheDecorator<K, V> {
     @Override
     public Map<K, V> getAll(Collection<? extends K> keys) {
         Map<K, V> valueMap = super.getAll(keys);
-        if (MapUtils.isEmpty(valueMap)) {
-            return Collections.emptyMap();
-        }
 
         // 缓存结果
         Map<K, V> resultMap = new HashMap<>(valueMap);
@@ -63,7 +59,7 @@ public class CacheLoaderDecorator<K, V> extends CacheDecorator<K, V> {
         Set<K> missingKeys = new HashSet<>(keys);
 
         // 移除命中的键
-        missingKeys.removeAll(valueMap.keySet());
+        missingKeys.removeAll(resultMap.keySet());
 
         // 如果有未命中的键，则尝试从分布式缓存中获取数据
         if (CollectionUtils.isNotEmpty(missingKeys)) {
