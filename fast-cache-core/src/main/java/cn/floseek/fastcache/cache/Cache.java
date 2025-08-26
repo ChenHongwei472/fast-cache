@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 缓存接口
@@ -42,7 +43,14 @@ public interface Cache<K, V> extends Closeable {
      */
     default List<V> listAll(Collection<? extends K> keys) {
         Map<K, V> valueMap = this.getAll(keys);
-        return new ArrayList<>(valueMap.values());
+        List<V> valueList = new ArrayList<>();
+        keys.forEach(key -> {
+            V value = valueMap.get(key);
+            if (Objects.nonNull(value)) {
+                valueList.add(value);
+            }
+        });
+        return valueList;
     }
 
     /**
