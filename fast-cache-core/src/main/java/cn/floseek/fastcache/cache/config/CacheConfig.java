@@ -1,5 +1,6 @@
 package cn.floseek.fastcache.cache.config;
 
+import cn.floseek.fastcache.common.BaseCacheKey;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -66,12 +67,25 @@ public class CacheConfig<K, V> implements Serializable {
     /**
      * 创建缓存配置
      *
-     * @param <K> 缓存键类型
-     * @param <V> 缓存值类型
+     * @param cacheName 缓存名称
+     * @param <K>       缓存键类型
+     * @param <V>       缓存值类型
      * @return 缓存配置构建器
      */
     public static <K, V> CacheConfigBuilder<K, V> newBuilder(String cacheName) {
         return new CacheConfigBuilder<>(cacheName);
+    }
+
+    /**
+     * 创建缓存配置
+     *
+     * @param baseCacheKey 缓存枚举
+     * @param <K>          缓存键类型
+     * @param <V>          缓存值类型
+     * @return 缓存配置构建器
+     */
+    public static <K, V> CacheConfigBuilder<K, V> newBuilder(BaseCacheKey baseCacheKey) {
+        return new CacheConfigBuilder<>(baseCacheKey);
     }
 
     /**
@@ -134,6 +148,13 @@ public class CacheConfig<K, V> implements Serializable {
         public CacheConfigBuilder(String cacheName) {
             Objects.requireNonNull(cacheName);
             this.cacheName = cacheName;
+        }
+
+        public CacheConfigBuilder(BaseCacheKey baseCacheKey) {
+            Objects.requireNonNull(baseCacheKey.getName());
+            this.cacheName = baseCacheKey.getName();
+            this.expireTime = baseCacheKey.getExpireTime();
+            this.localExpireTime = baseCacheKey.getLocalExpireTime();
         }
 
         public CacheConfigBuilder<K, V> cacheType(CacheType cacheType) {

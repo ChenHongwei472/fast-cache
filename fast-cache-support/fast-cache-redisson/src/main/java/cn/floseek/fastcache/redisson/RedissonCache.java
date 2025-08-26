@@ -71,7 +71,7 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
     @Override
     public void put(K key, V value) {
         RBucket<V> bucket = redissonClient.getBucket(this.generateCacheKey(key));
-        if (config.getExpireTime() == null) {
+        if (Objects.isNull(config.getExpireTime())) {
             bucket.set(value);
         } else {
             bucket.set(value, config.getExpireTime());
@@ -87,7 +87,7 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
         RBatch batch = redissonClient.createBatch();
         map.forEach((key, value) -> {
             RBucketAsync<V> bucket = batch.getBucket(this.generateCacheKey(key));
-            if (config.getExpireTime() == null) {
+            if (Objects.isNull(config.getExpireTime())) {
                 bucket.setAsync(value);
             } else {
                 bucket.setAsync(value, config.getExpireTime());

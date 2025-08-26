@@ -29,8 +29,6 @@ public class GuavaCache<K, V> extends AbstractLocalCache<K, V> {
         }
         if (Objects.nonNull(config.getLocalExpireTime())) {
             cacheBuilder.expireAfterWrite(config.getLocalExpireTime());
-        } else if (Objects.nonNull(config.getExpireTime())) {
-            cacheBuilder.expireAfterWrite(config.getExpireTime());
         }
         this.cache = cacheBuilder.build();
     }

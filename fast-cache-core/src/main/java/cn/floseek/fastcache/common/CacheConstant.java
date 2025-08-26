@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.constant;
+package cn.floseek.fastcache.common;
 
 /**
  * 缓存常量

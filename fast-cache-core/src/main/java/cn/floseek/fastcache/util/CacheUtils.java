@@ -1,7 +1,8 @@
 package cn.floseek.fastcache.util;
 
-import cn.floseek.fastcache.constant.CacheConstant;
-import org.apache.commons.lang3.StringUtils;
+import cn.floseek.fastcache.common.CacheConstant;
+
+import java.util.StringJoiner;
 
 /**
  * 缓存工具类
@@ -17,6 +18,10 @@ public class CacheUtils {
      * @return 缓存键
      */
     public static String generateKey(Object... params) {
-        return StringUtils.join(params, CacheConstant.COLON);
+        StringJoiner joiner = new StringJoiner(CacheConstant.COLON);
+        for (Object param : params) {
+            joiner.add(String.valueOf(param));
+        }
+        return joiner.toString();
     }
 }

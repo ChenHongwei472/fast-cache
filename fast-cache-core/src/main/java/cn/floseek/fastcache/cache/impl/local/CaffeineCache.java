@@ -29,8 +29,6 @@ public class CaffeineCache<K, V> extends AbstractLocalCache<K, V> {
         }
         if (Objects.nonNull(config.getLocalExpireTime())) {
             caffeine.expireAfterWrite(config.getLocalExpireTime());
-        } else if (Objects.nonNull(config.getExpireTime())) {
-            caffeine.expireAfterWrite(config.getExpireTime());
         }
         this.cache = caffeine.build();
     }
