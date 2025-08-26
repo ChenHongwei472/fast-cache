@@ -94,7 +94,7 @@ public class CacheConfig<K, V> implements Serializable {
         /**
          * 缓存名称
          */
-        private String cacheName;
+        private final String cacheName;
 
         /**
          * 缓存类型
@@ -134,11 +134,6 @@ public class CacheConfig<K, V> implements Serializable {
         public CacheConfigBuilder(String cacheName) {
             Objects.requireNonNull(cacheName);
             this.cacheName = cacheName;
-        }
-
-        public CacheConfigBuilder<K, V> cacheName(String cacheName) {
-            this.cacheName = cacheName;
-            return this;
         }
 
         public CacheConfigBuilder<K, V> cacheType(CacheType cacheType) {
