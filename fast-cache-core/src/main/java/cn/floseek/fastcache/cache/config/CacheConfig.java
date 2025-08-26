@@ -1,6 +1,5 @@
 package cn.floseek.fastcache.cache.config;
 
-import cn.floseek.fastcache.lock.LockTemplate;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -63,11 +62,6 @@ public class CacheConfig<K, V> implements Serializable {
      * 缓存加载器
      */
     private CacheLoader<K, V> loader;
-
-    /**
-     * 分布式锁模板
-     */
-    private LockTemplate lockTemplate;
 
     /**
      * 创建缓存配置
@@ -137,11 +131,6 @@ public class CacheConfig<K, V> implements Serializable {
          */
         private CacheLoader<K, V> loader;
 
-        /**
-         * 分布式锁模板
-         */
-        private LockTemplate lockTemplate;
-
         public CacheConfigBuilder(String cacheName) {
             Objects.requireNonNull(cacheName);
             this.cacheName = cacheName;
@@ -197,11 +186,6 @@ public class CacheConfig<K, V> implements Serializable {
             return this;
         }
 
-        public CacheConfigBuilder<K, V> lockTemplate(LockTemplate lockTemplate) {
-            this.lockTemplate = lockTemplate;
-            return this;
-        }
-
         public CacheConfig<K, V> build() {
             CacheConfig<K, V> cacheConfig = new CacheConfig<>();
             cacheConfig.cacheName = cacheName;
@@ -212,7 +196,6 @@ public class CacheConfig<K, V> implements Serializable {
             cacheConfig.syncLocal = syncLocal;
             cacheConfig.refreshPolicy = refreshPolicy;
             cacheConfig.loader = loader;
-            cacheConfig.lockTemplate = lockTemplate;
             return cacheConfig;
         }
     }

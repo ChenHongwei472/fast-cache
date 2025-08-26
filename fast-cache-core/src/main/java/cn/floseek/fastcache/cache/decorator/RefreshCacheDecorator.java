@@ -60,6 +60,8 @@ public class RefreshCacheDecorator<K, V> extends CacheLoaderDecorator<K, V> {
      */
     private static final AtomicInteger THREAD_COUNT = new AtomicInteger(0);
 
+    private final LockTemplate lockTemplate;
+
     static {
         log.info("Initializing cache refresh scheduler");
         ThreadFactory threadFactory = runnable -> {
@@ -77,8 +79,9 @@ public class RefreshCacheDecorator<K, V> extends CacheLoaderDecorator<K, V> {
         }));
     }
 
-    public RefreshCacheDecorator(Cache<K, V> decoratedCache) {
+    public RefreshCacheDecorator(Cache<K, V> decoratedCache, LockTemplate lockTemplate) {
         super(decoratedCache);
+        this.lockTemplate = lockTemplate;
     }
 
     @Override
@@ -251,13 +254,6 @@ public class RefreshCacheDecorator<K, V> extends CacheLoaderDecorator<K, V> {
                     localCache.put(key, value);
                     log.debug("Synchronized from remote to local cache, key: {}", key);
                 }
-                return;
-            }
-
-            // 获取分布式锁模板
-            LockTemplate lockTemplate = config.getLockTemplate();
-            if (Objects.isNull(lockTemplate)) {
-                log.debug("Lock template not available, skipping refresh for key: {}", key);
                 return;
             }
 

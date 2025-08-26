@@ -8,6 +8,8 @@ import cn.floseek.fastcache.cache.builder.RemoteCacheBuilder;
 import cn.floseek.fastcache.cache.impl.local.CaffeineCacheBuilder;
 import cn.floseek.fastcache.cache.impl.local.GuavaCacheBuilder;
 import cn.floseek.fastcache.config.properties.FastCacheProperties;
+import cn.floseek.fastcache.lock.LockTemplate;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,13 +27,18 @@ import java.util.List;
 @EnableConfigurationProperties(FastCacheProperties.class)
 public class FastCacheAutoConfiguration {
 
+    @Resource
+    private LockTemplate lockTemplate;
+
     @Bean(destroyMethod = "close")
-    public <K, V> CacheManager cacheManager(FastCacheProperties fastCacheProperties, CacheBuilderManager<K, V> cacheBuilderManager) {
-        return new DefaultCacheManager(fastCacheProperties, cacheBuilderManager);
+    public <K, V> CacheManager cacheManager(FastCacheProperties fastCacheProperties,
+                                            CacheBuilderManager<K, V> cacheBuilderManager) {
+        return new DefaultCacheManager(fastCacheProperties, cacheBuilderManager, lockTemplate);
     }
 
     @Bean
-    public <K, V> CacheBuilderManager<K, V> cacheBuilderManager(List<LocalCacheBuilder<K, V>> localCacheBuilders, List<RemoteCacheBuilder<K, V>> remoteCacheBuilders) {
+    public <K, V> CacheBuilderManager<K, V> cacheBuilderManager(List<LocalCacheBuilder<K, V>> localCacheBuilders,
+                                                                List<RemoteCacheBuilder<K, V>> remoteCacheBuilders) {
         CacheBuilderManager<K, V> cacheBuilderManager = new CacheBuilderManager<>();
 
         // 注册本地缓存构建器

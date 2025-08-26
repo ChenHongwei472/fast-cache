@@ -13,6 +13,7 @@ import cn.floseek.fastcache.cache.decorator.CacheLoaderDecorator;
 import cn.floseek.fastcache.cache.decorator.RefreshCacheDecorator;
 import cn.floseek.fastcache.cache.impl.multi.MultiLevelCacheBuilder;
 import cn.floseek.fastcache.config.GlobalProperties;
+import cn.floseek.fastcache.lock.LockTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +33,7 @@ public class DefaultCacheManager implements CacheManager {
 
     private final GlobalProperties globalProperties;
     private final CacheBuilderManager<?, ?> cacheBuilderManager;
+    private final LockTemplate lockTemplate;
 
     /**
      * 缓存映射
@@ -43,9 +45,10 @@ public class DefaultCacheManager implements CacheManager {
      */
     private BroadcastManager broadcastManager;
 
-    public DefaultCacheManager(GlobalProperties globalProperties, CacheBuilderManager<?, ?> cacheBuilderManager) {
+    public DefaultCacheManager(GlobalProperties globalProperties, CacheBuilderManager<?, ?> cacheBuilderManager, LockTemplate lockTemplate) {
         this.globalProperties = globalProperties;
         this.cacheBuilderManager = cacheBuilderManager;
+        this.lockTemplate = lockTemplate;
 
         // 初始化广播管理器
         this.initBroadcastManager();
@@ -155,7 +158,7 @@ public class DefaultCacheManager implements CacheManager {
         if (Objects.nonNull(config.getLoader())) {
             if (Objects.nonNull(config.getRefreshPolicy())) {
                 // 添加缓存刷新装饰器
-                cache = new RefreshCacheDecorator<>(cache);
+                cache = new RefreshCacheDecorator<>(cache, lockTemplate);
             } else {
                 // 添加缓存加载器装饰器
                 cache = new CacheLoaderDecorator<>(cache);

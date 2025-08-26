@@ -50,8 +50,8 @@ public class RedissonAutoConfiguration {
     }
 
     @Bean
-    public <K, V> RemoteCacheBuilder<K, V> remoteCacheBuilder(RedissonClient redissonClient, LockTemplate lockTemplate) {
-        return new RedissonCacheBuilder<>(redissonClient, lockTemplate);
+    public <K, V> RemoteCacheBuilder<K, V> remoteCacheBuilder(RedissonClient redissonClient) {
+        return new RedissonCacheBuilder<>(redissonClient);
     }
 
     @Bean
