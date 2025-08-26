@@ -34,6 +34,11 @@ public class GlobalProperties {
          * 提供者
          */
         private LocalCacheProvider provider = LocalCacheProvider.CAFFEINE;
+
+        /**
+         * 每个实例最大容量
+         */
+        private Long maximumSize;
     }
 
     @Data
