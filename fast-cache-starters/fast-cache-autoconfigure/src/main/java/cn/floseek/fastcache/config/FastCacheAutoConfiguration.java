@@ -26,8 +26,8 @@ import java.util.List;
 public class FastCacheAutoConfiguration {
 
     @Bean(destroyMethod = "close")
-    public <K, V> CacheManager cacheManager(GlobalProperties globalProperties, CacheBuilderManager<K, V> cacheBuilderManager) {
-        return new DefaultCacheManager(globalProperties, cacheBuilderManager);
+    public <K, V> CacheManager cacheManager(FastCacheProperties fastCacheProperties, CacheBuilderManager<K, V> cacheBuilderManager) {
+        return new DefaultCacheManager(fastCacheProperties, cacheBuilderManager);
     }
 
     @Bean
@@ -45,15 +45,6 @@ public class FastCacheAutoConfiguration {
         }
 
         return cacheBuilderManager;
-    }
-
-    @Bean
-    public GlobalProperties globalProperties(FastCacheProperties fastCacheProperties) {
-        GlobalProperties globalProperties = new GlobalProperties();
-        globalProperties.setSyncLocal(fastCacheProperties.isSyncLocal());
-        globalProperties.setLocal(fastCacheProperties.getLocal());
-        globalProperties.setRemote(fastCacheProperties.getRemote());
-        return globalProperties;
     }
 
     @Bean
