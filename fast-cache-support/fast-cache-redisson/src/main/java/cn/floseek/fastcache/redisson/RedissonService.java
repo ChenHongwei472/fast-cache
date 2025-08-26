@@ -4,6 +4,7 @@ import cn.floseek.fastcache.redis.RedisService;
 import cn.floseek.fastcache.redis.SortedEntry;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.time.DurationUtils;
 import org.redisson.api.BatchResult;
 import org.redisson.api.RAtomicLong;
 import org.redisson.api.RBatch;
@@ -65,7 +66,11 @@ public class RedissonService implements RedisService {
     @Override
     public <T> void setObject(final String key, final T value, final Duration duration) {
         RBucket<T> bucket = redissonClient.getBucket(key);
-        bucket.set(value, duration);
+        if (DurationUtils.isPositive(duration)) {
+            bucket.set(value, duration);
+        } else {
+            bucket.set(value);
+        }
     }
 
     @Override
@@ -83,7 +88,11 @@ public class RedissonService implements RedisService {
         RBatch batch = redissonClient.createBatch();
         objects.forEach((key, value) -> {
             RBucketAsync<T> bucket = batch.getBucket(key);
-            bucket.setAsync(value, duration);
+            if (DurationUtils.isPositive(duration)) {
+                bucket.setAsync(value, duration);
+            } else {
+                bucket.setAsync(value);
+            }
         });
         batch.execute();
 
@@ -92,18 +101,21 @@ public class RedissonService implements RedisService {
     @Override
     public <T> boolean setObjectIfAbsent(final String key, final T value, final Duration duration) {
         RBucket<T> bucket = redissonClient.getBucket(key);
-        return bucket.setIfAbsent(value, duration);
+        if (DurationUtils.isPositive(duration)) {
+            return bucket.setIfAbsent(value, duration);
+        } else {
+            return bucket.setIfAbsent(value);
+        }
     }
 
     @Override
     public <T> boolean setObjectIfExists(final String key, final T value, final Duration duration) {
         RBucket<T> bucket = redissonClient.getBucket(key);
-        return bucket.setIfExists(value, duration);
-    }
-
-    @Override
-    public boolean expire(final String key, final long timeout) {
-        return this.expire(key, Duration.ofSeconds(timeout));
+        if (DurationUtils.isPositive(duration)) {
+            return bucket.setIfExists(value, duration);
+        } else {
+            return bucket.setIfExists(value);
+        }
     }
 
     @Override

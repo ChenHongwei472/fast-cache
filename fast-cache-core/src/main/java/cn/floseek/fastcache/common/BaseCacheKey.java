@@ -1,7 +1,6 @@
 package cn.floseek.fastcache.common;
 
 import java.time.Duration;
-import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
@@ -36,11 +35,7 @@ public interface BaseCacheKey {
      * @return 缓存过期时间
      */
     default Duration getExpireTime() {
-        Long expireTimeMillis = this.getExpireTimeMillis();
-        if (Objects.isNull(expireTimeMillis)) {
-            return null;
-        }
-        return Duration.ofMillis(expireTimeMillis);
+        return Duration.ofMillis(this.getExpireTimeMillis());
     }
 
     /**
@@ -56,11 +51,7 @@ public interface BaseCacheKey {
      * @return 本地缓存过期时间
      */
     default Duration getLocalExpireTime() {
-        Long localExpireTimeMillis = this.getLocalExpireTimeMillis();
-        if (Objects.isNull(localExpireTimeMillis)) {
-            return null;
-        }
-        return Duration.ofMillis(localExpireTimeMillis);
+        return Duration.ofMillis(this.getLocalExpireTimeMillis());
     }
 
     /**

@@ -4,6 +4,7 @@ import cn.floseek.fastcache.cache.AbstractLocalCache;
 import cn.floseek.fastcache.cache.config.CacheConfig;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import org.apache.commons.lang3.time.DurationUtils;
 
 import java.util.Collection;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class CaffeineCache<K, V> extends AbstractLocalCache<K, V> {
         if (Objects.nonNull(config.getLocalMaximumSize())) {
             caffeine.maximumSize(config.getLocalMaximumSize());
         }
-        if (Objects.nonNull(config.getLocalExpireTime())) {
+        if (Objects.nonNull(config.getLocalExpireTime()) && DurationUtils.isPositive(config.getLocalExpireTime())) {
             caffeine.expireAfterWrite(config.getLocalExpireTime());
         }
         this.cache = caffeine.build();

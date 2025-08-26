@@ -4,6 +4,7 @@ import cn.floseek.fastcache.cache.AbstractLocalCache;
 import cn.floseek.fastcache.cache.config.CacheConfig;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import org.apache.commons.lang3.time.DurationUtils;
 
 import java.util.Collection;
 import java.util.Map;
@@ -23,14 +24,14 @@ public class GuavaCache<K, V> extends AbstractLocalCache<K, V> {
     public GuavaCache(CacheConfig<K, V> config) {
         super(config);
 
-        CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder();
+        CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder();
         if (Objects.nonNull(config.getLocalMaximumSize())) {
-            cacheBuilder.maximumSize(config.getLocalMaximumSize());
+            builder.maximumSize(config.getLocalMaximumSize());
         }
-        if (Objects.nonNull(config.getLocalExpireTime())) {
-            cacheBuilder.expireAfterWrite(config.getLocalExpireTime());
+        if (Objects.nonNull(config.getLocalExpireTime()) && DurationUtils.isPositive(config.getLocalExpireTime())) {
+            builder.expireAfterWrite(config.getLocalExpireTime());
         }
-        this.cache = cacheBuilder.build();
+        this.cache = builder.build();
     }
 
     @Override

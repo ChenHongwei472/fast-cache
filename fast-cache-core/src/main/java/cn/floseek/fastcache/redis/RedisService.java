@@ -77,15 +77,6 @@ public interface RedisService {
     /**
      * 设置键的过期时间
      *
-     * @param key     键名
-     * @param timeout 过期时间，单位为秒
-     * @return boolean
-     */
-    boolean expire(final String key, final long timeout);
-
-    /**
-     * 设置键的过期时间
-     *
      * @param key      键名
      * @param duration 过期时间
      * @return boolean
