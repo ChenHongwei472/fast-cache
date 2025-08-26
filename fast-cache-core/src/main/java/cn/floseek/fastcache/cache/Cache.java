@@ -4,7 +4,9 @@ import cn.floseek.fastcache.cache.config.CacheConfig;
 import cn.floseek.fastcache.cache.config.CacheType;
 
 import java.io.Closeable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +33,17 @@ public interface Cache<K, V> extends Closeable {
      * @return 缓存值映射
      */
     Map<K, V> getAll(Collection<? extends K> keys);
+
+    /**
+     * 批量获取缓存值
+     *
+     * @param keys 缓存键集合
+     * @return 缓存值列表
+     */
+    default List<V> listAll(Collection<? extends K> keys) {
+        Map<K, V> valueMap = this.getAll(keys);
+        return new ArrayList<>(valueMap.values());
+    }
 
     /**
      * 设置缓存值
