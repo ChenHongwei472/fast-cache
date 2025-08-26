@@ -59,6 +59,11 @@ public class DefaultCacheManager implements CacheManager {
             throw new IllegalArgumentException("Cache name must not be empty");
         }
 
+        // 初始化配置参数
+        if (Objects.isNull(config.getSyncCache())) {
+            config.setSyncCache(globalProperties.isSyncCache());
+        }
+
         // 生成映射的 key
         String cacheMapKey = this.generateMapKey(config.getCacheType(), cacheName);
 
@@ -208,7 +213,7 @@ public class DefaultCacheManager implements CacheManager {
      */
     private <K, V> void initBroadcastManager(CacheConfig<K, V> config) {
         // 检查是否启用缓存同步
-        if (!config.isSyncCache()) {
+        if (!config.getSyncCache()) {
             log.debug("Cache sync is disabled, skip init BroadcastManager");
             config.setBroadcastManager(null);
             return;

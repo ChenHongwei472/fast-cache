@@ -53,7 +53,7 @@ public class CacheConfig<K, V> implements Serializable {
     /**
      * 是否同步缓存
      */
-    private boolean syncCache = false;
+    private Boolean syncCache;
 
     /**
      * 缓存刷新策略
@@ -131,7 +131,7 @@ public class CacheConfig<K, V> implements Serializable {
         /**
          * 是否同步缓存
          */
-        private boolean syncCache = false;
+        private Boolean syncCache;
 
         /**
          * 缓存刷新策略
@@ -193,7 +193,7 @@ public class CacheConfig<K, V> implements Serializable {
             return this;
         }
 
-        public CacheConfigBuilder<K, V> syncCache(boolean syncCache) {
+        public CacheConfigBuilder<K, V> syncCache(Boolean syncCache) {
             this.syncCache = syncCache;
             return this;
         }

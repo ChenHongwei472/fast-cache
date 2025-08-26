@@ -131,7 +131,7 @@ public class RefreshCacheDecorator<K, V> extends CacheLoaderDecorator<K, V> {
         }
 
         RefreshTask refreshTask = refreshTaskMap.computeIfAbsent(key, obj -> {
-            log.debug("Adding cache refresh task for key: {}, interval: {}ms", key, refreshMillis);
+            log.debug("Adding cache refresh task for key: {}, interval: {} ms", key, refreshMillis);
             RefreshTask task = new RefreshTask(key);
             task.lastAccessTime = System.currentTimeMillis();
             task.future = SCHEDULER.scheduleWithFixedDelay(task, refreshMillis, refreshMillis, TimeUnit.MILLISECONDS);
