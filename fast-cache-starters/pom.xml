@@ -14,7 +14,7 @@
 
     <modules>
         <module>fast-cache-autoconfigure</module>
-        <module>fast-cache-spring-boot-starter</module>
+        <module>fast-cache-redisson-spring-boot-starter</module>
     </modules>
 
 </project>
