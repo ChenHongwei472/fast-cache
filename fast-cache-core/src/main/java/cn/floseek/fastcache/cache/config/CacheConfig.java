@@ -1,6 +1,5 @@
 package cn.floseek.fastcache.cache.config;
 
-import cn.floseek.fastcache.cache.broadcast.BroadcastManager;
 import cn.floseek.fastcache.lock.LockTemplate;
 import lombok.Getter;
 import lombok.Setter;
@@ -64,11 +63,6 @@ public class CacheConfig<K, V> implements Serializable {
      * 缓存加载器
      */
     private CacheLoader<K, V> loader;
-
-    /**
-     * 广播管理器
-     */
-    private BroadcastManager broadcastManager;
 
     /**
      * 分布式锁模板
@@ -144,11 +138,6 @@ public class CacheConfig<K, V> implements Serializable {
         private CacheLoader<K, V> loader;
 
         /**
-         * 广播管理器
-         */
-        private BroadcastManager broadcastManager;
-
-        /**
          * 分布式锁模板
          */
         private LockTemplate lockTemplate;
@@ -208,11 +197,6 @@ public class CacheConfig<K, V> implements Serializable {
             return this;
         }
 
-        public CacheConfigBuilder<K, V> broadcastManager(BroadcastManager broadcastManager) {
-            this.broadcastManager = broadcastManager;
-            return this;
-        }
-
         public CacheConfigBuilder<K, V> lockTemplate(LockTemplate lockTemplate) {
             this.lockTemplate = lockTemplate;
             return this;
@@ -228,7 +212,6 @@ public class CacheConfig<K, V> implements Serializable {
             cacheConfig.syncLocal = syncLocal;
             cacheConfig.refreshPolicy = refreshPolicy;
             cacheConfig.loader = loader;
-            cacheConfig.broadcastManager = broadcastManager;
             cacheConfig.lockTemplate = lockTemplate;
             return cacheConfig;
         }

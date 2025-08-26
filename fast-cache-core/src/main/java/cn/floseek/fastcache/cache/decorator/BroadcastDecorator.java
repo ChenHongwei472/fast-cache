@@ -25,8 +25,11 @@ import java.util.Map;
 @Slf4j
 public class BroadcastDecorator<K, V> extends CacheDecorator<K, V> {
 
-    public BroadcastDecorator(Cache<K, V> decoratedCache) {
+    private final BroadcastManager broadcastManager;
+
+    public BroadcastDecorator(Cache<K, V> decoratedCache, BroadcastManager broadcastManager) {
         super(decoratedCache);
+        this.broadcastManager = broadcastManager;
     }
 
     @Override
@@ -69,7 +72,6 @@ public class BroadcastDecorator<K, V> extends CacheDecorator<K, V> {
      */
     private void broadcast(Collection<? extends K> keys) {
         CacheConfig<K, V> config = getConfig();
-        BroadcastManager broadcastManager = config.getBroadcastManager();
 
         // 参数校验
         if (CollectionUtils.isEmpty(keys)) {

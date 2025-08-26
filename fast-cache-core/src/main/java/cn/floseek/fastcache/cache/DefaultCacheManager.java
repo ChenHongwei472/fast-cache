@@ -46,6 +46,9 @@ public class DefaultCacheManager implements CacheManager {
     public DefaultCacheManager(GlobalProperties globalProperties, CacheBuilderManager<?, ?> cacheBuilderManager) {
         this.globalProperties = globalProperties;
         this.cacheBuilderManager = cacheBuilderManager;
+
+        // 初始化广播管理器
+        this.initBroadcastManager();
     }
 
     @Override
@@ -78,9 +81,6 @@ public class DefaultCacheManager implements CacheManager {
                 }
             }
         }
-
-        // 初始化广播管理器
-        this.initBroadcastManager(config);
         return cache;
     }
 
@@ -163,7 +163,7 @@ public class DefaultCacheManager implements CacheManager {
         }
 
         // 添加广播装饰器
-        return new BroadcastDecorator<>(cache);
+        return new BroadcastDecorator<>(cache, broadcastManager);
     }
 
     /**
@@ -206,44 +206,26 @@ public class DefaultCacheManager implements CacheManager {
 
     /**
      * 初始化广播管理器
-     *
-     * @param config 缓存配置
-     * @param <K>    缓存键类型
-     * @param <V>    缓存值类型
      */
-    private <K, V> void initBroadcastManager(CacheConfig<K, V> config) {
-        // 检查是否启用本地缓存同步
-        if (!config.getSyncLocal()) {
-            log.debug("Local cache sync is disabled, skip init BroadcastManager");
-            config.setBroadcastManager(null);
+    private void initBroadcastManager() {
+        log.info("Initializing and subscribing broadcast manager");
+        RemoteCacheProvider provider = globalProperties.getRemote().getProvider();
+        RemoteCacheBuilder<?, ?> builder = cacheBuilderManager.getRemoteCacheBuilder(provider);
+
+        if (builder == null) {
+            log.warn("Remote cache builder not found for provider: {}", provider);
             return;
         }
 
-        // 检查是否配置广播管理器
-        if (config.getBroadcastManager() == null) {
-            log.info("BroadcastManager not configured, starting to create BroadcastManager");
-            RemoteCacheProvider provider = globalProperties.getRemote().getProvider();
-            RemoteCacheBuilder<K, V> builder = (RemoteCacheBuilder<K, V>) cacheBuilderManager.getRemoteCacheBuilder(provider);
-            if (builder == null) {
-                log.warn("Remote cache builder not available, skip init BroadcastManager");
-                return;
-            }
-
-            if (!builder.supportBroadcast()) {
-                log.debug("RemoteCacheBuilder not support broadcast, init BroadcastManager");
-                return;
-            }
-
-            broadcastManager = builder.createBroadcastManager(this);
-            config.setBroadcastManager(broadcastManager);
-            log.info("BroadcastManager has been successfully created");
-        } else {
-            log.info("BroadcastManager configured, using existing instance");
-            broadcastManager = config.getBroadcastManager();
+        if (!builder.supportBroadcast()) {
+            log.debug("Broadcast not supported by provider: {}", provider);
+            return;
         }
 
-        // 订阅消息
+        broadcastManager = builder.createBroadcastManager(this);
+
+        // 订阅广播频道
         broadcastManager.subscribe();
-        log.info("Initialized and subscribed BroadcastManager");
+        log.info("Broadcast manager initialized and subscribed");
     }
 }
