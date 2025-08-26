@@ -51,9 +51,9 @@ public class CacheConfig<K, V> implements Serializable {
     private Long localMaximumSize;
 
     /**
-     * 是否同步缓存
+     * 是否同步本地缓存
      */
-    private Boolean syncCache;
+    private Boolean syncLocal;
 
     /**
      * 缓存刷新策略
@@ -129,9 +129,9 @@ public class CacheConfig<K, V> implements Serializable {
         private Long localMaximumSize;
 
         /**
-         * 是否同步缓存
+         * 是否同步本地缓存
          */
-        private Boolean syncCache;
+        private Boolean syncLocal;
 
         /**
          * 缓存刷新策略
@@ -193,8 +193,8 @@ public class CacheConfig<K, V> implements Serializable {
             return this;
         }
 
-        public CacheConfigBuilder<K, V> syncCache(Boolean syncCache) {
-            this.syncCache = syncCache;
+        public CacheConfigBuilder<K, V> syncLocal(Boolean syncLocal) {
+            this.syncLocal = syncLocal;
             return this;
         }
 
@@ -225,7 +225,7 @@ public class CacheConfig<K, V> implements Serializable {
             cacheConfig.expireTime = expireTime;
             cacheConfig.localExpireTime = localExpireTime;
             cacheConfig.localMaximumSize = localMaximumSize;
-            cacheConfig.syncCache = syncCache;
+            cacheConfig.syncLocal = syncLocal;
             cacheConfig.refreshPolicy = refreshPolicy;
             cacheConfig.loader = loader;
             cacheConfig.broadcastManager = broadcastManager;

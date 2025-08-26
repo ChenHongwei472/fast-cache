@@ -3,7 +3,7 @@ package cn.floseek.fastcache.cache.broadcast;
 /**
  * 广播管理器接口
  * <p>
- * 定义了缓存广播功能的核心方法，用于在分布式环境中同步缓存数据
+ * 定义了缓存广播功能的核心方法，用于在分布式环境中同步本地缓存数据
  * </p>
  *
  * @author ChenHongwei472

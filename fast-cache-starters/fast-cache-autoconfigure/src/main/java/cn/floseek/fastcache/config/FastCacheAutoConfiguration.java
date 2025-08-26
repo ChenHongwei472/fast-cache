@@ -50,7 +50,7 @@ public class FastCacheAutoConfiguration {
     @Bean
     public GlobalProperties globalProperties(FastCacheProperties fastCacheProperties) {
         GlobalProperties globalProperties = new GlobalProperties();
-        globalProperties.setSyncCache(fastCacheProperties.isSyncCache());
+        globalProperties.setSyncLocal(fastCacheProperties.isSyncLocal());
         globalProperties.setLocal(fastCacheProperties.getLocal());
         globalProperties.setRemote(fastCacheProperties.getRemote());
         return globalProperties;

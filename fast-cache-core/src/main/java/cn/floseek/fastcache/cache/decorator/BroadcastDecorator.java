@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * 广播装饰器
  * <p>
- * 为缓存实例添加广播功能，用于实现分布式环境下的缓存同步
+ * 为缓存实例添加广播功能，用于实现分布式环境下的本地缓存数据同步
  * </p>
  *
  * @param <K> 缓存键类型
@@ -76,8 +76,8 @@ public class BroadcastDecorator<K, V> extends CacheDecorator<K, V> {
             log.debug("Skip broadcast for empty key set");
             return;
         }
-        if (!config.getSyncCache()) {
-            log.debug("Cache sync is disabled, skip broadcast");
+        if (!config.getSyncLocal()) {
+            log.debug("Local cache sync is disabled, skip broadcast");
             return;
         }
         if (broadcastManager == null) {

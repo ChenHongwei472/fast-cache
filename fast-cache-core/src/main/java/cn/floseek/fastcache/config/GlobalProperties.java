@@ -13,9 +13,9 @@ import lombok.Data;
 public class GlobalProperties {
 
     /**
-     * 是否同步缓存
+     * 是否同步本地缓存
      */
-    private boolean syncCache = false;
+    private boolean syncLocal = false;
 
     /**
      * 本地缓存配置
