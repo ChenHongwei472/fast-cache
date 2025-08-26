@@ -1,8 +1,9 @@
 package cn.floseek.fastcache.redisson;
 
-import cn.floseek.fastcache.redis.SortedEntry;
 import cn.floseek.fastcache.redis.RedisService;
+import cn.floseek.fastcache.redis.SortedEntry;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.redisson.api.BatchResult;
 import org.redisson.api.RAtomicLong;
 import org.redisson.api.RBatch;
@@ -24,7 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -44,7 +44,7 @@ public class RedissonService implements RedisService {
 
     @Override
     public <T> void setObject(final String key, final T value) {
-        setObject(key, value, false);
+        this.setObject(key, value, false);
     }
 
     @Override
@@ -64,11 +64,8 @@ public class RedissonService implements RedisService {
 
     @Override
     public <T> void setObject(final String key, final T value, final Duration duration) {
-        RBatch batch = redissonClient.createBatch();
-        RBucketAsync<T> bucket = batch.getBucket(key);
-        bucket.setAsync(value);
-        bucket.expireAsync(duration);
-        batch.execute();
+        RBucket<T> bucket = redissonClient.getBucket(key);
+        bucket.set(value, duration);
     }
 
     @Override
@@ -106,22 +103,23 @@ public class RedissonService implements RedisService {
 
     @Override
     public boolean expire(final String key, final long timeout) {
-        return expire(key, Duration.ofSeconds(timeout));
+        return this.expire(key, Duration.ofSeconds(timeout));
     }
 
     @Override
     public <T> boolean expire(final String key, final Duration duration) {
-        RBucket<T> rBucket = redissonClient.getBucket(key);
-        return rBucket.expire(duration);
+        RBucket<T> bucket = redissonClient.getBucket(key);
+        return bucket.expire(duration);
     }
 
     @Override
     public <T> T getObject(final String key) {
-        RBucket<T> rBucket = redissonClient.getBucket(key);
-        return rBucket.get();
+        RBucket<T> bucket = redissonClient.getBucket(key);
+        return bucket.get();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> List<T> getObjects(final Collection<String> keys) {
         RBatch batch = redissonClient.createBatch();
         keys.forEach(key -> batch.getBucket(key).getAsync());
@@ -133,8 +131,8 @@ public class RedissonService implements RedisService {
 
     @Override
     public <T> long getTimeToLive(final String key) {
-        RBucket<T> rBucket = redissonClient.getBucket(key);
-        return rBucket.remainTimeToLive();
+        RBucket<T> bucket = redissonClient.getBucket(key);
+        return bucket.remainTimeToLive();
     }
 
     @Override
@@ -156,44 +154,44 @@ public class RedissonService implements RedisService {
 
     @Override
     public <T> boolean setList(final String key, final List<T> dataList) {
-        RList<T> rList = redissonClient.getList(key);
-        return rList.addAll(dataList);
+        RList<T> list = redissonClient.getList(key);
+        return list.addAll(dataList);
     }
 
     @Override
     public <T> boolean addList(final String key, final T data) {
-        RList<T> rList = redissonClient.getList(key);
-        return rList.add(data);
+        RList<T> list = redissonClient.getList(key);
+        return list.add(data);
     }
 
     @Override
     public <T> List<T> getList(final String key) {
-        RList<T> rList = redissonClient.getList(key);
-        return rList.readAll();
+        RList<T> list = redissonClient.getList(key);
+        return list.readAll();
     }
 
     @Override
     public <T> List<T> getListRange(final String key, int form, int to) {
-        RList<T> rList = redissonClient.getList(key);
-        return rList.range(form, to);
+        RList<T> list = redissonClient.getList(key);
+        return list.range(form, to);
     }
 
     @Override
     public <T> boolean setSet(final String key, final Set<T> dataSet) {
-        RSet<T> rSet = redissonClient.getSet(key);
-        return rSet.addAll(dataSet);
+        RSet<T> set = redissonClient.getSet(key);
+        return set.addAll(dataSet);
     }
 
     @Override
     public <T> boolean addSet(final String key, final T data) {
-        RSet<T> rSet = redissonClient.getSet(key);
-        return rSet.add(data);
+        RSet<T> set = redissonClient.getSet(key);
+        return set.add(data);
     }
 
     @Override
     public <T> Set<T> getSet(final String key) {
-        RSet<T> rSet = redissonClient.getSet(key);
-        return rSet.readAll();
+        RSet<T> set = redissonClient.getSet(key);
+        return set.readAll();
     }
 
     @Override
@@ -316,80 +314,80 @@ public class RedissonService implements RedisService {
 
     @Override
     public <K, V> void setMap(final String key, final Map<K, V> dataMap) {
-        if (Objects.nonNull(dataMap)) {
-            RMap<K, V> rMap = redissonClient.getMap(key);
-            rMap.putAll(dataMap);
+        if (MapUtils.isNotEmpty(dataMap)) {
+            RMap<K, V> map = redissonClient.getMap(key);
+            map.putAll(dataMap);
         }
     }
 
     @Override
     public <T> Map<String, T> getMap(final String key) {
-        RMap<String, T> rMap = redissonClient.getMap(key);
-        return rMap.getAll(rMap.keySet());
+        RMap<String, T> map = redissonClient.getMap(key);
+        return map.getAll(map.keySet());
     }
 
     @Override
     public <T> Set<String> getMapKeySet(final String key) {
-        RMap<String, T> rMap = redissonClient.getMap(key);
-        return rMap.keySet();
+        RMap<String, T> map = redissonClient.getMap(key);
+        return map.keySet();
     }
 
     @Override
     public <T> void setMapValue(final String key, final String hKey, final T value) {
-        RMap<String, T> rMap = redissonClient.getMap(key);
-        rMap.put(hKey, value);
+        RMap<String, T> map = redissonClient.getMap(key);
+        map.put(hKey, value);
     }
 
     @Override
     public <T> T getMapValue(final String key, final String hKey) {
-        RMap<String, T> rMap = redissonClient.getMap(key);
-        return rMap.get(hKey);
+        RMap<String, T> map = redissonClient.getMap(key);
+        return map.get(hKey);
     }
 
     @Override
     public <T> T deleteMapValue(final String key, final String hKey) {
-        RMap<String, T> rMap = redissonClient.getMap(key);
-        return rMap.remove(hKey);
+        RMap<String, T> map = redissonClient.getMap(key);
+        return map.remove(hKey);
     }
 
     @Override
     public <T> void deleteMapValue(final String key, final Set<String> hKeys) {
         RBatch batch = redissonClient.createBatch();
-        RMapAsync<String, T> rMap = batch.getMap(key);
+        RMapAsync<String, T> map = batch.getMap(key);
         for (String hKey : hKeys) {
-            rMap.removeAsync(hKey);
+            map.removeAsync(hKey);
         }
         batch.execute();
     }
 
     @Override
     public <K, V> Map<K, V> getMapValue(final String key, final Set<K> hKeys) {
-        RMap<K, V> rMap = redissonClient.getMap(key);
-        return rMap.getAll(hKeys);
+        RMap<K, V> map = redissonClient.getMap(key);
+        return map.getAll(hKeys);
     }
 
     @Override
     public void setAtomicValue(String key, long value) {
-        RAtomicLong atomic = redissonClient.getAtomicLong(key);
-        atomic.set(value);
+        RAtomicLong atomicLong = redissonClient.getAtomicLong(key);
+        atomicLong.set(value);
     }
 
     @Override
     public long getAtomicValue(String key) {
-        RAtomicLong atomic = redissonClient.getAtomicLong(key);
-        return atomic.get();
+        RAtomicLong atomicLong = redissonClient.getAtomicLong(key);
+        return atomicLong.get();
     }
 
     @Override
     public long incrementAtomicValue(String key) {
-        RAtomicLong atomic = redissonClient.getAtomicLong(key);
-        return atomic.incrementAndGet();
+        RAtomicLong atomicLong = redissonClient.getAtomicLong(key);
+        return atomicLong.incrementAndGet();
     }
 
     @Override
     public long decrementAtomicValue(String key) {
-        RAtomicLong atomic = redissonClient.getAtomicLong(key);
-        return atomic.decrementAndGet();
+        RAtomicLong atomicLong = redissonClient.getAtomicLong(key);
+        return atomicLong.decrementAndGet();
     }
 
     @Override
@@ -406,8 +404,8 @@ public class RedissonService implements RedisService {
 
     @Override
     public Boolean hasKey(String key) {
-        RKeys rKeys = redissonClient.getKeys();
-        return rKeys.countExists(key) > 0;
+        RKeys keys = redissonClient.getKeys();
+        return keys.countExists(key) > 0;
     }
 
     /**
