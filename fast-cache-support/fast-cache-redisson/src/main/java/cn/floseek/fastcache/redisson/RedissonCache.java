@@ -2,6 +2,7 @@ package cn.floseek.fastcache.redisson;
 
 import cn.floseek.fastcache.cache.AbstractRemoteCache;
 import cn.floseek.fastcache.cache.config.CacheConfig;
+import cn.floseek.fastcache.cache.serialize.Serializer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -11,6 +12,8 @@ import org.redisson.api.RBatch;
 import org.redisson.api.RBucket;
 import org.redisson.api.RBucketAsync;
 import org.redisson.api.RedissonClient;
+import org.redisson.client.codec.ByteArrayCodec;
+import org.redisson.client.codec.Codec;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -33,20 +36,23 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
 
     private final Duration expireTime;
 
+    private final Serializer serializer;
+
     public RedissonCache(CacheConfig<K, V> config, RedissonClient redissonClient) {
         super(config);
         this.redissonClient = redissonClient;
         this.expireTime = config.getExpireTime();
+        this.serializer = config.getSerializer();
     }
 
     @Override
     public V get(K key) {
-        RBucket<V> bucket = redissonClient.getBucket(this.generateCacheKey(key));
-        return bucket.get();
+        RBucket<byte[]> bucket = redissonClient.getBucket(this.generateCacheKey(key), this.getCodec());
+        byte[] bytes = bucket.get();
+        return serializer.deserialize(bytes);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Map<K, V> getAll(Collection<? extends K> keys) {
         if (CollectionUtils.isEmpty(keys)) {
             return Collections.emptyMap();
@@ -55,19 +61,19 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
         List<K> keyList = new ArrayList<>(keys);
 
         RBatch batch = redissonClient.createBatch();
-        keyList.forEach(k -> batch.getBucket(this.generateCacheKey(k)).getAsync());
+        keyList.forEach(key -> batch.getBucket(this.generateCacheKey(key), this.getCodec()).getAsync());
         BatchResult<?> batchResult = batch.execute();
 
-        List<V> objectList = batchResult.getResponses().stream()
-                .map(response -> (V) response)
+        List<byte[]> objectList = batchResult.getResponses().stream()
+                .map(response -> (byte[]) response)
                 .toList();
 
         Map<K, V> valueMap = new HashMap<>();
         for (int i = 0; i < keyList.size(); i++) {
             K key = keyList.get(i);
-            V value = objectList.get(i);
+            byte[] value = objectList.get(i);
             if (Objects.nonNull(value)) {
-                valueMap.put(key, value);
+                valueMap.put(key, serializer.deserialize(value));
             }
         }
         return valueMap;
@@ -75,11 +81,11 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
 
     @Override
     public void put(K key, V value) {
-        RBucket<V> bucket = redissonClient.getBucket(this.generateCacheKey(key));
+        RBucket<byte[]> bucket = redissonClient.getBucket(this.generateCacheKey(key), this.getCodec());
         if (Objects.nonNull(expireTime) && DurationUtils.isPositive(expireTime)) {
-            bucket.set(value, expireTime);
+            bucket.set(serializer.serialize(value), expireTime);
         } else {
-            bucket.set(value);
+            bucket.set(serializer.serialize(value));
         }
     }
 
@@ -91,11 +97,11 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
 
         RBatch batch = redissonClient.createBatch();
         map.forEach((key, value) -> {
-            RBucketAsync<V> bucket = batch.getBucket(this.generateCacheKey(key));
+            RBucketAsync<byte[]> bucket = batch.getBucket(this.generateCacheKey(key), this.getCodec());
             if (Objects.nonNull(expireTime) && DurationUtils.isPositive(expireTime)) {
-                bucket.setAsync(value, expireTime);
+                bucket.setAsync(serializer.serialize(value), expireTime);
             } else {
-                bucket.setAsync(value);
+                bucket.setAsync(serializer.serialize(value));
             }
         });
         batch.execute();
@@ -103,7 +109,7 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
 
     @Override
     public void remove(K key) {
-        redissonClient.getBucket(this.generateCacheKey(key)).delete();
+        redissonClient.getBucket(this.generateCacheKey(key), this.getCodec()).delete();
     }
 
     @Override
@@ -113,7 +119,16 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
         }
 
         RBatch batch = redissonClient.createBatch();
-        keys.forEach(key -> redissonClient.getBucket(this.generateCacheKey(key)).deleteAsync());
+        keys.forEach(key -> redissonClient.getBucket(this.generateCacheKey(key), this.getCodec()).deleteAsync());
         batch.execute();
+    }
+
+    /**
+     * 获取编解码器
+     *
+     * @return {@link Codec}
+     */
+    private Codec getCodec() {
+        return ByteArrayCodec.INSTANCE;
     }
 }
