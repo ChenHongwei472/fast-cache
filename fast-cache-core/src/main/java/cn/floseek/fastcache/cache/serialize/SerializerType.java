@@ -1,6 +1,5 @@
-package cn.floseek.fastcache.cache.config;
+package cn.floseek.fastcache.cache.serialize;
 
-import cn.floseek.fastcache.cache.serialize.Serializer;
 import cn.floseek.fastcache.cache.serialize.impl.JavaSerializer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,7 @@ public enum SerializerType {
      */
     private final String name;
 
-    /*
+    /**
      * 序列化器
      */
     private final Serializer serializer;

@@ -2,6 +2,7 @@ package cn.floseek.fastcache.util;
 
 import cn.floseek.fastcache.common.CacheConstant;
 
+import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
@@ -20,7 +21,9 @@ public class CacheUtils {
     public static String generateKey(Object... params) {
         StringJoiner joiner = new StringJoiner(CacheConstant.COLON);
         for (Object param : params) {
-            joiner.add(String.valueOf(param));
+            if (Objects.nonNull(param)) {
+                joiner.add(String.valueOf(param));
+            }
         }
         return joiner.toString();
     }

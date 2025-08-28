@@ -29,7 +29,7 @@ public class RedissonBloomFilter extends AbstractBloomFilter {
      */
     private RBloomFilter<String> bloomFilter;
 
-    public RedissonBloomFilter(RedissonClient redissonClient, BloomFilterConfig config) {
+    public RedissonBloomFilter(BloomFilterConfig config, RedissonClient redissonClient) {
         super(config);
         this.redissonClient = redissonClient;
         this.bloomFilter = this.getBloomFilter(config.getKey());

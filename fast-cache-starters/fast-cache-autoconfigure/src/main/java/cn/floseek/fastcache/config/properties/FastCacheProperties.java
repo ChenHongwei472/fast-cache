@@ -16,9 +16,4 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class FastCacheProperties extends GlobalProperties {
 
     public static final String PREFIX = "fast-cache";
-
-    /**
-     * Key 前缀
-     */
-    private String keyPrefix;
 }

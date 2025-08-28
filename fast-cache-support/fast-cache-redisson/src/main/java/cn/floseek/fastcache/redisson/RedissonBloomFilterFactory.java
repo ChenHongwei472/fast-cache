@@ -24,7 +24,7 @@ public class RedissonBloomFilterFactory implements BloomFilterFactory {
 
     @Override
     public BloomFilter createBloomFilter(BloomFilterConfig bloomFilterConfig) {
-        return new RedissonBloomFilter(redissonClient, bloomFilterConfig);
+        return new RedissonBloomFilter(bloomFilterConfig, redissonClient);
     }
 
     @Override

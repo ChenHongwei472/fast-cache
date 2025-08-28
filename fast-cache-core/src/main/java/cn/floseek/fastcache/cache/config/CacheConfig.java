@@ -1,6 +1,9 @@
 package cn.floseek.fastcache.cache.config;
 
+import cn.floseek.fastcache.cache.converter.KeyConverter;
+import cn.floseek.fastcache.cache.converter.KeyConverterType;
 import cn.floseek.fastcache.cache.serialize.Serializer;
+import cn.floseek.fastcache.cache.serialize.SerializerType;
 import cn.floseek.fastcache.common.BaseCacheKey;
 import lombok.Getter;
 import lombok.Setter;
@@ -64,6 +67,11 @@ public class CacheConfig<K, V> implements Serializable {
      * 缓存加载器
      */
     private CacheLoader<K, V> loader;
+
+    /**
+     * 键名转换器
+     */
+    private KeyConverter keyConverter = KeyConverterType.JACKSON.getKeyConverter();
 
     /**
      * 序列器
@@ -152,7 +160,12 @@ public class CacheConfig<K, V> implements Serializable {
         private CacheLoader<K, V> loader;
 
         /**
-         * 序列器
+         * 键名转换器
+         */
+        private KeyConverter keyConverter = KeyConverterType.JACKSON.getKeyConverter();
+
+        /**
+         * 序列化器
          */
         private Serializer serializer = SerializerType.JAVA.getSerializer();
 
@@ -213,6 +226,11 @@ public class CacheConfig<K, V> implements Serializable {
             return this;
         }
 
+        public CacheConfigBuilder<K, V> keyConverter(KeyConverter keyConverter) {
+            this.keyConverter = keyConverter;
+            return this;
+        }
+
         public CacheConfigBuilder<K, V> serializer(Serializer serializer) {
             this.serializer = serializer;
             return this;
@@ -228,6 +246,7 @@ public class CacheConfig<K, V> implements Serializable {
             cacheConfig.syncLocal = syncLocal;
             cacheConfig.refreshPolicy = refreshPolicy;
             cacheConfig.loader = loader;
+            cacheConfig.keyConverter = keyConverter;
             cacheConfig.serializer = serializer;
             return cacheConfig;
         }

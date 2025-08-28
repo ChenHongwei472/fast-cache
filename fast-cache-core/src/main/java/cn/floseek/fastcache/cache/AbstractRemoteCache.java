@@ -4,6 +4,8 @@ import cn.floseek.fastcache.cache.config.CacheConfig;
 import cn.floseek.fastcache.cache.config.CacheType;
 import cn.floseek.fastcache.util.CacheUtils;
 
+import java.nio.charset.Charset;
+
 /**
  * 本地缓存抽象类
  *
@@ -23,12 +25,13 @@ public abstract class AbstractRemoteCache<K, V> extends AbstractCache<K, V> {
     }
 
     /**
-     * 生成分布式缓存键
+     * 构建缓存键
      *
-     * @param key 键
-     * @return 分布式缓存键
+     * @param key 缓存键
+     * @return 字节数组
      */
-    public String generateCacheKey(K key) {
-        return CacheUtils.generateKey(config.getCacheName(), key.toString());
+    public byte[] buildCacheKey(K key) {
+        String cacheKey = CacheUtils.generateKey(config.getCacheName(), config.getKeyConverter().convert(key));
+        return cacheKey.getBytes(Charset.defaultCharset());
     }
 }
