@@ -20,6 +20,7 @@
         <module>fast-cache-core</module>
         <module>fast-cache-starters</module>
         <module>fast-cache-support</module>
+        <module>fast-cache-test</module>
     </modules>
 
     <properties>

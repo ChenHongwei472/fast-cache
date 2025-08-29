@@ -15,11 +15,13 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 /**
  * Jackson 序列化器
@@ -64,6 +66,10 @@ public class JacksonSerializer implements Serializer {
 
     @Override
     public <T> byte[] serialize(T object) {
+        if (Objects.isNull(object)) {
+            return new byte[0];
+        }
+
         try {
             return objectMapper.writeValueAsBytes(object);
         } catch (Exception e) {
@@ -73,6 +79,10 @@ public class JacksonSerializer implements Serializer {
 
     @Override
     public <T> T deserialize(byte[] bytes) {
+        if (ArrayUtils.isEmpty(bytes)) {
+            return null;
+        }
+
         try {
             return objectMapper.readValue(bytes, new TypeReference<>() {
             });
