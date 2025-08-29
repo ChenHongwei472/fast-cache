@@ -1,7 +1,7 @@
-package cn.floseek.fastcache.cache.serialize;
+package cn.floseek.fastcache.cache.serializer;
 
-import cn.floseek.fastcache.cache.serialize.impl.JacksonSerializer;
-import cn.floseek.fastcache.cache.serialize.impl.JavaSerializer;
+import cn.floseek.fastcache.cache.serializer.impl.JacksonSerializer;
+import cn.floseek.fastcache.cache.serializer.impl.JavaSerializer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

@@ -1,8 +1,8 @@
 package cn.floseek.fastcache.test.cache.serialize;
 
-import cn.floseek.fastcache.cache.serialize.Serializer;
-import cn.floseek.fastcache.cache.serialize.impl.JacksonSerializer;
-import cn.floseek.fastcache.cache.serialize.impl.JavaSerializer;
+import cn.floseek.fastcache.cache.serializer.Serializer;
+import cn.floseek.fastcache.cache.serializer.impl.JacksonSerializer;
+import cn.floseek.fastcache.cache.serializer.impl.JavaSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 

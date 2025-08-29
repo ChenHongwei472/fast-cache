@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.cache.config;
 
 import cn.floseek.fastcache.cache.converter.KeyConverter;
-import cn.floseek.fastcache.cache.serialize.Serializer;
+import cn.floseek.fastcache.cache.serializer.Serializer;
 import cn.floseek.fastcache.common.BaseCacheKey;
 import lombok.Getter;
 import lombok.Setter;

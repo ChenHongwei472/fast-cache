@@ -1,6 +1,6 @@
-package cn.floseek.fastcache.cache.serialize.impl;
+package cn.floseek.fastcache.cache.serializer.impl;
 
-import cn.floseek.fastcache.cache.serialize.Serializer;
+import cn.floseek.fastcache.cache.serializer.Serializer;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;

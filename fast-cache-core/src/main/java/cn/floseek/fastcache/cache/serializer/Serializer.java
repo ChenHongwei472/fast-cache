@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.cache.serialize;
+package cn.floseek.fastcache.cache.serializer;
 
 /**
  * 序列化器接口

@@ -1,6 +1,6 @@
-package cn.floseek.fastcache.cache.serialize.impl;
+package cn.floseek.fastcache.cache.serializer.impl;
 
-import cn.floseek.fastcache.cache.serialize.Serializer;
+import cn.floseek.fastcache.cache.serializer.Serializer;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.ByteArrayInputStream;
