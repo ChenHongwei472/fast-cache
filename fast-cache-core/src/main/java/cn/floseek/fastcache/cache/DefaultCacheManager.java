@@ -72,6 +72,12 @@ public class DefaultCacheManager implements CacheManager {
         if (Objects.isNull(config.getLocalMaximumSize())) {
             config.setLocalMaximumSize(globalProperties.getLocal().getMaximumSize());
         }
+        if (Objects.isNull(config.getKeyConverter())) {
+            config.setKeyConverter(globalProperties.getRemote().getKeyConverter().getKeyConverter());
+        }
+        if (Objects.isNull(config.getSerializer())) {
+            config.setSerializer(globalProperties.getRemote().getSerializer().getSerializer());
+        }
 
         // 生成映射的 key
         String cacheMapKey = this.generateMapKey(config.getCacheType(), cacheName);

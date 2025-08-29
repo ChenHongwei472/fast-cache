@@ -2,6 +2,8 @@ package cn.floseek.fastcache.config;
 
 import cn.floseek.fastcache.cache.config.LocalCacheProvider;
 import cn.floseek.fastcache.cache.config.RemoteCacheProvider;
+import cn.floseek.fastcache.cache.converter.KeyConverterType;
+import cn.floseek.fastcache.cache.serialize.SerializerType;
 import lombok.Data;
 
 /**
@@ -53,5 +55,15 @@ public class GlobalProperties {
          * 广播频道
          */
         private String broadcastChannel = "default_broadcast_channel";
+
+        /**
+         * 键名转换器
+         */
+        private KeyConverterType keyConverter = KeyConverterType.JACKSON;
+
+        /**
+         * 序列化器
+         */
+        private SerializerType serializer = SerializerType.JAVA;
     }
 }

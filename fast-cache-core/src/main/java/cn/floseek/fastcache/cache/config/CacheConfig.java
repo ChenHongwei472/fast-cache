@@ -1,9 +1,7 @@
 package cn.floseek.fastcache.cache.config;
 
 import cn.floseek.fastcache.cache.converter.KeyConverter;
-import cn.floseek.fastcache.cache.converter.KeyConverterType;
 import cn.floseek.fastcache.cache.serialize.Serializer;
-import cn.floseek.fastcache.cache.serialize.SerializerType;
 import cn.floseek.fastcache.common.BaseCacheKey;
 import lombok.Getter;
 import lombok.Setter;
@@ -71,12 +69,12 @@ public class CacheConfig<K, V> implements Serializable {
     /**
      * 键名转换器
      */
-    private KeyConverter keyConverter = KeyConverterType.JACKSON.getKeyConverter();
+    private KeyConverter keyConverter;
 
     /**
      * 序列器
      */
-    private Serializer serializer = SerializerType.JAVA.getSerializer();
+    private Serializer serializer;
 
     /**
      * 创建缓存配置
@@ -162,12 +160,12 @@ public class CacheConfig<K, V> implements Serializable {
         /**
          * 键名转换器
          */
-        private KeyConverter keyConverter = KeyConverterType.JACKSON.getKeyConverter();
+        private KeyConverter keyConverter;
 
         /**
          * 序列化器
          */
-        private Serializer serializer = SerializerType.JAVA.getSerializer();
+        private Serializer serializer;
 
         public CacheConfigBuilder(String cacheName) {
             Objects.requireNonNull(cacheName);
