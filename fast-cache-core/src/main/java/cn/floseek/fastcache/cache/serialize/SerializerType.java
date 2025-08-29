@@ -1,5 +1,6 @@
 package cn.floseek.fastcache.cache.serialize;
 
+import cn.floseek.fastcache.cache.serialize.impl.JacksonSerializer;
 import cn.floseek.fastcache.cache.serialize.impl.JavaSerializer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,11 @@ public enum SerializerType {
     /**
      * Java 序列化器
      */
-    JAVA("java", new JavaSerializer());
+    JAVA("java", new JavaSerializer()),
+    /**
+     * Jackson 序列化器
+     */
+    JACKSON("jackson", new JacksonSerializer());
 
     /**
      * 名称
