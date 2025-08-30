@@ -67,16 +67,16 @@ public class DefaultCacheManager implements CacheManager {
 
         // 初始化配置参数
         if (Objects.isNull(config.getSyncLocal())) {
-            config.setSyncLocal(globalProperties.isSyncLocal());
+            config.syncLocal(globalProperties.isSyncLocal());
         }
         if (Objects.isNull(config.getLocalMaximumSize())) {
-            config.setLocalMaximumSize(globalProperties.getLocal().getMaximumSize());
+            config.localMaximumSize(globalProperties.getLocal().getMaximumSize());
         }
         if (Objects.isNull(config.getKeyConverter())) {
-            config.setKeyConverter(globalProperties.getRemote().getKeyConverter().getKeyConverter());
+            config.keyConverter(globalProperties.getRemote().getKeyConverter().getKeyConverter());
         }
         if (Objects.isNull(config.getSerializer())) {
-            config.setSerializer(globalProperties.getRemote().getSerializer().getSerializer());
+            config.serializer(globalProperties.getRemote().getSerializer().getSerializer());
         }
 
         // 生成映射的 key

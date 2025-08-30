@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.cache.config;
 
 import lombok.Getter;
-import lombok.Setter;
+import lombok.ToString;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  * @author ChenHongwei472
  */
 @Getter
-@Setter
+@ToString
 public class RefreshPolicy {
 
     /**
@@ -36,7 +36,7 @@ public class RefreshPolicy {
      * @param duration 刷新间隔时间
      * @return 缓存刷新策略
      */
-    public static RefreshPolicy newBuilder(Duration duration) {
+    public static RefreshPolicy newPolicy(Duration duration) {
         RefreshPolicy refreshPolicy = new RefreshPolicy();
         refreshPolicy.refreshMillis = duration.toMillis();
         return refreshPolicy;
@@ -49,7 +49,7 @@ public class RefreshPolicy {
      * @param timeUnit 时间单位
      * @return 缓存刷新策略
      */
-    public static RefreshPolicy newBuilder(long time, TimeUnit timeUnit) {
+    public static RefreshPolicy newPolicy(long time, TimeUnit timeUnit) {
         RefreshPolicy refreshPolicy = new RefreshPolicy();
         refreshPolicy.refreshMillis = timeUnit.toMillis(time);
         return refreshPolicy;
