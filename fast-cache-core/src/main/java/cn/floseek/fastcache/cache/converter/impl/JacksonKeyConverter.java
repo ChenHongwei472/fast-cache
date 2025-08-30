@@ -21,8 +21,10 @@ public class JacksonKeyConverter implements KeyConverter {
             return null;
         }
 
-        if (originalKey instanceof Character) {
-            return originalKey.toString();
+        if (originalKey instanceof String string) {
+            return string;
+        } else if (originalKey instanceof Character character) {
+            return character.toString();
         }
 
         try {
