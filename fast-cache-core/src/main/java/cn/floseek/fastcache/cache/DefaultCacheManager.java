@@ -52,8 +52,6 @@ public class DefaultCacheManager implements CacheManager {
 
         // 初始化广播管理器
         this.initBroadcastManager();
-        // 订阅广播频道
-        this.subscribeBroadcast(globalProperties.getSyncStrategy());
     }
 
     @Override
@@ -231,7 +229,7 @@ public class DefaultCacheManager implements CacheManager {
      * 初始化广播管理器
      */
     private void initBroadcastManager() {
-        log.info("Initializing broadcast manager");
+        log.info("Initializing and subscribing broadcast manager");
         RemoteCacheProvider provider = globalProperties.getRemote().getProvider();
         RemoteCacheBuilder<?, ?> builder = cacheBuilderManager.getRemoteCacheBuilder(provider);
 
@@ -246,7 +244,13 @@ public class DefaultCacheManager implements CacheManager {
         }
 
         broadcastManager = builder.createBroadcastManager(this);
-        log.info("Broadcast manager initialized");
+        if (globalProperties.getSyncStrategy() == SyncStrategy.NONE) {
+            log.info("Broadcast manager initialized, skip subscribe broadcast");
+            return;
+        }
+
+        broadcastManager.subscribe();
+        log.info("Broadcast manager initialized and subscribed");
     }
 
     /**
@@ -265,5 +269,6 @@ public class DefaultCacheManager implements CacheManager {
             return;
         }
         broadcastManager.subscribe();
+        log.info("Broadcast manager subscribed");
     }
 }
