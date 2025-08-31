@@ -92,8 +92,13 @@ public abstract class AbstractBroadcastManager implements BroadcastManager {
             localCache = multiLevelCache.getLocalCache();
         }
 
-        // 清理本地缓存
-        localCache.removeAll(broadcastMessage.getKeys());
-        log.info("Clear local cache success, cacheName: {}, keys: {}", broadcastMessage.getCacheName(), broadcastMessage.getKeys());
+        // 同步本地缓存数据
+        if (broadcastMessage.isInvalidate()) {
+            localCache.removeAll(broadcastMessage.getKeys());
+            log.info("Invalidate local cache success, cacheName: {}, keys: {}", broadcastMessage.getCacheName(), broadcastMessage.getKeys());
+        } else if (broadcastMessage.isUpdate()) {
+            localCache.putAll(broadcastMessage.getKeyValues());
+            log.info("Update local cache success, cacheName: {}, keyValues: {}", broadcastMessage.getCacheName(), broadcastMessage.getKeyValues());
+        }
     }
 }

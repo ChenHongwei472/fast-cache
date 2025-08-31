@@ -52,9 +52,9 @@ public class CacheConfig<K, V> implements Serializable {
     private Long localMaximumSize;
 
     /**
-     * 是否同步本地缓存
+     * 缓存同步策略
      */
-    private Boolean syncLocal;
+    private SyncStrategy syncStrategy;
 
     /**
      * 缓存刷新策略
@@ -180,13 +180,13 @@ public class CacheConfig<K, V> implements Serializable {
     }
 
     /**
-     * 设置是否同步本地缓存
+     * 设置缓存同步策略
      *
-     * @param syncLocal 是否同步本地缓存
+     * @param syncStrategy 缓存同步策略
      * @return 缓存配置对象
      */
-    public CacheConfig<K, V> syncLocal(Boolean syncLocal) {
-        this.syncLocal = syncLocal;
+    public CacheConfig<K, V> syncStrategy(SyncStrategy syncStrategy) {
+        this.syncStrategy = syncStrategy;
         return this;
     }
 

@@ -2,6 +2,7 @@ package cn.floseek.fastcache.config;
 
 import cn.floseek.fastcache.cache.config.LocalCacheProvider;
 import cn.floseek.fastcache.cache.config.RemoteCacheProvider;
+import cn.floseek.fastcache.cache.config.SyncStrategy;
 import cn.floseek.fastcache.cache.converter.KeyConverterType;
 import cn.floseek.fastcache.cache.serializer.SerializerType;
 import lombok.Data;
@@ -15,9 +16,9 @@ import lombok.Data;
 public class GlobalProperties {
 
     /**
-     * 是否同步本地缓存
+     * 缓存同步策略
      */
-    private boolean syncLocal = false;
+    private SyncStrategy syncStrategy = SyncStrategy.NONE;
 
     /**
      * 本地缓存配置

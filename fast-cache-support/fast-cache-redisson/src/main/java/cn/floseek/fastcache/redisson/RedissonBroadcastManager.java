@@ -47,7 +47,7 @@ public class RedissonBroadcastManager extends AbstractBroadcastManager {
         try {
             if (StringUtils.isNotBlank(this.channel) && ObjectUtils.isNotEmpty(broadcastMessage)) {
                 this.redissonClient.getTopic(this.channel).publish(broadcastMessage);
-                log.debug("Broadcast message published successfully, channel: {}", this.channel);
+                log.debug("Broadcast message published success, channel: {}", this.channel);
             }
         } catch (Throwable e) {
             log.error("Failed to publish broadcast message, channel: {}", this.channel, e);

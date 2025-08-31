@@ -66,8 +66,8 @@ public class DefaultCacheManager implements CacheManager {
         }
 
         // 初始化配置参数
-        if (Objects.isNull(config.getSyncLocal())) {
-            config.syncLocal(globalProperties.isSyncLocal());
+        if (Objects.isNull(config.getSyncStrategy())) {
+            config.syncStrategy(globalProperties.getSyncStrategy());
         }
         if (Objects.isNull(config.getLocalMaximumSize())) {
             config.localMaximumSize(globalProperties.getLocal().getMaximumSize());
