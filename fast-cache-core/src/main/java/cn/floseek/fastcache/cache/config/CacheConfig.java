@@ -250,6 +250,15 @@ public class CacheConfig<K, V> implements Serializable {
     }
 
     /**
+     * 是否启用缓存同步
+     *
+     * @return boolean
+     */
+    public boolean isSyncEnabled() {
+        return this.syncStrategy != SyncStrategy.NONE;
+    }
+
+    /**
      * 是否启用缓存加载器
      *
      * @return boolean

@@ -86,4 +86,9 @@ public class RedissonBroadcastManager extends AbstractBroadcastManager {
             reentrantLock.unlock();
         }
     }
+
+    @Override
+    public boolean isSubscribed() {
+        return this.subscribeId != UNSUBSCRIBED;
+    }
 }

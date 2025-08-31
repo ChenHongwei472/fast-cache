@@ -28,6 +28,13 @@ public interface BroadcastManager {
     void close();
 
     /**
+     * 是否订阅广播频道
+     *
+     * @return boolean
+     */
+    boolean isSubscribed();
+
+    /**
      * 获取当前实例 ID
      *
      * @return 实例 ID

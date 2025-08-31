@@ -8,6 +8,7 @@ import cn.floseek.fastcache.cache.config.CacheConfig;
 import cn.floseek.fastcache.cache.config.CacheType;
 import cn.floseek.fastcache.cache.config.LocalCacheProvider;
 import cn.floseek.fastcache.cache.config.RemoteCacheProvider;
+import cn.floseek.fastcache.cache.config.SyncStrategy;
 import cn.floseek.fastcache.cache.decorator.BroadcastDecorator;
 import cn.floseek.fastcache.cache.decorator.CacheLoaderDecorator;
 import cn.floseek.fastcache.cache.decorator.RefreshCacheDecorator;
@@ -31,19 +32,18 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings("unchecked")
 public class DefaultCacheManager implements CacheManager {
 
-    private final GlobalProperties globalProperties;
-    private final CacheBuilderManager<?, ?> cacheBuilderManager;
-    private final LockTemplate lockTemplate;
-
     /**
      * 缓存映射
      */
     private final Map<String, Cache<?, ?>> cacheMap = new ConcurrentHashMap<>();
 
-    /**
-     * 广播管理器
-     */
+    private GlobalProperties globalProperties;
+    private CacheBuilderManager<?, ?> cacheBuilderManager;
+    private LockTemplate lockTemplate;
     private BroadcastManager broadcastManager;
+
+    private DefaultCacheManager() {
+    }
 
     public DefaultCacheManager(GlobalProperties globalProperties, CacheBuilderManager<?, ?> cacheBuilderManager, LockTemplate lockTemplate) {
         this.globalProperties = globalProperties;
@@ -52,6 +52,8 @@ public class DefaultCacheManager implements CacheManager {
 
         // 初始化广播管理器
         this.initBroadcastManager();
+        // 订阅广播频道
+        this.subscribeBroadcast(globalProperties.getSyncStrategy());
     }
 
     @Override
@@ -93,6 +95,11 @@ public class DefaultCacheManager implements CacheManager {
                 }
             }
         }
+
+        // 订阅广播频道
+        if (config.isSyncEnabled() && Objects.nonNull(broadcastManager) && !broadcastManager.isSubscribed()) {
+            this.subscribeBroadcast(config.getSyncStrategy());
+        }
         return cache;
     }
 
@@ -113,7 +120,7 @@ public class DefaultCacheManager implements CacheManager {
             try {
                 broadcastManager.close();
             } catch (Exception e) {
-                log.error("Closing broadcast service failed", e);
+                log.error("Closing broadcast manager failed", e);
             }
             broadcastManager = null;
         }
@@ -175,7 +182,11 @@ public class DefaultCacheManager implements CacheManager {
         }
 
         // 添加广播装饰器
-        return new BroadcastDecorator<>(cache, broadcastManager);
+        if (config.isSyncEnabled()) {
+            return new BroadcastDecorator<>(cache, broadcastManager);
+        }
+
+        return cache;
     }
 
     /**
@@ -220,7 +231,7 @@ public class DefaultCacheManager implements CacheManager {
      * 初始化广播管理器
      */
     private void initBroadcastManager() {
-        log.info("Initializing and subscribing broadcast manager");
+        log.info("Initializing broadcast manager");
         RemoteCacheProvider provider = globalProperties.getRemote().getProvider();
         RemoteCacheBuilder<?, ?> builder = cacheBuilderManager.getRemoteCacheBuilder(provider);
 
@@ -235,9 +246,24 @@ public class DefaultCacheManager implements CacheManager {
         }
 
         broadcastManager = builder.createBroadcastManager(this);
+        log.info("Broadcast manager initialized");
+    }
 
-        // 订阅广播频道
+    /**
+     * 订阅广播频道
+     *
+     * @param syncStrategy 缓存同步策略
+     */
+    private void subscribeBroadcast(SyncStrategy syncStrategy) {
+        log.info("Subscribing broadcast manager");
+        if (syncStrategy == SyncStrategy.NONE) {
+            log.debug("Sync strategy is NONE, skip subscribe broadcast");
+            return;
+        }
+        if (broadcastManager == null) {
+            log.debug("Broadcast manager not initialized, skip subscribe broadcast");
+            return;
+        }
         broadcastManager.subscribe();
-        log.info("Broadcast manager initialized and subscribed");
     }
 }
