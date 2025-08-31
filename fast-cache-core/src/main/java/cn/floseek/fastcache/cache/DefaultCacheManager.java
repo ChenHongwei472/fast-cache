@@ -13,6 +13,7 @@ import cn.floseek.fastcache.cache.decorator.BroadcastDecorator;
 import cn.floseek.fastcache.cache.decorator.CacheLoaderDecorator;
 import cn.floseek.fastcache.cache.decorator.RefreshCacheDecorator;
 import cn.floseek.fastcache.cache.impl.multi.MultiLevelCacheBuilder;
+import cn.floseek.fastcache.common.CacheException;
 import cn.floseek.fastcache.config.GlobalProperties;
 import cn.floseek.fastcache.lock.LockTemplate;
 import lombok.extern.slf4j.Slf4j;
@@ -58,11 +59,11 @@ public class DefaultCacheManager implements CacheManager {
     public <K, V> Cache<K, V> getOrCreateCache(CacheConfig<K, V> config) {
         // 参数校验
         if (cacheBuilderManager == null) {
-            throw new IllegalStateException("CacheBuilderManager is not initialized");
+            throw new CacheException("CacheBuilderManager is not initialized");
         }
         String cacheName = config.getCacheName();
         if (StringUtils.isBlank(cacheName)) {
-            throw new IllegalArgumentException("Cache name must not be empty");
+            throw new CacheException("Cache name must not be empty");
         }
 
         // 初始化配置参数
@@ -200,7 +201,7 @@ public class DefaultCacheManager implements CacheManager {
         LocalCacheBuilder<K, V> builder = (LocalCacheBuilder<K, V>) cacheBuilderManager.getLocalCacheBuilder(provider);
 
         if (builder == null) {
-            throw new IllegalArgumentException("LocalCacheBuilder not found for provider: " + provider);
+            throw new CacheException("LocalCacheBuilder not found for provider: " + provider);
         }
 
         return builder.build(config);
@@ -219,7 +220,7 @@ public class DefaultCacheManager implements CacheManager {
         RemoteCacheBuilder<K, V> builder = (RemoteCacheBuilder<K, V>) cacheBuilderManager.getRemoteCacheBuilder(provider);
 
         if (builder == null) {
-            throw new IllegalArgumentException("Remote cache builder not found for provider: " + provider);
+            throw new CacheException("Remote cache builder not found for provider: " + provider);
         }
 
         return builder.build(config);

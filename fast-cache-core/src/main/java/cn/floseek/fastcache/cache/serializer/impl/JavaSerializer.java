@@ -1,6 +1,7 @@
 package cn.floseek.fastcache.cache.serializer.impl;
 
 import cn.floseek.fastcache.cache.serializer.Serializer;
+import cn.floseek.fastcache.common.CacheException;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.ByteArrayInputStream;
@@ -28,7 +29,7 @@ public class JavaSerializer implements Serializer {
             oos.writeObject(object);
             return baos.toByteArray();
         } catch (IOException e) {
-            throw new RuntimeException("Java serializer serialize error: " + e.getMessage(), e);
+            throw new CacheException("Java serializer serialize error: " + e.getMessage(), e);
         }
     }
 
@@ -43,7 +44,7 @@ public class JavaSerializer implements Serializer {
              ObjectInputStream ois = new ObjectInputStream(bais)) {
             return (T) ois.readObject();
         } catch (Exception e) {
-            throw new RuntimeException("Java serializer deserialize error: " + e.getMessage(), e);
+            throw new CacheException("Java serializer deserialize error: " + e.getMessage(), e);
         }
     }
 }

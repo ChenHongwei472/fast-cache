@@ -4,6 +4,7 @@ import cn.floseek.fastcache.bloomfilter.BloomFilterFactory;
 import cn.floseek.fastcache.bloomfilter.BloomFilterManager;
 import cn.floseek.fastcache.bloomfilter.impl.GuavaBloomFilterFactory;
 import cn.floseek.fastcache.bloomfilter.template.BloomFilterTemplate;
+import cn.floseek.fastcache.common.CacheException;
 import cn.floseek.fastcache.config.properties.BloomFilterProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,7 +32,7 @@ public class BloomFilterAutoConfiguration {
         BloomFilterFactory bloomFilterFactory = bloomFilterTemplate.get(bloomFilterProperties.getType());
         if (bloomFilterFactory == null) {
             String message = String.format("Unsupported bloom filter type: %s, please check the dependency", bloomFilterProperties.getType());
-            throw new IllegalArgumentException(message);
+            throw new CacheException(message);
         }
 
         return new BloomFilterManager(bloomFilterFactory,

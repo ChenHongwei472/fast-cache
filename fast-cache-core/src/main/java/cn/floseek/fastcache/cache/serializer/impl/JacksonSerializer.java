@@ -1,6 +1,7 @@
 package cn.floseek.fastcache.cache.serializer.impl;
 
 import cn.floseek.fastcache.cache.serializer.Serializer;
+import cn.floseek.fastcache.common.CacheException;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -73,7 +74,7 @@ public class JacksonSerializer implements Serializer {
         try {
             return objectMapper.writeValueAsBytes(object);
         } catch (Exception e) {
-            throw new RuntimeException("Jackson serializer serialize error: " + e.getMessage(), e);
+            throw new CacheException("Jackson serializer serialize error: " + e.getMessage(), e);
         }
     }
 
@@ -87,7 +88,7 @@ public class JacksonSerializer implements Serializer {
             return objectMapper.readValue(bytes, new TypeReference<>() {
             });
         } catch (Exception e) {
-            throw new RuntimeException("Jackson serializer deserialize error: " + e.getMessage(), e);
+            throw new CacheException("Jackson serializer deserialize error: " + e.getMessage(), e);
         }
     }
 }
