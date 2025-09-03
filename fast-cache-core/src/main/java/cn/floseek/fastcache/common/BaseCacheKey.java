@@ -73,7 +73,9 @@ public interface BaseCacheKey {
         StringJoiner joiner = new StringJoiner(CacheConstant.COLON);
         joiner.add(this.getName());
         for (Object param : params) {
-            joiner.add(String.valueOf(param));
+            if (Objects.nonNull(param)) {
+                joiner.add(String.valueOf(param));
+            }
         }
         return joiner.toString();
     }
