@@ -12,8 +12,4 @@ public interface CacheConstant {
      */
     String COLON = ":";
 
-    /**
-     * 永不过期
-     */
-    Long NEVER_EXPIRE = -1L;
 }
