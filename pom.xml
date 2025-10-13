@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.8</version>
+        <version>3.4.10</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>cn.floseek</groupId>
@@ -29,10 +29,10 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <redisson.version>3.45.0</redisson.version>
-        <guava.version>33.4.6-jre</guava.version>
-        <commons-lang3.version>3.18.0</commons-lang3.version>
-        <commons-collections4.version>4.4</commons-collections4.version>
+        <redisson.version>3.52.0</redisson.version>
+        <guava.version>33.5.0-jre</guava.version>
+        <commons-lang3.version>3.19.0</commons-lang3.version>
+        <commons-collections4.version>4.5.0</commons-collections4.version>
     </properties>
 
     <dependencyManagement>
