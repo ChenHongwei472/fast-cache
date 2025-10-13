@@ -3,12 +3,14 @@ package cn.floseek.fastcache.cache.serializer.impl;
 import cn.floseek.fastcache.cache.serializer.Serializer;
 import cn.floseek.fastcache.common.CacheException;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.TypeResolverBuilder;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -18,6 +20,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import org.apache.commons.lang3.ArrayUtils;
 
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -41,14 +44,6 @@ public class JacksonSerializer implements Serializer {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public JacksonSerializer() {
-        // 创建多态类型验证器
-        PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
-                .allowIfSubType(Object.class)
-                .allowIfBaseType(Object.class)
-                .build();
-        // 启用默认类型
-        objectMapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-
         // 忽略未知属性
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         // 忽略空对象
@@ -63,6 +58,40 @@ public class JacksonSerializer implements Serializer {
         javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(TIME_FORMATTER));
         javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(TIME_FORMATTER));
         objectMapper.registerModule(javaTimeModule);
+
+        // 添加类型信息
+        TypeResolverBuilder<?> typer = new ObjectMapper.DefaultTypeResolverBuilder(ObjectMapper.DefaultTyping.NON_FINAL, LaissezFaireSubTypeValidator.instance) {
+
+            @Override
+            public boolean useForType(JavaType t) {
+                if (t.isPrimitive()) {
+                    return false;
+                }
+
+                if (_appliesFor == ObjectMapper.DefaultTyping.NON_FINAL) {
+                    while (t.isArrayType()) {
+                        t = t.getContentType();
+                    }
+                    // 19-Apr-2016, tatu: ReferenceType like Optional also requires similar handling:
+                    while (t.isReferenceType()) {
+                        t = t.getReferencedType();
+                    }
+                    // to fix problem with wrong long to int conversion
+                    if (t.getRawClass() == Long.class) {
+                        return true;
+                    }
+                    if (t.getRawClass() == XMLGregorianCalendar.class) {
+                        return false;
+                    }
+                    // [databind#88] Should not apply to JSON tree models:
+                    return !t.isFinal() && !TreeNode.class.isAssignableFrom(t.getRawClass());
+                }
+                return super.useForType(t);
+            }
+        };
+        typer.init(JsonTypeInfo.Id.CLASS, null);
+        typer.inclusion(JsonTypeInfo.As.PROPERTY);
+        objectMapper.setDefaultTyping(typer);
     }
 
     @Override
@@ -91,4 +120,5 @@ public class JacksonSerializer implements Serializer {
             throw new CacheException("Jackson serializer deserialize error: " + e.getMessage(), e);
         }
     }
+
 }
