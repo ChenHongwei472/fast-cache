@@ -24,15 +24,6 @@ public interface RedisService {
     /**
      * 缓存对象
      *
-     * @param key     键名
-     * @param value   要缓存的对象
-     * @param saveTtl 是否保留 TTL 有效期
-     */
-    <T> void setObject(String key, T value, boolean saveTtl);
-
-    /**
-     * 缓存对象
-     *
      * @param key      键名
      * @param value    要缓存的对象
      * @param duration 过期时间
@@ -81,7 +72,7 @@ public interface RedisService {
      * @param duration 过期时间
      * @return boolean
      */
-    <T> boolean expire(String key, Duration duration);
+    boolean expire(String key, Duration duration);
 
     /**
      * 获取缓存的对象
@@ -106,7 +97,7 @@ public interface RedisService {
      * @param key 键名
      * @return 剩余存活时间
      */
-    <T> long getTimeToLive(String key);
+    long getTimeToLive(String key);
 
     /**
      * 删除缓存的对象
@@ -121,7 +112,7 @@ public interface RedisService {
      *
      * @param keys 键名的集合
      */
-    <T> void deleteObjects(Collection<String> keys);
+    void deleteObjects(Collection<String> keys);
 
     /**
      * 检查缓存的对象是否存在
@@ -430,74 +421,6 @@ public interface RedisService {
      * @return 条目列表
      */
     <T> List<SortedEntry<T>> getSortedSetEntryRangeReversed(String key, double startScore, double endScore, int offset, int count);
-
-    /**
-     * 缓存哈希表
-     *
-     * @param key     键名
-     * @param dataMap 要设置的键值对映射
-     */
-    <K, V> void setMap(String key, Map<K, V> dataMap);
-
-    /**
-     * 获取缓存的哈希表
-     *
-     * @param key 键名
-     * @return 键值对映射
-     */
-    <T> Map<String, T> getMap(String key);
-
-    /**
-     * 获取缓存的哈希表的所有键
-     *
-     * @param key 键名
-     * @return 键集合
-     */
-    <T> Set<String> getMapKeySet(String key);
-
-    /**
-     * 缓存哈希表中的值
-     *
-     * @param key   键名
-     * @param hKey  哈希表中的键
-     * @param value 要缓存的值
-     */
-    <T> void setMapValue(String key, String hKey, T value);
-
-    /**
-     * 获取缓存的哈希表中的值
-     *
-     * @param key  键名
-     * @param hKey 哈希表中的键
-     * @return 对应的值
-     */
-    <T> T getMapValue(String key, String hKey);
-
-    /**
-     * 删除哈希表中的键值对
-     *
-     * @param key  键名
-     * @param hKey 哈希表中的键
-     * @return 被删除的值
-     */
-    <T> T deleteMapValue(String key, String hKey);
-
-    /**
-     * 删除哈希表中的键值对
-     *
-     * @param key   键名
-     * @param hKeys 键值对映射
-     */
-    <T> void deleteMapValue(String key, Set<String> hKeys);
-
-    /**
-     * 获取缓存的哈希表中的值
-     *
-     * @param key   键名
-     * @param hKeys 要获取的哈希表键集合
-     * @return 所有键值对的 Map
-     */
-    <K, V> Map<K, V> getMapValue(String key, Set<K> hKeys);
 
     /**
      * 设置原子值

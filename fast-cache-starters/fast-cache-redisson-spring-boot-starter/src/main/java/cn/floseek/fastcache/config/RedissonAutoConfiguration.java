@@ -41,8 +41,12 @@ public class RedissonAutoConfiguration {
     }
 
     @Bean
-    public RedisService redissonService(RedissonClient redissonClient) {
-        return new RedissonServiceImpl(redissonClient);
+    public RedisService redissonService(RedissonClient redissonClient, FastCacheProperties fastCacheProperties) {
+        return new RedissonServiceImpl(
+                redissonClient,
+                fastCacheProperties.getRemote().getKeyConverter().getKeyConverter(),
+                fastCacheProperties.getRemote().getSerializer().getSerializer()
+        );
     }
 
 }
