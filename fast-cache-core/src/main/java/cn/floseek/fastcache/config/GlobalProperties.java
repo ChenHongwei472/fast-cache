@@ -4,7 +4,7 @@ import cn.floseek.fastcache.converter.KeyConverterType;
 import cn.floseek.fastcache.common.enums.LocalCacheProvider;
 import cn.floseek.fastcache.common.enums.RemoteCacheProvider;
 import cn.floseek.fastcache.common.enums.SyncStrategy;
-import cn.floseek.fastcache.serializer.SerializerType;
+import cn.floseek.fastcache.serializer.ValueSerializerType;
 import lombok.Data;
 
 /**
@@ -42,6 +42,7 @@ public class GlobalProperties {
          * 每个实例最大容量
          */
         private Long maximumSize;
+
     }
 
     @Data
@@ -63,9 +64,10 @@ public class GlobalProperties {
         private KeyConverterType keyConverter = KeyConverterType.JACKSON;
 
         /**
-         * 序列化器
+         * 值序列化器
          */
-        private SerializerType serializer = SerializerType.JAVA;
+        private ValueSerializerType serializer = ValueSerializerType.JAVA;
+
     }
 
 }

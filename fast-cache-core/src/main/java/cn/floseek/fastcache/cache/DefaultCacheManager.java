@@ -76,8 +76,8 @@ public class DefaultCacheManager implements CacheManager {
         if (Objects.isNull(config.getKeyConverter())) {
             config.keyConverter(globalProperties.getRemote().getKeyConverter().getKeyConverter());
         }
-        if (Objects.isNull(config.getSerializer())) {
-            config.serializer(globalProperties.getRemote().getSerializer().getSerializer());
+        if (Objects.isNull(config.getValueSerializer())) {
+            config.serializer(globalProperties.getRemote().getSerializer().getInstance());
         }
 
         // 生成映射的 key

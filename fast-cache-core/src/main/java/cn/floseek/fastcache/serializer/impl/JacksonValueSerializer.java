@@ -1,6 +1,6 @@
 package cn.floseek.fastcache.serializer.impl;
 
-import cn.floseek.fastcache.serializer.Serializer;
+import cn.floseek.fastcache.serializer.ValueSerializer;
 import cn.floseek.fastcache.common.exception.CacheException;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.TreeNode;
@@ -28,11 +28,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 /**
- * Jackson 序列化器
+ * Jackson 值序列化器
  *
  * @author ChenHongwei472
  */
-public class JacksonSerializer implements Serializer {
+public class JacksonValueSerializer implements ValueSerializer {
 
     public static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     public static final String DATE_PATTERN = "yyyy-MM-dd";
@@ -43,7 +43,7 @@ public class JacksonSerializer implements Serializer {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public JacksonSerializer() {
+    public JacksonValueSerializer() {
         // 忽略未知属性
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         // 忽略空对象

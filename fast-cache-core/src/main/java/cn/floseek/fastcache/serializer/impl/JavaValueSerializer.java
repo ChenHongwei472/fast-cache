@@ -1,6 +1,6 @@
 package cn.floseek.fastcache.serializer.impl;
 
-import cn.floseek.fastcache.serializer.Serializer;
+import cn.floseek.fastcache.serializer.ValueSerializer;
 import cn.floseek.fastcache.common.exception.CacheException;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -12,11 +12,11 @@ import java.io.ObjectOutputStream;
 import java.util.Objects;
 
 /**
- * Java 序列化器
+ * Java 值序列化器
  *
  * @author ChenHongwei472
  */
-public class JavaSerializer implements Serializer {
+public class JavaValueSerializer implements ValueSerializer {
 
     @Override
     public <T> byte[] serialize(T object) {

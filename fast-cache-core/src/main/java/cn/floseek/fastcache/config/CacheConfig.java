@@ -4,7 +4,7 @@ import cn.floseek.fastcache.cache.CacheLoader;
 import cn.floseek.fastcache.converter.KeyConverter;
 import cn.floseek.fastcache.common.enums.CacheType;
 import cn.floseek.fastcache.common.enums.SyncStrategy;
-import cn.floseek.fastcache.serializer.Serializer;
+import cn.floseek.fastcache.serializer.ValueSerializer;
 import cn.floseek.fastcache.common.enums.BaseCacheKeyEnum;
 import lombok.Getter;
 import lombok.ToString;
@@ -70,9 +70,9 @@ public class CacheConfig<K, V> implements Serializable {
     private KeyConverter keyConverter;
 
     /**
-     * 序列器
+     * 值序列器
      */
-    private Serializer serializer;
+    private ValueSerializer valueSerializer;
 
     /**
      * 缓存加载器
@@ -216,13 +216,13 @@ public class CacheConfig<K, V> implements Serializable {
     }
 
     /**
-     * 缓存序列化器
+     * 设置值序列化器
      *
-     * @param serializer 序列化器
+     * @param valueSerializer 值序列化器
      * @return 缓存配置对象
      */
-    public CacheConfig<K, V> serializer(Serializer serializer) {
-        this.serializer = serializer;
+    public CacheConfig<K, V> serializer(ValueSerializer valueSerializer) {
+        this.valueSerializer = valueSerializer;
         return this;
     }
 

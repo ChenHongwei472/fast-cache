@@ -2,7 +2,7 @@ package cn.floseek.fastcache.redisson;
 
 import cn.floseek.fastcache.cache.AbstractRemoteCache;
 import cn.floseek.fastcache.config.CacheConfig;
-import cn.floseek.fastcache.serializer.Serializer;
+import cn.floseek.fastcache.serializer.ValueSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -37,20 +37,20 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
 
     private final Duration expireTime;
 
-    private final Serializer serializer;
+    private final ValueSerializer valueSerializer;
 
     public RedissonCache(CacheConfig<K, V> config, RedissonClient redissonClient) {
         super(config);
         this.redissonClient = redissonClient;
         this.expireTime = config.getExpireTime();
-        this.serializer = config.getSerializer();
+        this.valueSerializer = config.getValueSerializer();
     }
 
     @Override
     public V get(K key) {
         RBucket<byte[]> bucket = redissonClient.getBucket(this.getCacheKey(key), this.getCodec());
         byte[] bytes = bucket.get();
-        return serializer.deserialize(bytes);
+        return valueSerializer.deserialize(bytes);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
             K key = keyList.get(i);
             byte[] value = objectList.get(i);
             if (Objects.nonNull(value)) {
-                valueMap.put(key, serializer.deserialize(value));
+                valueMap.put(key, valueSerializer.deserialize(value));
             }
         }
         return valueMap;
@@ -84,9 +84,9 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
     public void put(K key, V value) {
         RBucket<byte[]> bucket = redissonClient.getBucket(this.getCacheKey(key), this.getCodec());
         if (Objects.nonNull(expireTime) && DurationUtils.isPositive(expireTime)) {
-            bucket.set(serializer.serialize(value), expireTime);
+            bucket.set(valueSerializer.serialize(value), expireTime);
         } else {
-            bucket.set(serializer.serialize(value));
+            bucket.set(valueSerializer.serialize(value));
         }
     }
 
@@ -100,9 +100,9 @@ public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
         map.forEach((key, value) -> {
             RBucketAsync<byte[]> bucket = batch.getBucket(this.getCacheKey(key), this.getCodec());
             if (Objects.nonNull(expireTime) && DurationUtils.isPositive(expireTime)) {
-                bucket.setAsync(serializer.serialize(value), expireTime);
+                bucket.setAsync(valueSerializer.serialize(value), expireTime);
             } else {
-                bucket.setAsync(serializer.serialize(value));
+                bucket.setAsync(valueSerializer.serialize(value));
             }
         });
         batch.execute();

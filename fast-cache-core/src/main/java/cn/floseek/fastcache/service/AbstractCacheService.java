@@ -9,7 +9,7 @@ import cn.floseek.fastcache.common.enums.SyncStrategy;
 import cn.floseek.fastcache.config.CacheConfig;
 import cn.floseek.fastcache.config.RefreshPolicy;
 import cn.floseek.fastcache.converter.KeyConverter;
-import cn.floseek.fastcache.serializer.Serializer;
+import cn.floseek.fastcache.serializer.ValueSerializer;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.time.Duration;
@@ -154,11 +154,11 @@ public abstract class AbstractCacheService<K, V> implements CacheService<K, V> {
     }
 
     /**
-     * 获取序列器
+     * 获取值序列器
      *
-     * @return 序列器
+     * @return 值序列器
      */
-    protected Serializer serializer() {
+    protected ValueSerializer serializer() {
         return null;
     }
 
