@@ -62,11 +62,6 @@ public class CacheConfig<K, V> implements Serializable {
     private RefreshPolicy refreshPolicy;
 
     /**
-     * 缓存加载器
-     */
-    private CacheLoader<K, V> loader;
-
-    /**
      * 键名转换器
      */
     private KeyConverter keyConverter;
@@ -75,6 +70,11 @@ public class CacheConfig<K, V> implements Serializable {
      * 序列器
      */
     private Serializer serializer;
+
+    /**
+     * 缓存加载器
+     */
+    private CacheLoader<K, V> loader;
 
     private CacheConfig() {
     }
@@ -266,4 +266,5 @@ public class CacheConfig<K, V> implements Serializable {
     public boolean loaderEnabled() {
         return Objects.nonNull(this.loader);
     }
+
 }
