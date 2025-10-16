@@ -10,9 +10,11 @@ import cn.floseek.fastcache.cache.config.SyncStrategy;
 import cn.floseek.fastcache.cache.converter.KeyConverter;
 import cn.floseek.fastcache.cache.serializer.Serializer;
 import cn.floseek.fastcache.common.BaseCacheKey;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -208,11 +210,19 @@ public abstract class AbstractCacheService<K, V> implements CacheService<K, V> {
             cacheLoader = new CacheLoader<>() {
                 @Override
                 public V load(K key) {
+                    if (Objects.isNull(key)) {
+                        return null;
+                    }
+
                     return query().apply(key);
                 }
 
                 @Override
                 public Map<K, V> loadAll(Collection<K> keys) {
+                    if (CollectionUtils.isEmpty(keys)) {
+                        return Collections.emptyMap();
+                    }
+
                     return queryAll().apply(keys);
                 }
             };
