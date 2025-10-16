@@ -1,14 +1,14 @@
 package cn.floseek.fastcache.common.enums;
 
 /**
- * 缓存同步策略
+ * 缓存同步模式
  * <p>
  * 定义在分布式环境中本地缓存数据的同步方式，用于控制多个节点间本地缓存的数据一致性
  * </p>
  *
  * @author ChenHongwei472
  */
-public enum SyncStrategy {
+public enum CacheSyncMode {
 
     /**
      * 不同步

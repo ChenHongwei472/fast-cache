@@ -8,7 +8,7 @@ import cn.floseek.fastcache.config.CacheConfig;
 import cn.floseek.fastcache.common.enums.CacheType;
 import cn.floseek.fastcache.common.enums.LocalCacheProvider;
 import cn.floseek.fastcache.common.enums.RemoteCacheProvider;
-import cn.floseek.fastcache.common.enums.SyncStrategy;
+import cn.floseek.fastcache.common.enums.CacheSyncMode;
 import cn.floseek.fastcache.cache.decorator.BroadcastDecorator;
 import cn.floseek.fastcache.cache.decorator.CacheLoaderDecorator;
 import cn.floseek.fastcache.cache.decorator.RefreshCacheDecorator;
@@ -67,8 +67,8 @@ public class DefaultCacheManager implements CacheManager {
         }
 
         // 初始化配置参数
-        if (Objects.isNull(config.getSyncStrategy())) {
-            config.syncStrategy(globalProperties.getSyncStrategy());
+        if (Objects.isNull(config.getCacheSyncMode())) {
+            config.cacheSyncMode(globalProperties.getCacheSyncMode());
         }
         if (Objects.isNull(config.getLocalMaximumSize())) {
             config.localMaximumSize(globalProperties.getLocal().getMaximumSize());
@@ -97,7 +97,7 @@ public class DefaultCacheManager implements CacheManager {
 
         // 订阅广播频道
         if (config.isSyncEnabled() && Objects.nonNull(broadcastManager) && !broadcastManager.isSubscribed()) {
-            this.subscribeBroadcast(config.getSyncStrategy());
+            this.subscribeBroadcast(config.getCacheSyncMode());
         }
         return cache;
     }
@@ -245,7 +245,7 @@ public class DefaultCacheManager implements CacheManager {
         }
 
         broadcastManager = builder.createBroadcastManager(this);
-        if (globalProperties.getSyncStrategy() == SyncStrategy.NONE) {
+        if (globalProperties.getCacheSyncMode() == CacheSyncMode.NONE) {
             log.info("Broadcast manager initialized, skip subscribe broadcast");
             return;
         }
@@ -257,12 +257,12 @@ public class DefaultCacheManager implements CacheManager {
     /**
      * 订阅广播频道
      *
-     * @param syncStrategy 缓存同步策略
+     * @param cacheSyncMode 缓存同步模式
      */
-    private void subscribeBroadcast(SyncStrategy syncStrategy) {
+    private void subscribeBroadcast(CacheSyncMode cacheSyncMode) {
         log.info("Subscribing broadcast manager");
-        if (syncStrategy == SyncStrategy.NONE) {
-            log.debug("Sync strategy is NONE, skip subscribe broadcast");
+        if (cacheSyncMode == CacheSyncMode.NONE) {
+            log.debug("Cache sync mode is NONE, skip subscribe broadcast");
             return;
         }
         if (broadcastManager == null) {

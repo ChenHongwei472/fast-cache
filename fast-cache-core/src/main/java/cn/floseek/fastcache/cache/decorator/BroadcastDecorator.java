@@ -4,7 +4,7 @@ import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.broadcast.BroadcastManager;
 import cn.floseek.fastcache.cache.broadcast.BroadcastMessage;
 import cn.floseek.fastcache.config.CacheConfig;
-import cn.floseek.fastcache.common.enums.SyncStrategy;
+import cn.floseek.fastcache.common.enums.CacheSyncMode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -70,9 +70,9 @@ public class BroadcastDecorator<K, V> extends CacheDecorator<K, V> {
             return;
         }
 
-        if (config.getSyncStrategy() == SyncStrategy.UPDATE) {
+        if (config.getCacheSyncMode() == CacheSyncMode.UPDATE) {
             this.notifyUpdate(keyValues);
-        } else if (config.getSyncStrategy() == SyncStrategy.INVALIDATE) {
+        } else if (config.getCacheSyncMode() == CacheSyncMode.INVALIDATE) {
             this.notifyInvalidate(keyValues.keySet());
         }
     }
@@ -127,8 +127,8 @@ public class BroadcastDecorator<K, V> extends CacheDecorator<K, V> {
             log.debug("Broadcast manager not configured, skip broadcast");
             return true;
         }
-        if (config.getSyncStrategy() == SyncStrategy.NONE) {
-            log.debug("Sync strategy is NONE, skip broadcast");
+        if (config.getCacheSyncMode() == CacheSyncMode.NONE) {
+            log.debug("Cache sync mode is NONE, skip broadcast");
             return true;
         }
         return false;

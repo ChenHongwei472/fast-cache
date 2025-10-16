@@ -2,7 +2,7 @@ package cn.floseek.fastcache.config;
 
 import cn.floseek.fastcache.common.enums.LocalCacheProvider;
 import cn.floseek.fastcache.common.enums.RemoteCacheProvider;
-import cn.floseek.fastcache.common.enums.SyncStrategy;
+import cn.floseek.fastcache.common.enums.CacheSyncMode;
 import cn.floseek.fastcache.converter.KeyConverter;
 import cn.floseek.fastcache.converter.KeyConverterType;
 import cn.floseek.fastcache.serializer.ValueSerializer;
@@ -18,11 +18,6 @@ import lombok.Data;
 public class GlobalProperties {
 
     /**
-     * 缓存同步策略
-     */
-    private SyncStrategy syncStrategy = SyncStrategy.NONE;
-
-    /**
      * 本地缓存配置
      */
     private LocalCache local = new LocalCache();
@@ -32,6 +27,14 @@ public class GlobalProperties {
      */
     private RemoteCache remote = new RemoteCache();
 
+    /**
+     * 缓存同步策略配置
+     */
+    private CacheSyncStrategy syncStrategy = new CacheSyncStrategy();
+
+    /**
+     * 本地缓存配置
+     */
     @Data
     public static class LocalCache {
 
@@ -47,6 +50,9 @@ public class GlobalProperties {
 
     }
 
+    /**
+     * 分布式缓存配置
+     */
     @Data
     public static class RemoteCache {
 
@@ -54,11 +60,6 @@ public class GlobalProperties {
          * 提供者
          */
         private RemoteCacheProvider provider = RemoteCacheProvider.REDISSON;
-
-        /**
-         * 广播频道
-         */
-        private String broadcastChannel = "default_broadcast_channel";
 
         /**
          * 键名转换器类型
@@ -69,6 +70,24 @@ public class GlobalProperties {
          * 值序列化器类型
          */
         private ValueSerializerType valueSerializer = ValueSerializerType.JAVA;
+
+    }
+
+    /**
+     * 缓存同步策略配置
+     */
+    @Data
+    public static class CacheSyncStrategy {
+
+        /**
+         * 缓存同步模式
+         */
+        private CacheSyncMode mode = CacheSyncMode.NONE;
+
+        /**
+         * 缓存广播频道
+         */
+        private String broadcastChannel = "fast_cache_broadcast_channel";
 
     }
 
@@ -88,6 +107,24 @@ public class GlobalProperties {
      */
     public ValueSerializer getRemoteCacheValueSerializer() {
         return this.remote.getValueSerializer().getInstance();
+    }
+
+    /**
+     * 获取缓存同步模式
+     *
+     * @return 缓存同步模式
+     */
+    public CacheSyncMode getCacheSyncMode() {
+        return this.syncStrategy.getMode();
+    }
+
+    /**
+     * 获取缓存同步广播频道
+     *
+     * @return 广播频道
+     */
+    public String getCacheSyncBroadcastChannel() {
+        return this.syncStrategy.getBroadcastChannel();
     }
 
 }

@@ -3,7 +3,7 @@ package cn.floseek.fastcache.config;
 import cn.floseek.fastcache.cache.CacheLoader;
 import cn.floseek.fastcache.converter.KeyConverter;
 import cn.floseek.fastcache.common.enums.CacheType;
-import cn.floseek.fastcache.common.enums.SyncStrategy;
+import cn.floseek.fastcache.common.enums.CacheSyncMode;
 import cn.floseek.fastcache.serializer.ValueSerializer;
 import cn.floseek.fastcache.common.enums.BaseCacheKeyEnum;
 import lombok.Getter;
@@ -55,9 +55,9 @@ public class CacheConfig<K, V> implements Serializable {
     private Long localMaximumSize;
 
     /**
-     * 缓存同步策略
+     * 缓存同步模式
      */
-    private SyncStrategy syncStrategy;
+    private CacheSyncMode cacheSyncMode;
 
     /**
      * 缓存刷新策略
@@ -183,13 +183,13 @@ public class CacheConfig<K, V> implements Serializable {
     }
 
     /**
-     * 设置缓存同步策略
+     * 设置缓存同步模式
      *
-     * @param syncStrategy 缓存同步策略
+     * @param cacheSyncMode 缓存同步模式
      * @return 缓存配置对象
      */
-    public CacheConfig<K, V> syncStrategy(SyncStrategy syncStrategy) {
-        this.syncStrategy = syncStrategy;
+    public CacheConfig<K, V> cacheSyncMode(CacheSyncMode cacheSyncMode) {
+        this.cacheSyncMode = cacheSyncMode;
         return this;
     }
 
@@ -258,7 +258,7 @@ public class CacheConfig<K, V> implements Serializable {
      * @return boolean
      */
     public boolean isSyncEnabled() {
-        return this.syncStrategy != SyncStrategy.NONE;
+        return this.cacheSyncMode != CacheSyncMode.NONE;
     }
 
     /**

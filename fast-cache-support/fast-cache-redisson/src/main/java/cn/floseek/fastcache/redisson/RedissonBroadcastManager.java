@@ -38,7 +38,7 @@ public class RedissonBroadcastManager extends AbstractBroadcastManager {
 
     public RedissonBroadcastManager(CacheManager cacheManager, RedissonClient redissonClient) {
         super(cacheManager);
-        this.channel = cacheManager.getGlobalProperties().getRemote().getBroadcastChannel();
+        this.channel = cacheManager.getGlobalProperties().getCacheSyncBroadcastChannel();
         this.redissonClient = redissonClient;
     }
 
@@ -91,4 +91,5 @@ public class RedissonBroadcastManager extends AbstractBroadcastManager {
     public boolean isSubscribed() {
         return this.subscribeId != UNSUBSCRIBED;
     }
+
 }

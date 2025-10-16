@@ -5,7 +5,7 @@ import cn.floseek.fastcache.cache.CacheLoader;
 import cn.floseek.fastcache.cache.CacheManager;
 import cn.floseek.fastcache.common.enums.BaseCacheKeyEnum;
 import cn.floseek.fastcache.common.enums.CacheType;
-import cn.floseek.fastcache.common.enums.SyncStrategy;
+import cn.floseek.fastcache.common.enums.CacheSyncMode;
 import cn.floseek.fastcache.config.CacheConfig;
 import cn.floseek.fastcache.config.RefreshPolicy;
 import cn.floseek.fastcache.converter.KeyConverter;
@@ -127,11 +127,11 @@ public abstract class AbstractCacheService<K, V> implements CacheService<K, V> {
     }
 
     /**
-     * 获取缓存同步策略
+     * 获取缓存同步模式
      *
-     * @return 缓存同步策略
+     * @return 缓存同步模式
      */
-    protected SyncStrategy syncStrategy() {
+    protected CacheSyncMode syncMode() {
         return null;
     }
 
@@ -191,7 +191,7 @@ public abstract class AbstractCacheService<K, V> implements CacheService<K, V> {
                 .expireTime(this.expireTime())
                 .localExpireTime(this.localExpireTime())
                 .localMaximumSize(this.localMaximumSize())
-                .syncStrategy(this.syncStrategy())
+                .cacheSyncMode(this.syncMode())
                 .refreshPolicy(this.refreshPolicy())
                 .keyConverter(this.keyConverter())
                 .serializer(this.serializer());
