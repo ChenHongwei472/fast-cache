@@ -77,4 +77,16 @@ public class CacheLoaderDecorator<K, V> extends CacheDecorator<K, V> {
         return resultMap;
     }
 
+    @Override
+    public V refresh(K key) {
+        V value = loader.load(key);
+        if (Objects.isNull(value)) {
+            super.remove(key);
+            return null;
+        }
+
+        super.put(key, value);
+        return value;
+    }
+
 }

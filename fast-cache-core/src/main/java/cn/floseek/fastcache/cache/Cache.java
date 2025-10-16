@@ -83,6 +83,14 @@ public interface Cache<K, V> extends Closeable {
     void removeAll(Collection<? extends K> keys);
 
     /**
+     * 刷新缓存值
+     *
+     * @param key 缓存键
+     * @return 缓存值
+     */
+    V refresh(K key);
+
+    /**
      * 关闭缓存
      */
     @Override
@@ -101,5 +109,4 @@ public interface Cache<K, V> extends Closeable {
      * @return 缓存配置对象
      */
     CacheConfig<K, V> getConfig();
-
 }

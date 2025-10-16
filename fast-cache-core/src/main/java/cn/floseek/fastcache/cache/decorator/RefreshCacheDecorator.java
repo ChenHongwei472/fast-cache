@@ -103,6 +103,24 @@ public class RefreshCacheDecorator<K, V> extends CacheLoaderDecorator<K, V> {
     }
 
     @Override
+    public V refresh(K key) {
+        CacheLoader<K, V> loader = config.getLoader();
+        if (Objects.isNull(loader)) {
+            log.warn("Cache loader is not configured, please check your configuration.");
+            return null;
+        }
+
+        V value = loader.load(key);
+        if (Objects.isNull(value)) {
+            super.remove(key);
+            return null;
+        }
+
+        super.put(key, value);
+        return value;
+    }
+
+    @Override
     public void close() {
         this.stopRefresh();
         super.close();

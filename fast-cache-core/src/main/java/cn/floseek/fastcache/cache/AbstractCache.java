@@ -23,6 +23,12 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     @Override
+    public V refresh(K key) {
+        log.warn("Cache loader is not configured, please check your configuration.");
+        return null;
+    }
+
+    @Override
     public void close() {
     }
 

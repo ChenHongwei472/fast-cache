@@ -1,15 +1,15 @@
 package cn.floseek.fastcache.service;
 
 import cn.floseek.fastcache.cache.Cache;
-import cn.floseek.fastcache.cache.CacheManager;
-import cn.floseek.fastcache.config.CacheConfig;
 import cn.floseek.fastcache.cache.CacheLoader;
+import cn.floseek.fastcache.cache.CacheManager;
+import cn.floseek.fastcache.common.enums.BaseCacheKeyEnum;
 import cn.floseek.fastcache.common.enums.CacheType;
-import cn.floseek.fastcache.config.RefreshPolicy;
 import cn.floseek.fastcache.common.enums.SyncStrategy;
+import cn.floseek.fastcache.config.CacheConfig;
+import cn.floseek.fastcache.config.RefreshPolicy;
 import cn.floseek.fastcache.converter.KeyConverter;
 import cn.floseek.fastcache.serializer.Serializer;
-import cn.floseek.fastcache.common.enums.BaseCacheKeyEnum;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.time.Duration;
@@ -69,6 +69,11 @@ public abstract class AbstractCacheService<K, V> implements CacheService<K, V> {
     @Override
     public void removeAll(Collection<? extends K> keys) {
         cache.removeAll(keys);
+    }
+
+    @Override
+    public V refresh(K key) {
+        return cache.refresh(key);
     }
 
     /**
