@@ -9,15 +9,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * 基于 Redisson 的分布式锁模板
  *
+ * @param redissonClient Redisson 客户端
  * @author ChenHongwei472
  */
-public class RedissonLockTemplate implements LockTemplate {
-
-    private final RedissonClient redissonClient;
-
-    public RedissonLockTemplate(RedissonClient redissonClient) {
-        this.redissonClient = redissonClient;
-    }
+public record RedissonLockTemplate(RedissonClient redissonClient) implements LockTemplate {
 
     @Override
     public boolean tryLock(String name, long waitTime, long leaseTime, TimeUnit timeUnit) throws InterruptedException {
@@ -48,5 +43,6 @@ public class RedissonLockTemplate implements LockTemplate {
     private RLock getLock(String name) {
         return redissonClient.getLock(name);
     }
+
 }
 

@@ -5,13 +5,11 @@ import cn.floseek.fastcache.cache.serializer.Serializer;
 import cn.floseek.fastcache.common.CacheConstant;
 import cn.floseek.fastcache.redis.RedisService;
 import cn.floseek.fastcache.redis.SortedEntry;
-import cn.floseek.fastcache.redisson.extension.RBatchExtensions;
-import cn.floseek.fastcache.redisson.extension.RedissonClientExtensions;
-import lombok.experimental.ExtensionMethod;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DurationUtils;
 import org.redisson.api.BatchResult;
 import org.redisson.api.RAtomicLong;
+import org.redisson.api.RBatch;
 import org.redisson.api.RBucket;
 import org.redisson.api.RBucketAsync;
 import org.redisson.api.RKeys;
@@ -20,6 +18,7 @@ import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;
 import org.redisson.api.options.KeysScanOptions;
+import org.redisson.client.codec.ByteArrayCodec;
 import org.redisson.client.protocol.ScoredEntry;
 
 import java.time.Duration;
@@ -34,9 +33,11 @@ import java.util.stream.StreamSupport;
 /**
  * Redisson 服务实现
  *
+ * @param redissonClient Redisson 客户端
+ * @param keyConverter   键名转换器
+ * @param serializer     序列化器
  * @author ChenHongwei472
  */
-@ExtensionMethod({RedissonClientExtensions.class, RBatchExtensions.class})
 public record RedissonServiceImpl(
         RedissonClient redissonClient,
         KeyConverter keyConverter,
@@ -50,7 +51,7 @@ public record RedissonServiceImpl(
 
     @Override
     public <T> void setObject(String key, T value, Duration duration) {
-        RBucket<byte[]> bucket = redissonClient.getByteArrayBucket(key, keyConverter);
+        RBucket<byte[]> bucket = this.getByteArrayBucket(redissonClient, key, keyConverter);
         byte[] serializedValue = serializer.serialize(value);
         if (DurationUtils.isPositive(duration)) {
             bucket.set(serializedValue, duration);
@@ -66,22 +67,22 @@ public record RedissonServiceImpl(
 
     @Override
     public <T> void setObjects(Map<String, T> objects, Duration duration) {
-        redissonClient.executeBatch(batch -> {
-            objects.forEach((key, value) -> {
-                RBucketAsync<byte[]> bucket = batch.getByteArrayBucket(key, keyConverter);
-                byte[] serializedValue = serializer.serialize(value);
-                if (DurationUtils.isPositive(duration)) {
-                    bucket.setAsync(serializedValue, duration);
-                } else {
-                    bucket.setAsync(serializedValue);
-                }
-            });
+        RBatch batch = redissonClient.createBatch();
+        objects.forEach((key, value) -> {
+            RBucketAsync<byte[]> bucket = this.getByteArrayBucket(batch, key, keyConverter);
+            byte[] serializedValue = serializer.serialize(value);
+            if (DurationUtils.isPositive(duration)) {
+                bucket.setAsync(serializedValue, duration);
+            } else {
+                bucket.setAsync(serializedValue);
+            }
         });
+        batch.execute();
     }
 
     @Override
     public <T> boolean setObjectIfAbsent(String key, T value, Duration duration) {
-        RBucket<byte[]> bucket = redissonClient.getByteArrayBucket(key, keyConverter);
+        RBucket<byte[]> bucket = this.getByteArrayBucket(redissonClient, key, keyConverter);
         byte[] serializedValue = serializer.serialize(value);
         if (DurationUtils.isPositive(duration)) {
             return bucket.setIfAbsent(serializedValue, duration);
@@ -92,7 +93,7 @@ public record RedissonServiceImpl(
 
     @Override
     public <T> boolean setObjectIfExists(String key, T value, Duration duration) {
-        RBucket<byte[]> bucket = redissonClient.getByteArrayBucket(key, keyConverter);
+        RBucket<byte[]> bucket = this.getByteArrayBucket(redissonClient, key, keyConverter);
         byte[] serializedValue = serializer.serialize(value);
         if (DurationUtils.isPositive(duration)) {
             return bucket.setIfExists(serializedValue, duration);
@@ -103,25 +104,25 @@ public record RedissonServiceImpl(
 
     @Override
     public boolean expire(String key, Duration duration) {
-        RBucket<byte[]> bucket = redissonClient.getByteArrayBucket(key, keyConverter);
+        RBucket<byte[]> bucket = this.getByteArrayBucket(redissonClient, key, keyConverter);
         return bucket.expire(duration);
     }
 
     @Override
     public <T> T getObject(String key) {
-        RBucket<byte[]> bucket = redissonClient.getByteArrayBucket(key, keyConverter);
+        RBucket<byte[]> bucket = this.getByteArrayBucket(redissonClient, key, keyConverter);
         return serializer.deserialize(bucket.get());
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> List<T> getObjects(Collection<String> keys) {
-        BatchResult<?> batchResult = redissonClient.executeBatch(batch -> {
-            keys.forEach(key -> {
-                RBucketAsync<byte[]> bucket = batch.getByteArrayBucket(key, keyConverter);
-                bucket.getAsync();
-            });
+        RBatch batch = redissonClient.createBatch();
+        keys.forEach(key -> {
+            RBucketAsync<byte[]> bucket = this.getByteArrayBucket(batch, key, keyConverter);
+            bucket.getAsync();
         });
+        BatchResult<?> batchResult = batch.execute();
         return batchResult.getResponses().stream()
                 .map(response -> (T) serializer.deserialize((byte[]) response))
                 .collect(Collectors.toList());
@@ -129,49 +130,49 @@ public record RedissonServiceImpl(
 
     @Override
     public long getTimeToLive(String key) {
-        RBucket<byte[]> bucket = redissonClient.getByteArrayBucket(key, keyConverter);
+        RBucket<byte[]> bucket = this.getByteArrayBucket(redissonClient, key, keyConverter);
         return bucket.remainTimeToLive();
     }
 
     @Override
     public boolean deleteObject(String key) {
-        RBucket<byte[]> bucket = redissonClient.getByteArrayBucket(key, keyConverter);
+        RBucket<byte[]> bucket = this.getByteArrayBucket(redissonClient, key, keyConverter);
         return bucket.delete();
     }
 
     @Override
     public void deleteObjects(Collection<String> keys) {
-        redissonClient.executeBatch(batch -> {
-            keys.forEach(key -> {
-                RBucketAsync<byte[]> bucket = batch.getByteArrayBucket(key, keyConverter);
-                bucket.deleteAsync();
-            });
+        RBatch batch = redissonClient.createBatch();
+        keys.forEach(key -> {
+            RBucketAsync<byte[]> bucket = this.getByteArrayBucket(batch, key, keyConverter);
+            bucket.deleteAsync();
         });
+        batch.execute();
     }
 
     @Override
     public boolean existsObject(String key) {
-        RBucket<byte[]> bucket = redissonClient.getByteArrayBucket(key, keyConverter);
+        RBucket<byte[]> bucket = this.getByteArrayBucket(redissonClient, key, keyConverter);
         return bucket.isExists();
     }
 
     @Override
     public <T> boolean setList(String key, List<T> dataList) {
-        RList<byte[]> list = redissonClient.getByteArrayList(key, keyConverter);
+        RList<byte[]> list = this.getByteArrayList(redissonClient, key, keyConverter);
         List<byte[]> valueBytes = dataList.stream().map(serializer::serialize).toList();
         return list.addAll(valueBytes);
     }
 
     @Override
     public <T> boolean addList(String key, T data) {
-        RList<byte[]> list = redissonClient.getByteArrayList(key, keyConverter);
+        RList<byte[]> list = this.getByteArrayList(redissonClient, key, keyConverter);
         return list.add(serializer.serialize(data));
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> List<T> getList(String key) {
-        RList<byte[]> list = redissonClient.getByteArrayList(key, keyConverter);
+        RList<byte[]> list = this.getByteArrayList(redissonClient, key, keyConverter);
         List<byte[]> valueBytes = list.readAll();
         return valueBytes.stream()
                 .map(bytes -> (T) serializer.deserialize(bytes))
@@ -181,7 +182,7 @@ public record RedissonServiceImpl(
     @Override
     @SuppressWarnings("unchecked")
     public <T> List<T> getListRange(String key, int form, int to) {
-        RList<byte[]> list = redissonClient.getByteArrayList(key, keyConverter);
+        RList<byte[]> list = this.getByteArrayList(redissonClient, key, keyConverter);
         List<byte[]> valueBytes = list.range(form, to);
         return valueBytes.stream()
                 .map(bytes -> (T) serializer.deserialize(bytes))
@@ -190,21 +191,21 @@ public record RedissonServiceImpl(
 
     @Override
     public <T> boolean setSet(String key, Set<T> dataSet) {
-        RSet<byte[]> set = redissonClient.getByteArraySet(key, keyConverter);
+        RSet<byte[]> set = this.getByteArraySet(redissonClient, key, keyConverter);
         Set<byte[]> valueBytes = dataSet.stream().map(serializer::serialize).collect(Collectors.toSet());
         return set.addAll(valueBytes);
     }
 
     @Override
     public <T> boolean addSet(String key, T data) {
-        RSet<byte[]> set = redissonClient.getByteArraySet(key, keyConverter);
+        RSet<byte[]> set = this.getByteArraySet(redissonClient, key, keyConverter);
         return set.add(serializer.serialize(data));
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> Set<T> getSet(String key) {
-        RSet<byte[]> set = redissonClient.getByteArraySet(key, keyConverter);
+        RSet<byte[]> set = this.getByteArraySet(redissonClient, key, keyConverter);
         Set<byte[]> valueBytes = set.readAll();
         return valueBytes.stream()
                 .map(bytes -> (T) serializer.deserialize(bytes))
@@ -213,32 +214,32 @@ public record RedissonServiceImpl(
 
     @Override
     public <T> Integer getSortedSetRank(String key, T object) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         return scoredSortedSet.rank(serializer.serialize(object));
     }
 
     @Override
     public <T> Integer getSortedSetReRank(String key, T object) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         return scoredSortedSet.revRank(serializer.serialize(object));
     }
 
     @Override
     public <T> Double getSortedSetScore(String key, T element) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         return scoredSortedSet.getScore(serializer.serialize(element));
     }
 
     @Override
     public <T> List<Double> getSortedSetScore(String key, List<T> elements) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         List<byte[]> valueBytes = elements.stream().map(serializer::serialize).toList();
         return scoredSortedSet.getScore(valueBytes);
     }
 
     @Override
     public <T> boolean removeSortedSet(String key, T element) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         return scoredSortedSet.remove(serializer.serialize(element));
     }
 
@@ -249,7 +250,7 @@ public record RedissonServiceImpl(
 
     @Override
     public <T> int addSortedSet(String key, Map<T, Double> objects, Duration duration) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         Map<byte[], Double> bytesMap = objects.entrySet().stream()
                 .collect(Collectors.toMap(entry -> serializer.serialize(entry.getKey()), Map.Entry::getValue));
         int result = scoredSortedSet.addAll(bytesMap);
@@ -266,7 +267,7 @@ public record RedissonServiceImpl(
 
     @Override
     public <T> boolean addSortedSet(String key, double score, T object, Duration duration) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         boolean result = scoredSortedSet.add(score, serializer.serialize(object));
         if (DurationUtils.isPositive(duration)) {
             scoredSortedSet.expire(duration);
@@ -277,7 +278,7 @@ public record RedissonServiceImpl(
     @Override
     @SuppressWarnings("unchecked")
     public <T> List<T> getSortedSetValueRange(String key, int startIndex, int endIndex) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         Collection<byte[]> collection = scoredSortedSet.valueRange(startIndex, endIndex);
         return collection.stream()
                 .map(bytes -> (T) serializer.deserialize(bytes))
@@ -287,7 +288,7 @@ public record RedissonServiceImpl(
     @Override
     @SuppressWarnings("unchecked")
     public <T> List<T> getSortedSetValueRange(String key, double startScore, double endScore) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         Collection<byte[]> collection = scoredSortedSet.valueRange(startScore, true, endScore, true);
         return collection.stream()
                 .map(bytes -> (T) serializer.deserialize(bytes))
@@ -297,7 +298,7 @@ public record RedissonServiceImpl(
     @Override
     @SuppressWarnings("unchecked")
     public <T> List<T> getSortedSetValueRange(String key, double startScore, double endScore, int offset, int count) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         Collection<byte[]> collection = scoredSortedSet.valueRange(startScore, true, endScore, true, offset, count);
         return collection.stream()
                 .map(bytes -> (T) serializer.deserialize(bytes))
@@ -307,7 +308,7 @@ public record RedissonServiceImpl(
     @Override
     @SuppressWarnings("unchecked")
     public <T> List<T> getSortedSetValueRangeReversed(String key, int startIndex, int endIndex) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         Collection<byte[]> collection = scoredSortedSet.valueRangeReversed(startIndex, endIndex);
         return collection.stream()
                 .map(bytes -> (T) serializer.deserialize(bytes))
@@ -317,7 +318,7 @@ public record RedissonServiceImpl(
     @Override
     @SuppressWarnings("unchecked")
     public <T> List<T> getSortedSetValueRangeReversed(String key, double startScore, double endScore) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         Collection<byte[]> collection = scoredSortedSet.valueRangeReversed(startScore, true, endScore, true);
         return collection.stream()
                 .map(bytes -> (T) serializer.deserialize(bytes))
@@ -327,7 +328,7 @@ public record RedissonServiceImpl(
     @Override
     @SuppressWarnings("unchecked")
     public <T> List<T> getSortedSetValueRangeReversed(String key, double startScore, double endScore, int offset, int count) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         Collection<byte[]> collection = scoredSortedSet.valueRangeReversed(startScore, true, endScore, true, offset, count);
         return collection.stream()
                 .map(bytes -> (T) serializer.deserialize(bytes))
@@ -336,42 +337,42 @@ public record RedissonServiceImpl(
 
     @Override
     public <T> List<SortedEntry<T>> getSortedSetEntryRange(String key, int startIndex, int endIndex) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         Collection<ScoredEntry<byte[]>> scoredEntryCollection = scoredSortedSet.entryRange(startIndex, endIndex);
         return this.convertToSortedEntryList(scoredEntryCollection);
     }
 
     @Override
     public <T> List<SortedEntry<T>> getSortedSetEntryRange(String key, double startScore, double endScore) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         Collection<ScoredEntry<byte[]>> scoredEntryCollection = scoredSortedSet.entryRange(startScore, true, endScore, true);
         return this.convertToSortedEntryList(scoredEntryCollection);
     }
 
     @Override
     public <T> List<SortedEntry<T>> getSortedSetEntryRange(String key, double startScore, double endScore, int offset, int count) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         Collection<ScoredEntry<byte[]>> scoredEntryCollection = scoredSortedSet.entryRange(startScore, true, endScore, true, offset, count);
         return this.convertToSortedEntryList(scoredEntryCollection);
     }
 
     @Override
     public <T> List<SortedEntry<T>> getSortedSetEntryRangeReversed(String key, int startIndex, int endIndex) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         Collection<ScoredEntry<byte[]>> scoredEntryCollection = scoredSortedSet.entryRangeReversed(startIndex, endIndex);
         return this.convertToSortedEntryList(scoredEntryCollection);
     }
 
     @Override
     public <T> List<SortedEntry<T>> getSortedSetEntryRangeReversed(String key, double startScore, double endScore) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         Collection<ScoredEntry<byte[]>> scoredEntryCollection = scoredSortedSet.entryRangeReversed(startScore, true, endScore, true);
         return this.convertToSortedEntryList(scoredEntryCollection);
     }
 
     @Override
     public <T> List<SortedEntry<T>> getSortedSetEntryRangeReversed(String key, double startScore, double endScore, int offset, int count) {
-        RScoredSortedSet<byte[]> scoredSortedSet = redissonClient.getByteArrayScoredSortedSet(key, keyConverter);
+        RScoredSortedSet<byte[]> scoredSortedSet = this.getByteArrayScoredSortedSet(redissonClient, key, keyConverter);
         Collection<ScoredEntry<byte[]>> scoredEntryCollection = scoredSortedSet.entryRangeReversed(startScore, true, endScore, true, offset, count);
         return this.convertToSortedEntryList(scoredEntryCollection);
     }
@@ -416,6 +417,66 @@ public record RedissonServiceImpl(
     public Boolean hasKey(String key) {
         RKeys keys = redissonClient.getKeys();
         return keys.countExists(key) > 0;
+    }
+
+    /**
+     * 获取字节数组缓存桶
+     *
+     * @param redissonClient Redisson 客户端
+     * @param key            缓存键
+     * @param keyConverter   键名转换器
+     * @return 字节数组缓存桶
+     */
+    private RBucket<byte[]> getByteArrayBucket(RedissonClient redissonClient, String key, KeyConverter keyConverter) {
+        return redissonClient.getBucket(keyConverter.convert(key), ByteArrayCodec.INSTANCE);
+    }
+
+    /**
+     * 获取字节数组缓存桶
+     *
+     * @param batch        {@link RBatch}
+     * @param key          缓存键
+     * @param keyConverter 缓存键转换器
+     * @return 字节数组缓存桶
+     */
+    private RBucketAsync<byte[]> getByteArrayBucket(RBatch batch, String key, KeyConverter keyConverter) {
+        return batch.getBucket(keyConverter.convert(key), ByteArrayCodec.INSTANCE);
+    }
+
+    /**
+     * 获取字节数组列表缓存桶
+     *
+     * @param redissonClient Redisson 客户端
+     * @param key            缓存键
+     * @param keyConverter   缓存键转换器
+     * @return 字节数组列表缓存桶
+     */
+    private RList<byte[]> getByteArrayList(RedissonClient redissonClient, String key, KeyConverter keyConverter) {
+        return redissonClient.getList(keyConverter.convert(key), ByteArrayCodec.INSTANCE);
+    }
+
+    /**
+     * 获取字节数组集合缓存桶
+     *
+     * @param redissonClient Redisson 客户端
+     * @param key            缓存键
+     * @param keyConverter   缓存键转换器
+     * @return 字节数组集合缓存桶
+     */
+    private RSet<byte[]> getByteArraySet(RedissonClient redissonClient, String key, KeyConverter keyConverter) {
+        return redissonClient.getSet(keyConverter.convert(key), ByteArrayCodec.INSTANCE);
+    }
+
+    /**
+     * 获取字节数组排序集合缓存桶
+     *
+     * @param redissonClient Redisson 客户端
+     * @param key            缓存键
+     * @param keyConverter   缓存键转换器
+     * @return 字节数组排序集合缓存桶
+     */
+    private RScoredSortedSet<byte[]> getByteArrayScoredSortedSet(RedissonClient redissonClient, String key, KeyConverter keyConverter) {
+        return redissonClient.getScoredSortedSet(keyConverter.convert(key), ByteArrayCodec.INSTANCE);
     }
 
     /**
