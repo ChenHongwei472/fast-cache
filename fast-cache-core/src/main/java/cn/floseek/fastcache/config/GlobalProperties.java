@@ -39,7 +39,7 @@ public class GlobalProperties {
     public static class LocalCache {
 
         /**
-         * 提供者
+         * 本地缓存提供者
          */
         private LocalCacheProvider provider = LocalCacheProvider.CAFFEINE;
 
@@ -57,7 +57,7 @@ public class GlobalProperties {
     public static class RemoteCache {
 
         /**
-         * 提供者
+         * 分布式缓存提供者
          */
         private RemoteCacheProvider provider = RemoteCacheProvider.REDISSON;
 
@@ -89,6 +89,33 @@ public class GlobalProperties {
          */
         private String broadcastChannel = "fast_cache_broadcast_channel";
 
+    }
+
+    /**
+     * 获取本地缓存提供者
+     *
+     * @return 本地缓存提供者
+     */
+    public LocalCacheProvider getLocalCacheProvider() {
+        return this.local.getProvider();
+    }
+
+    /**
+     * 获取本地缓存每个实例最大容量
+     *
+     * @return 每个实例最大容量
+     */
+    public Long getLocalCacheMaximumSize() {
+        return this.local.getMaximumSize();
+    }
+
+    /**
+     * 获取分布式缓存提供者
+     *
+     * @return 分布式缓存提供者
+     */
+    public RemoteCacheProvider getRemoteCacheProvider() {
+        return this.remote.getProvider();
     }
 
     /**

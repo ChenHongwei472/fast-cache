@@ -71,13 +71,13 @@ public class DefaultCacheManager implements CacheManager {
             config.cacheSyncMode(globalProperties.getCacheSyncMode());
         }
         if (Objects.isNull(config.getLocalMaximumSize())) {
-            config.localMaximumSize(globalProperties.getLocal().getMaximumSize());
+            config.localMaximumSize(globalProperties.getLocalCacheMaximumSize());
         }
         if (Objects.isNull(config.getKeyConverter())) {
-            config.keyConverter(globalProperties.getRemote().getKeyConverter().getInstance());
+            config.keyConverter(globalProperties.getRemoteCacheKeyConverter());
         }
         if (Objects.isNull(config.getValueSerializer())) {
-            config.serializer(globalProperties.getRemote().getValueSerializer().getInstance());
+            config.serializer(globalProperties.getRemoteCacheValueSerializer());
         }
 
         // 生成映射的 key
@@ -197,7 +197,7 @@ public class DefaultCacheManager implements CacheManager {
      * @return 本地缓存
      */
     private <K, V> Cache<K, V> createLocalCache(CacheConfig<K, V> config) {
-        LocalCacheProvider provider = globalProperties.getLocal().getProvider();
+        LocalCacheProvider provider = globalProperties.getLocalCacheProvider();
         LocalCacheBuilder<K, V> builder = (LocalCacheBuilder<K, V>) cacheBuilderManager.getLocalCacheBuilder(provider);
 
         if (builder == null) {
@@ -216,7 +216,7 @@ public class DefaultCacheManager implements CacheManager {
      * @return 分布式缓存
      */
     private <K, V> Cache<K, V> createRemoteCache(CacheConfig<K, V> config) {
-        RemoteCacheProvider provider = globalProperties.getRemote().getProvider();
+        RemoteCacheProvider provider = globalProperties.getRemoteCacheProvider();
         RemoteCacheBuilder<K, V> builder = (RemoteCacheBuilder<K, V>) cacheBuilderManager.getRemoteCacheBuilder(provider);
 
         if (builder == null) {
@@ -231,7 +231,7 @@ public class DefaultCacheManager implements CacheManager {
      */
     private void initBroadcastManager() {
         log.info("Initializing and subscribing broadcast manager");
-        RemoteCacheProvider provider = globalProperties.getRemote().getProvider();
+        RemoteCacheProvider provider = globalProperties.getRemoteCacheProvider();
         RemoteCacheBuilder<?, ?> builder = cacheBuilderManager.getRemoteCacheBuilder(provider);
 
         if (builder == null) {
