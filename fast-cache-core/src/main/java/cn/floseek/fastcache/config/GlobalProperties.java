@@ -1,9 +1,11 @@
 package cn.floseek.fastcache.config;
 
-import cn.floseek.fastcache.converter.KeyConverterType;
 import cn.floseek.fastcache.common.enums.LocalCacheProvider;
 import cn.floseek.fastcache.common.enums.RemoteCacheProvider;
 import cn.floseek.fastcache.common.enums.SyncStrategy;
+import cn.floseek.fastcache.converter.KeyConverter;
+import cn.floseek.fastcache.converter.KeyConverterType;
+import cn.floseek.fastcache.serializer.ValueSerializer;
 import cn.floseek.fastcache.serializer.ValueSerializerType;
 import lombok.Data;
 
@@ -59,15 +61,33 @@ public class GlobalProperties {
         private String broadcastChannel = "default_broadcast_channel";
 
         /**
-         * 键名转换器
+         * 键名转换器类型
          */
         private KeyConverterType keyConverter = KeyConverterType.JACKSON;
 
         /**
-         * 值序列化器
+         * 值序列化器类型
          */
-        private ValueSerializerType serializer = ValueSerializerType.JAVA;
+        private ValueSerializerType valueSerializer = ValueSerializerType.JAVA;
 
+    }
+
+    /**
+     * 获取分布式缓存键名转换器
+     *
+     * @return 键名转换器
+     */
+    public KeyConverter getRemoteCacheKeyConverter() {
+        return this.remote.getKeyConverter().getInstance();
+    }
+
+    /**
+     * 获取分布式缓存值序列化器
+     *
+     * @return 值序列化器
+     */
+    public ValueSerializer getRemoteCacheValueSerializer() {
+        return this.remote.getValueSerializer().getInstance();
     }
 
 }

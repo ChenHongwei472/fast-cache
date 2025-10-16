@@ -24,8 +24,8 @@ public enum KeyConverterType {
     private final String name;
 
     /**
-     * 键名转换器
+     * 键名转换器实例
      */
-    private final KeyConverter keyConverter;
+    private final KeyConverter instance;
 
 }

@@ -29,7 +29,7 @@ public class JavaValueSerializer implements ValueSerializer {
             oos.writeObject(object);
             return baos.toByteArray();
         } catch (IOException e) {
-            throw new CacheException("Java serializer serialize error: " + e.getMessage(), e);
+            throw new CacheException("Java value serializer serialize error: " + e.getMessage(), e);
         }
     }
 
@@ -44,7 +44,7 @@ public class JavaValueSerializer implements ValueSerializer {
              ObjectInputStream ois = new ObjectInputStream(bais)) {
             return (T) ois.readObject();
         } catch (Exception e) {
-            throw new CacheException("Java serializer deserialize error: " + e.getMessage(), e);
+            throw new CacheException("Java value serializer deserialize error: " + e.getMessage(), e);
         }
     }
 

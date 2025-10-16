@@ -74,10 +74,10 @@ public class DefaultCacheManager implements CacheManager {
             config.localMaximumSize(globalProperties.getLocal().getMaximumSize());
         }
         if (Objects.isNull(config.getKeyConverter())) {
-            config.keyConverter(globalProperties.getRemote().getKeyConverter().getKeyConverter());
+            config.keyConverter(globalProperties.getRemote().getKeyConverter().getInstance());
         }
         if (Objects.isNull(config.getValueSerializer())) {
-            config.serializer(globalProperties.getRemote().getSerializer().getInstance());
+            config.serializer(globalProperties.getRemote().getValueSerializer().getInstance());
         }
 
         // 生成映射的 key

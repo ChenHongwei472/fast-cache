@@ -37,8 +37,8 @@ public class RedissonAutoConfiguration {
     public RedisService redissonService(RedissonClient redissonClient, FastCacheProperties fastCacheProperties) {
         return new RedissonServiceImpl(
                 redissonClient,
-                fastCacheProperties.getRemote().getKeyConverter().getKeyConverter(),
-                fastCacheProperties.getRemote().getSerializer().getInstance()
+                fastCacheProperties.getRemoteCacheKeyConverter(),
+                fastCacheProperties.getRemoteCacheValueSerializer()
         );
     }
 

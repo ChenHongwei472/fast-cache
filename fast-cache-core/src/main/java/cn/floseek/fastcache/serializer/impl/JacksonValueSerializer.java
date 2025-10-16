@@ -103,7 +103,7 @@ public class JacksonValueSerializer implements ValueSerializer {
         try {
             return objectMapper.writeValueAsBytes(object);
         } catch (Exception e) {
-            throw new CacheException("Jackson serializer serialize error: " + e.getMessage(), e);
+            throw new CacheException("Jackson value serializer serialize error: " + e.getMessage(), e);
         }
     }
 
@@ -117,7 +117,7 @@ public class JacksonValueSerializer implements ValueSerializer {
             return objectMapper.readValue(bytes, new TypeReference<>() {
             });
         } catch (Exception e) {
-            throw new CacheException("Jackson serializer deserialize error: " + e.getMessage(), e);
+            throw new CacheException("Jackson value serializer deserialize error: " + e.getMessage(), e);
         }
     }
 
