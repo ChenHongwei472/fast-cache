@@ -72,11 +72,11 @@ public abstract class AbstractCacheService<K, V> implements CacheService<K, V> {
     }
 
     /**
-     * 获取缓存键枚举基础接口
+     * 获取缓存键枚举
      *
-     * @return 缓存键枚举基础接口
+     * @return 缓存键枚举
      */
-    protected abstract BaseCacheKeyEnum baseCacheKeyEnum();
+    protected abstract BaseCacheKeyEnum cacheKeyEnum();
 
     /**
      * 获取缓存名称
@@ -84,7 +84,7 @@ public abstract class AbstractCacheService<K, V> implements CacheService<K, V> {
      * @return 缓存名称
      */
     protected String cacheName() {
-        return this.baseCacheKeyEnum().getName();
+        return this.cacheKeyEnum().getName();
     }
 
     /**
@@ -100,7 +100,7 @@ public abstract class AbstractCacheService<K, V> implements CacheService<K, V> {
      * @return 缓存过期时间
      */
     protected Duration expireTime() {
-        return this.baseCacheKeyEnum().getExpireTime();
+        return this.cacheKeyEnum().getExpireTime();
     }
 
     /**
@@ -109,7 +109,7 @@ public abstract class AbstractCacheService<K, V> implements CacheService<K, V> {
      * @return 本地缓存过期时间
      */
     protected Duration localExpireTime() {
-        return this.baseCacheKeyEnum().getLocalExpireTime();
+        return this.cacheKeyEnum().getLocalExpireTime();
     }
 
     /**
