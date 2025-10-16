@@ -1,7 +1,7 @@
-package cn.floseek.fastcache.cache.serializer;
+package cn.floseek.fastcache.serializer;
 
-import cn.floseek.fastcache.cache.serializer.impl.JacksonSerializer;
-import cn.floseek.fastcache.cache.serializer.impl.JavaSerializer;
+import cn.floseek.fastcache.serializer.impl.JacksonSerializer;
+import cn.floseek.fastcache.serializer.impl.JavaSerializer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum SerializerType {
+
     /**
      * Java 序列化器
      */
@@ -31,4 +32,5 @@ public enum SerializerType {
      * 序列化器
      */
     private final Serializer serializer;
+
 }

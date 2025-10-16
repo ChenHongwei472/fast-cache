@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.cache.config;
+package cn.floseek.fastcache.common.enums;
 
 /**
  * 缓存类型枚举
@@ -6,6 +6,7 @@ package cn.floseek.fastcache.cache.config;
  * @author ChenHongwei472
  */
 public enum CacheType {
+
     /**
      * 本地缓存
      */
@@ -18,4 +19,5 @@ public enum CacheType {
      * 多级缓存
      */
     MULTI_LEVEL
+
 }

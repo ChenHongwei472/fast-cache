@@ -1,8 +1,8 @@
 package cn.floseek.fastcache.test.cache.serialize;
 
-import cn.floseek.fastcache.cache.serializer.Serializer;
-import cn.floseek.fastcache.cache.serializer.impl.JacksonSerializer;
-import cn.floseek.fastcache.cache.serializer.impl.JavaSerializer;
+import cn.floseek.fastcache.serializer.Serializer;
+import cn.floseek.fastcache.serializer.impl.JacksonSerializer;
+import cn.floseek.fastcache.serializer.impl.JavaSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -62,4 +62,5 @@ public class SerializerTest {
         deserialize = jacksonSerializer.deserialize(serializeString);
         log.info("Jackson deserialize string: {}", deserialize);
     }
+
 }

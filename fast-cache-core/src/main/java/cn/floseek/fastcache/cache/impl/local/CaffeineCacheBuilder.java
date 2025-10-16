@@ -1,9 +1,9 @@
 package cn.floseek.fastcache.cache.impl.local;
 
 import cn.floseek.fastcache.cache.Cache;
-import cn.floseek.fastcache.cache.config.CacheConfig;
+import cn.floseek.fastcache.config.CacheConfig;
 import cn.floseek.fastcache.cache.builder.LocalCacheBuilder;
-import cn.floseek.fastcache.cache.config.LocalCacheProvider;
+import cn.floseek.fastcache.common.enums.LocalCacheProvider;
 
 /**
  * Caffeine 缓存构建器
@@ -23,4 +23,5 @@ public class CaffeineCacheBuilder<K, V> extends LocalCacheBuilder<K, V> {
     public LocalCacheProvider getProvider() {
         return LocalCacheProvider.CAFFEINE;
     }
+
 }

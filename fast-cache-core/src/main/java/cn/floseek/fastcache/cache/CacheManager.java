@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.cache;
 
-import cn.floseek.fastcache.cache.config.CacheConfig;
-import cn.floseek.fastcache.cache.config.CacheType;
+import cn.floseek.fastcache.config.CacheConfig;
+import cn.floseek.fastcache.common.enums.CacheType;
 import cn.floseek.fastcache.config.GlobalProperties;
 
 /**
@@ -41,4 +41,5 @@ public interface CacheManager extends AutoCloseable {
      * @return 全局配置对象
      */
     GlobalProperties getGlobalProperties();
+
 }

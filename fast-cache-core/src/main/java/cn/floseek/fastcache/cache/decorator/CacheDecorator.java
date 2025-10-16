@@ -1,8 +1,8 @@
 package cn.floseek.fastcache.cache.decorator;
 
 import cn.floseek.fastcache.cache.Cache;
-import cn.floseek.fastcache.cache.config.CacheConfig;
-import cn.floseek.fastcache.cache.config.CacheType;
+import cn.floseek.fastcache.config.CacheConfig;
+import cn.floseek.fastcache.common.enums.CacheType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
@@ -113,4 +113,5 @@ public abstract class CacheDecorator<K, V> implements Cache<K, V> {
         }
         return false;
     }
+
 }

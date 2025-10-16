@@ -4,8 +4,8 @@ import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.CacheManager;
 import cn.floseek.fastcache.cache.broadcast.BroadcastManager;
 import cn.floseek.fastcache.cache.builder.RemoteCacheBuilder;
-import cn.floseek.fastcache.cache.config.CacheConfig;
-import cn.floseek.fastcache.cache.config.RemoteCacheProvider;
+import cn.floseek.fastcache.config.CacheConfig;
+import cn.floseek.fastcache.common.enums.RemoteCacheProvider;
 import org.redisson.api.RedissonClient;
 
 /**
@@ -42,4 +42,5 @@ public class RedissonCacheBuilder<K, V> extends RemoteCacheBuilder<K, V> {
     public Cache<K, V> build(CacheConfig<K, V> config) {
         return new RedissonCache<>(config, redissonClient);
     }
+
 }

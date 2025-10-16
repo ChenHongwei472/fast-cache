@@ -4,16 +4,16 @@ import cn.floseek.fastcache.cache.broadcast.BroadcastManager;
 import cn.floseek.fastcache.cache.builder.CacheBuilderManager;
 import cn.floseek.fastcache.cache.builder.LocalCacheBuilder;
 import cn.floseek.fastcache.cache.builder.RemoteCacheBuilder;
-import cn.floseek.fastcache.cache.config.CacheConfig;
-import cn.floseek.fastcache.cache.config.CacheType;
-import cn.floseek.fastcache.cache.config.LocalCacheProvider;
-import cn.floseek.fastcache.cache.config.RemoteCacheProvider;
-import cn.floseek.fastcache.cache.config.SyncStrategy;
+import cn.floseek.fastcache.config.CacheConfig;
+import cn.floseek.fastcache.common.enums.CacheType;
+import cn.floseek.fastcache.common.enums.LocalCacheProvider;
+import cn.floseek.fastcache.common.enums.RemoteCacheProvider;
+import cn.floseek.fastcache.common.enums.SyncStrategy;
 import cn.floseek.fastcache.cache.decorator.BroadcastDecorator;
 import cn.floseek.fastcache.cache.decorator.CacheLoaderDecorator;
 import cn.floseek.fastcache.cache.decorator.RefreshCacheDecorator;
 import cn.floseek.fastcache.cache.impl.multi.MultiLevelCacheBuilder;
-import cn.floseek.fastcache.common.CacheException;
+import cn.floseek.fastcache.common.exception.CacheException;
 import cn.floseek.fastcache.config.GlobalProperties;
 import cn.floseek.fastcache.lock.LockTemplate;
 import lombok.extern.slf4j.Slf4j;
@@ -272,4 +272,5 @@ public class DefaultCacheManager implements CacheManager {
         broadcastManager.subscribe();
         log.info("Broadcast manager subscribed");
     }
+
 }

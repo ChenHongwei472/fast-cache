@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.cache;
 
-import cn.floseek.fastcache.cache.config.CacheConfig;
-import cn.floseek.fastcache.cache.config.CacheType;
+import cn.floseek.fastcache.config.CacheConfig;
+import cn.floseek.fastcache.common.enums.CacheType;
 import cn.floseek.fastcache.util.CacheUtils;
 
 import java.nio.charset.Charset;
@@ -34,4 +34,5 @@ public abstract class AbstractRemoteCache<K, V> extends AbstractCache<K, V> {
         String cacheKey = CacheUtils.generateKey(config.getCacheName(), config.getKeyConverter().convert(key));
         return cacheKey.getBytes(Charset.defaultCharset());
     }
+
 }

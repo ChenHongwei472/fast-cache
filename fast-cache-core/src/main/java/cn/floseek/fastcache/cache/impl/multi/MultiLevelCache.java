@@ -2,8 +2,8 @@ package cn.floseek.fastcache.cache.impl.multi;
 
 import cn.floseek.fastcache.cache.AbstractCache;
 import cn.floseek.fastcache.cache.Cache;
-import cn.floseek.fastcache.cache.config.CacheConfig;
-import cn.floseek.fastcache.cache.config.CacheType;
+import cn.floseek.fastcache.config.CacheConfig;
+import cn.floseek.fastcache.common.enums.CacheType;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -122,4 +122,5 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
     public CacheType getCacheType() {
         return CacheType.MULTI_LEVEL;
     }
+
 }

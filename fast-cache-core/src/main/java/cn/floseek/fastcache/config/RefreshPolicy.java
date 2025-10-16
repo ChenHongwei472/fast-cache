@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.cache.config;
+package cn.floseek.fastcache.config;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -100,4 +100,5 @@ public class RefreshPolicy {
         this.refreshLockTimeoutMillis = timeUnit.toMillis(time);
         return this;
     }
+
 }

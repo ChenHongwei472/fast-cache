@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.cache.impl.local;
 
 import cn.floseek.fastcache.cache.AbstractLocalCache;
-import cn.floseek.fastcache.cache.config.CacheConfig;
+import cn.floseek.fastcache.config.CacheConfig;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.commons.lang3.time.DurationUtils;
@@ -63,4 +63,5 @@ public class CaffeineCache<K, V> extends AbstractLocalCache<K, V> {
     public void removeAll(Collection<? extends K> keys) {
         cache.invalidateAll(keys);
     }
+
 }

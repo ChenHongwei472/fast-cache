@@ -1,7 +1,7 @@
-package cn.floseek.fastcache.cache.converter.impl;
+package cn.floseek.fastcache.converter.impl;
 
-import cn.floseek.fastcache.cache.converter.KeyConverter;
-import cn.floseek.fastcache.common.CacheException;
+import cn.floseek.fastcache.converter.KeyConverter;
+import cn.floseek.fastcache.common.exception.CacheException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -34,4 +34,5 @@ public class JacksonKeyConverter implements KeyConverter {
             throw new CacheException("Jackson key convert error", e);
         }
     }
+
 }

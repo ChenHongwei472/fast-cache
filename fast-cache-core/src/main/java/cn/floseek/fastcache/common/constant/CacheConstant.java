@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.common;
+package cn.floseek.fastcache.common.constant;
 
 import java.time.Duration;
 

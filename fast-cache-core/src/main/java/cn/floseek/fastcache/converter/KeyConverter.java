@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.cache.converter;
+package cn.floseek.fastcache.converter;
 
 /**
  * 键名转换器
@@ -17,4 +17,5 @@ public interface KeyConverter {
      * @return 转换后的键
      */
     String convert(Object originalKey);
+
 }

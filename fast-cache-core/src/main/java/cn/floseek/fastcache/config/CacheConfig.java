@@ -1,8 +1,11 @@
-package cn.floseek.fastcache.cache.config;
+package cn.floseek.fastcache.config;
 
-import cn.floseek.fastcache.cache.converter.KeyConverter;
-import cn.floseek.fastcache.cache.serializer.Serializer;
-import cn.floseek.fastcache.common.BaseCacheKey;
+import cn.floseek.fastcache.cache.config.CacheLoader;
+import cn.floseek.fastcache.converter.KeyConverter;
+import cn.floseek.fastcache.common.enums.CacheType;
+import cn.floseek.fastcache.common.enums.SyncStrategy;
+import cn.floseek.fastcache.serializer.Serializer;
+import cn.floseek.fastcache.common.enums.BaseCacheKeyEnum;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -84,11 +87,11 @@ public class CacheConfig<K, V> implements Serializable {
         this.cacheName = cacheName;
     }
 
-    private CacheConfig(BaseCacheKey baseCacheKey) {
-        Objects.requireNonNull(baseCacheKey.getName());
-        this.cacheName = baseCacheKey.getName();
-        this.expireTime = baseCacheKey.getExpireTime();
-        this.localExpireTime = baseCacheKey.getLocalExpireTime();
+    private CacheConfig(BaseCacheKeyEnum baseCacheKeyEnum) {
+        Objects.requireNonNull(baseCacheKeyEnum.getName());
+        this.cacheName = baseCacheKeyEnum.getName();
+        this.expireTime = baseCacheKeyEnum.getExpireTime();
+        this.localExpireTime = baseCacheKeyEnum.getLocalExpireTime();
     }
 
     /**
@@ -104,11 +107,11 @@ public class CacheConfig<K, V> implements Serializable {
     /**
      * 创建缓存配置
      *
-     * @param baseCacheKey 缓存枚举
+     * @param baseCacheKeyEnum 缓存键枚举
      * @return 缓存配置对象
      */
-    public static CacheConfig<Object, Object> newBuilder(BaseCacheKey baseCacheKey) {
-        return new CacheConfig<>(baseCacheKey);
+    public static CacheConfig<Object, Object> newBuilder(BaseCacheKeyEnum baseCacheKeyEnum) {
+        return new CacheConfig<>(baseCacheKeyEnum);
     }
 
     /**

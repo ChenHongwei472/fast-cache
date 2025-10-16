@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.cache.config;
+package cn.floseek.fastcache.common.enums;
 
 /**
  * 本地缓存提供者枚举
@@ -6,6 +6,7 @@ package cn.floseek.fastcache.cache.config;
  * @author ChenHongwei472
  */
 public enum LocalCacheProvider {
+
     /**
      * Caffeine
      */
@@ -14,4 +15,5 @@ public enum LocalCacheProvider {
      * Guava
      */
     GUAVA,
+
 }

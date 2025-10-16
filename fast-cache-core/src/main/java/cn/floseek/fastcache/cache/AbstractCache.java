@@ -1,6 +1,6 @@
 package cn.floseek.fastcache.cache;
 
-import cn.floseek.fastcache.cache.config.CacheConfig;
+import cn.floseek.fastcache.config.CacheConfig;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -30,4 +30,5 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     public CacheConfig<K, V> getConfig() {
         return config;
     }
+
 }

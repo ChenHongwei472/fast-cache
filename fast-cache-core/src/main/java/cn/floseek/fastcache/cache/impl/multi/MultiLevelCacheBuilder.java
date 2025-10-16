@@ -2,7 +2,7 @@ package cn.floseek.fastcache.cache.impl.multi;
 
 import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.builder.CacheBuilder;
-import cn.floseek.fastcache.cache.config.CacheConfig;
+import cn.floseek.fastcache.config.CacheConfig;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -33,4 +33,5 @@ public class MultiLevelCacheBuilder<K, V> implements CacheBuilder<K, V> {
     public Cache<K, V> build(CacheConfig<K, V> config) {
         return new MultiLevelCache<>(config, this.localCache, this.remoteCache);
     }
+
 }

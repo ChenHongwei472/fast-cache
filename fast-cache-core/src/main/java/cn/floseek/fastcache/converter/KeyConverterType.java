@@ -1,6 +1,6 @@
-package cn.floseek.fastcache.cache.converter;
+package cn.floseek.fastcache.converter;
 
-import cn.floseek.fastcache.cache.converter.impl.JacksonKeyConverter;
+import cn.floseek.fastcache.converter.impl.JacksonKeyConverter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum KeyConverterType {
+
     /**
      * Jackson 键名转换器
      */
@@ -26,4 +27,5 @@ public enum KeyConverterType {
      * 键名转换器
      */
     private final KeyConverter keyConverter;
+
 }

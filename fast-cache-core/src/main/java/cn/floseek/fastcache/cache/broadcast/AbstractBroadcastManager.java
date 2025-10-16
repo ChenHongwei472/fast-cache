@@ -2,7 +2,7 @@ package cn.floseek.fastcache.cache.broadcast;
 
 import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.CacheManager;
-import cn.floseek.fastcache.cache.config.CacheType;
+import cn.floseek.fastcache.common.enums.CacheType;
 import cn.floseek.fastcache.cache.decorator.BroadcastDecorator;
 import cn.floseek.fastcache.cache.decorator.CacheDecorator;
 import cn.floseek.fastcache.cache.impl.multi.MultiLevelCache;
@@ -101,4 +101,5 @@ public abstract class AbstractBroadcastManager implements BroadcastManager {
             log.info("Update local cache success, cacheName: {}, keyValues: {}", broadcastMessage.getCacheName(), broadcastMessage.getKeyValues());
         }
     }
+
 }

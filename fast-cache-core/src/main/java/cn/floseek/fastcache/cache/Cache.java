@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.cache;
 
-import cn.floseek.fastcache.cache.config.CacheConfig;
-import cn.floseek.fastcache.cache.config.CacheType;
+import cn.floseek.fastcache.config.CacheConfig;
+import cn.floseek.fastcache.common.enums.CacheType;
 
 import java.io.Closeable;
 import java.util.ArrayList;
@@ -101,4 +101,5 @@ public interface Cache<K, V> extends Closeable {
      * @return 缓存配置对象
      */
     CacheConfig<K, V> getConfig();
+
 }

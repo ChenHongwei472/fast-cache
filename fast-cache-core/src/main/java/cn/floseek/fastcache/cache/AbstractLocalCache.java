@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.cache;
 
-import cn.floseek.fastcache.cache.config.CacheConfig;
-import cn.floseek.fastcache.cache.config.CacheType;
+import cn.floseek.fastcache.config.CacheConfig;
+import cn.floseek.fastcache.common.enums.CacheType;
 
 /**
  * 本地缓存抽象类
@@ -20,4 +20,5 @@ public abstract class AbstractLocalCache<K, V> extends AbstractCache<K, V> {
     public CacheType getCacheType() {
         return CacheType.LOCAL;
     }
+
 }

@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.cache.config;
+package cn.floseek.fastcache.common.enums;
 
 /**
  * 缓存同步策略
@@ -9,6 +9,7 @@ package cn.floseek.fastcache.cache.config;
  * @author ChenHongwei472
  */
 public enum SyncStrategy {
+
     /**
      * 不同步
      */
@@ -21,4 +22,5 @@ public enum SyncStrategy {
      * 删除
      */
     INVALIDATE
+
 }

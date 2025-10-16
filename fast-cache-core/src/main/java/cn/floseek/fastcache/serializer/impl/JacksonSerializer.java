@@ -1,7 +1,7 @@
-package cn.floseek.fastcache.cache.serializer.impl;
+package cn.floseek.fastcache.serializer.impl;
 
-import cn.floseek.fastcache.cache.serializer.Serializer;
-import cn.floseek.fastcache.common.CacheException;
+import cn.floseek.fastcache.serializer.Serializer;
+import cn.floseek.fastcache.common.exception.CacheException;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.core.type.TypeReference;

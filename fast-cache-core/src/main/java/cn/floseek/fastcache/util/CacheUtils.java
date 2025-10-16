@@ -1,6 +1,6 @@
 package cn.floseek.fastcache.util;
 
-import cn.floseek.fastcache.common.CacheConstant;
+import cn.floseek.fastcache.common.constant.CacheConstant;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -27,4 +27,5 @@ public class CacheUtils {
         }
         return joiner.toString();
     }
+
 }

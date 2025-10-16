@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.cache.builder;
 
 import cn.floseek.fastcache.cache.Cache;
-import cn.floseek.fastcache.cache.config.CacheConfig;
+import cn.floseek.fastcache.config.CacheConfig;
 
 /**
  * 缓存构建器接口
@@ -19,4 +19,5 @@ public interface CacheBuilder<K, V> {
      * @return 缓存实例
      */
     Cache<K, V> build(CacheConfig<K, V> config);
+
 }

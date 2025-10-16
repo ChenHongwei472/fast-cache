@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.cache.serializer;
+package cn.floseek.fastcache.serializer;
 
 /**
  * 序列化器接口
@@ -27,4 +27,5 @@ public interface Serializer {
      * @return 对象
      */
     <T> T deserialize(byte[] bytes);
+
 }

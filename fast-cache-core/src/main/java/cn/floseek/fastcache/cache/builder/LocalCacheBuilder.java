@@ -1,6 +1,6 @@
 package cn.floseek.fastcache.cache.builder;
 
-import cn.floseek.fastcache.cache.config.LocalCacheProvider;
+import cn.floseek.fastcache.common.enums.LocalCacheProvider;
 
 /**
  * 本地缓存构建器抽象类
@@ -20,4 +20,5 @@ public abstract class LocalCacheBuilder<K, V> implements CacheBuilder<K, V> {
      * @return 本地缓存提供者枚举
      */
     public abstract LocalCacheProvider getProvider();
+
 }

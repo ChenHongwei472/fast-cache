@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.cache.builder;
 
-import cn.floseek.fastcache.cache.config.LocalCacheProvider;
-import cn.floseek.fastcache.cache.config.RemoteCacheProvider;
+import cn.floseek.fastcache.common.enums.LocalCacheProvider;
+import cn.floseek.fastcache.common.enums.RemoteCacheProvider;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -67,4 +67,5 @@ public class CacheBuilderManager<K, V> {
     public RemoteCacheBuilder<K, V> getRemoteCacheBuilder(RemoteCacheProvider provider) {
         return remoteCacheBuilderMap.get(provider);
     }
+
 }

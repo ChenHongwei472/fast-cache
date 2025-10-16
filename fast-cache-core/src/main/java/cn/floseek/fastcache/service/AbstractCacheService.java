@@ -2,14 +2,14 @@ package cn.floseek.fastcache.service;
 
 import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.CacheManager;
-import cn.floseek.fastcache.cache.config.CacheConfig;
+import cn.floseek.fastcache.config.CacheConfig;
 import cn.floseek.fastcache.cache.config.CacheLoader;
-import cn.floseek.fastcache.cache.config.CacheType;
-import cn.floseek.fastcache.cache.config.RefreshPolicy;
-import cn.floseek.fastcache.cache.config.SyncStrategy;
-import cn.floseek.fastcache.cache.converter.KeyConverter;
-import cn.floseek.fastcache.cache.serializer.Serializer;
-import cn.floseek.fastcache.common.BaseCacheKey;
+import cn.floseek.fastcache.common.enums.CacheType;
+import cn.floseek.fastcache.config.RefreshPolicy;
+import cn.floseek.fastcache.common.enums.SyncStrategy;
+import cn.floseek.fastcache.converter.KeyConverter;
+import cn.floseek.fastcache.serializer.Serializer;
+import cn.floseek.fastcache.common.enums.BaseCacheKeyEnum;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.time.Duration;
@@ -72,11 +72,11 @@ public abstract class AbstractCacheService<K, V> implements CacheService<K, V> {
     }
 
     /**
-     * 获取缓存键基础接口
+     * 获取缓存键枚举基础接口
      *
-     * @return 缓存键基础接口
+     * @return 缓存键枚举基础接口
      */
-    protected abstract BaseCacheKey baseCacheKey();
+    protected abstract BaseCacheKeyEnum baseCacheKeyEnum();
 
     /**
      * 获取缓存名称
@@ -84,7 +84,7 @@ public abstract class AbstractCacheService<K, V> implements CacheService<K, V> {
      * @return 缓存名称
      */
     protected String cacheName() {
-        return this.baseCacheKey().getName();
+        return this.baseCacheKeyEnum().getName();
     }
 
     /**
@@ -100,7 +100,7 @@ public abstract class AbstractCacheService<K, V> implements CacheService<K, V> {
      * @return 缓存过期时间
      */
     protected Duration expireTime() {
-        return this.baseCacheKey().getExpireTime();
+        return this.baseCacheKeyEnum().getExpireTime();
     }
 
     /**
@@ -109,7 +109,7 @@ public abstract class AbstractCacheService<K, V> implements CacheService<K, V> {
      * @return 本地缓存过期时间
      */
     protected Duration localExpireTime() {
-        return this.baseCacheKey().getLocalExpireTime();
+        return this.baseCacheKeyEnum().getLocalExpireTime();
     }
 
     /**

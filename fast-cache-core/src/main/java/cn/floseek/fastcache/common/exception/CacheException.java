@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.common;
+package cn.floseek.fastcache.common.exception;
 
 import java.io.Serial;
 
@@ -23,4 +23,5 @@ public class CacheException extends RuntimeException {
     public CacheException(Throwable cause) {
         super(cause);
     }
+
 }

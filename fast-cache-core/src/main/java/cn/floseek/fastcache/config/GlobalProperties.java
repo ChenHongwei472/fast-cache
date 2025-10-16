@@ -1,10 +1,10 @@
 package cn.floseek.fastcache.config;
 
-import cn.floseek.fastcache.cache.config.LocalCacheProvider;
-import cn.floseek.fastcache.cache.config.RemoteCacheProvider;
-import cn.floseek.fastcache.cache.config.SyncStrategy;
-import cn.floseek.fastcache.cache.converter.KeyConverterType;
-import cn.floseek.fastcache.cache.serializer.SerializerType;
+import cn.floseek.fastcache.converter.KeyConverterType;
+import cn.floseek.fastcache.common.enums.LocalCacheProvider;
+import cn.floseek.fastcache.common.enums.RemoteCacheProvider;
+import cn.floseek.fastcache.common.enums.SyncStrategy;
+import cn.floseek.fastcache.serializer.SerializerType;
 import lombok.Data;
 
 /**
@@ -67,4 +67,5 @@ public class GlobalProperties {
          */
         private SerializerType serializer = SerializerType.JAVA;
     }
+
 }

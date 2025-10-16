@@ -3,8 +3,8 @@ package cn.floseek.fastcache.cache.decorator;
 import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.broadcast.BroadcastManager;
 import cn.floseek.fastcache.cache.broadcast.BroadcastMessage;
-import cn.floseek.fastcache.cache.config.CacheConfig;
-import cn.floseek.fastcache.cache.config.SyncStrategy;
+import cn.floseek.fastcache.config.CacheConfig;
+import cn.floseek.fastcache.common.enums.SyncStrategy;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -133,4 +133,5 @@ public class BroadcastDecorator<K, V> extends CacheDecorator<K, V> {
         }
         return false;
     }
+
 }

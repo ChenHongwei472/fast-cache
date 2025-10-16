@@ -2,7 +2,7 @@ package cn.floseek.fastcache.cache.builder;
 
 import cn.floseek.fastcache.cache.broadcast.BroadcastManager;
 import cn.floseek.fastcache.cache.CacheManager;
-import cn.floseek.fastcache.cache.config.RemoteCacheProvider;
+import cn.floseek.fastcache.common.enums.RemoteCacheProvider;
 
 /**
  * 分布式缓存构建器
@@ -37,4 +37,5 @@ public abstract class RemoteCacheBuilder<K, V> implements CacheBuilder<K, V> {
      * @return 分布式缓存提供者枚举
      */
     public abstract RemoteCacheProvider getProvider();
+
 }

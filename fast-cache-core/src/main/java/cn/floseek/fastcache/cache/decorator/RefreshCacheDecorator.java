@@ -3,7 +3,7 @@ package cn.floseek.fastcache.cache.decorator;
 import cn.floseek.fastcache.cache.AbstractLocalCache;
 import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.config.CacheLoader;
-import cn.floseek.fastcache.cache.config.RefreshPolicy;
+import cn.floseek.fastcache.config.RefreshPolicy;
 import cn.floseek.fastcache.cache.impl.multi.MultiLevelCache;
 import cn.floseek.fastcache.lock.LockTemplate;
 import cn.floseek.fastcache.util.CacheUtils;
@@ -275,4 +275,5 @@ public class RefreshCacheDecorator<K, V> extends CacheLoaderDecorator<K, V> {
             }
         }
     }
+
 }
