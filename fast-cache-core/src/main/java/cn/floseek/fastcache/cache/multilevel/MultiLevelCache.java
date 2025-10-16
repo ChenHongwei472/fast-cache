@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.cache.impl.multi;
+package cn.floseek.fastcache.cache.multilevel;
 
 import cn.floseek.fastcache.cache.AbstractCache;
 import cn.floseek.fastcache.cache.Cache;

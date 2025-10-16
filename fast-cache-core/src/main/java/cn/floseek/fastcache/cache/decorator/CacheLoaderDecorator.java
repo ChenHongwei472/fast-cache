@@ -2,7 +2,7 @@ package cn.floseek.fastcache.cache.decorator;
 
 import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.config.CacheConfig;
-import cn.floseek.fastcache.cache.config.CacheLoader;
+import cn.floseek.fastcache.cache.CacheLoader;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 

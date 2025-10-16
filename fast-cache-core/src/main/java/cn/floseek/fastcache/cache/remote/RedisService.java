@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.redis;
+package cn.floseek.fastcache.cache.remote;
 
 import java.time.Duration;
 import java.util.Collection;

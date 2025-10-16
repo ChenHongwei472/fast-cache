@@ -12,7 +12,7 @@ import cn.floseek.fastcache.common.enums.SyncStrategy;
 import cn.floseek.fastcache.cache.decorator.BroadcastDecorator;
 import cn.floseek.fastcache.cache.decorator.CacheLoaderDecorator;
 import cn.floseek.fastcache.cache.decorator.RefreshCacheDecorator;
-import cn.floseek.fastcache.cache.impl.multi.MultiLevelCacheBuilder;
+import cn.floseek.fastcache.cache.multilevel.MultiLevelCacheBuilder;
 import cn.floseek.fastcache.common.exception.CacheException;
 import cn.floseek.fastcache.config.GlobalProperties;
 import cn.floseek.fastcache.lock.LockTemplate;

@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.cache.config;
+package cn.floseek.fastcache.cache;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,4 +39,5 @@ public interface CacheLoader<K, V> {
         }
         return resultMap;
     }
+
 }

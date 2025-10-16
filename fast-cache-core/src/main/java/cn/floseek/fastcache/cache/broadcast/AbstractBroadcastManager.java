@@ -5,7 +5,7 @@ import cn.floseek.fastcache.cache.CacheManager;
 import cn.floseek.fastcache.common.enums.CacheType;
 import cn.floseek.fastcache.cache.decorator.BroadcastDecorator;
 import cn.floseek.fastcache.cache.decorator.CacheDecorator;
-import cn.floseek.fastcache.cache.impl.multi.MultiLevelCache;
+import cn.floseek.fastcache.cache.multilevel.MultiLevelCache;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;

@@ -3,7 +3,7 @@ package cn.floseek.fastcache.config;
 import cn.floseek.fastcache.cache.builder.RemoteCacheBuilder;
 import cn.floseek.fastcache.config.properties.FastCacheProperties;
 import cn.floseek.fastcache.lock.LockTemplate;
-import cn.floseek.fastcache.redis.RedisService;
+import cn.floseek.fastcache.cache.remote.RedisService;
 import cn.floseek.fastcache.redisson.RedissonCacheBuilder;
 import cn.floseek.fastcache.redisson.RedissonLockTemplate;
 import cn.floseek.fastcache.redisson.RedissonServiceImpl;

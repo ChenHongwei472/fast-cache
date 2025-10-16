@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.redis;
+package cn.floseek.fastcache.cache.remote;
 
 /**
  * 有序集合条目

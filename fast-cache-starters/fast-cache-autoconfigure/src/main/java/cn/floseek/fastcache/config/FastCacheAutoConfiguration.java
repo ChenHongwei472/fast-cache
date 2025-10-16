@@ -5,8 +5,8 @@ import cn.floseek.fastcache.cache.DefaultCacheManager;
 import cn.floseek.fastcache.cache.builder.CacheBuilderManager;
 import cn.floseek.fastcache.cache.builder.LocalCacheBuilder;
 import cn.floseek.fastcache.cache.builder.RemoteCacheBuilder;
-import cn.floseek.fastcache.cache.impl.local.CaffeineCacheBuilder;
-import cn.floseek.fastcache.cache.impl.local.GuavaCacheBuilder;
+import cn.floseek.fastcache.cache.local.CaffeineCacheBuilder;
+import cn.floseek.fastcache.cache.local.GuavaCacheBuilder;
 import cn.floseek.fastcache.config.properties.FastCacheProperties;
 import cn.floseek.fastcache.lock.LockTemplate;
 import jakarta.annotation.Resource;
@@ -63,4 +63,5 @@ public class FastCacheAutoConfiguration {
     public <K, V> LocalCacheBuilder<K, V> guavaCacheBuilder() {
         return new GuavaCacheBuilder<>();
     }
+
 }

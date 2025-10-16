@@ -1,6 +1,6 @@
 package cn.floseek.fastcache.config;
 
-import cn.floseek.fastcache.cache.config.CacheLoader;
+import cn.floseek.fastcache.cache.CacheLoader;
 import cn.floseek.fastcache.converter.KeyConverter;
 import cn.floseek.fastcache.common.enums.CacheType;
 import cn.floseek.fastcache.common.enums.SyncStrategy;

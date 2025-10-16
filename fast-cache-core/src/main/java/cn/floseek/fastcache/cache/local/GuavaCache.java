@@ -1,4 +1,4 @@
-package cn.floseek.fastcache.cache.impl.local;
+package cn.floseek.fastcache.cache.local;
 
 import cn.floseek.fastcache.cache.AbstractLocalCache;
 import cn.floseek.fastcache.config.CacheConfig;

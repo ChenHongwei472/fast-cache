@@ -3,7 +3,7 @@ package cn.floseek.fastcache.service;
 import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.CacheManager;
 import cn.floseek.fastcache.config.CacheConfig;
-import cn.floseek.fastcache.cache.config.CacheLoader;
+import cn.floseek.fastcache.cache.CacheLoader;
 import cn.floseek.fastcache.common.enums.CacheType;
 import cn.floseek.fastcache.config.RefreshPolicy;
 import cn.floseek.fastcache.common.enums.SyncStrategy;
