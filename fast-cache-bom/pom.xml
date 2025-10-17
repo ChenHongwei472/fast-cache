@@ -6,7 +6,7 @@
     <parent>
         <groupId>cn.floseek</groupId>
         <artifactId>fast-cache</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>fast-cache-bom</artifactId>
@@ -18,22 +18,22 @@
             <dependency>
                 <groupId>cn.floseek</groupId>
                 <artifactId>fast-cache-core</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.1</version>
             </dependency>
             <dependency>
                 <groupId>cn.floseek</groupId>
                 <artifactId>fast-cache-autoconfigure</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.1</version>
             </dependency>
             <dependency>
                 <groupId>cn.floseek</groupId>
                 <artifactId>fast-cache-redisson-spring-boot-starter</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.1</version>
             </dependency>
             <dependency>
                 <groupId>cn.floseek</groupId>
                 <artifactId>fast-cache-redisson</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
