@@ -10,7 +10,7 @@
     </parent>
     <groupId>cn.floseek</groupId>
     <artifactId>fast-cache</artifactId>
-    <version>0.0.9</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
     <name>fast-cache</name>
     <description>A java cache framework.</description>
