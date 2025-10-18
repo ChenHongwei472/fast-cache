@@ -60,7 +60,36 @@ FastCache 提供了 `fast-cache-bom` 模块进行依赖管理，这是我们比�
 - fast-cache-redisson：Redisson 缓存模块
 - fast-cache-redisson-spring-boot-starter：Redisson 缓存自动配置模块
 
-### 二、定义缓存键枚举
+### 二、配置文件
+
+在 `application.yml` 中添加 Redis 的相关配置，比如：
+
+```yaml
+spring:
+  data:
+    redis:
+      database: 0
+      host: 127.0.0.1
+      port: 6379
+      password:
+```
+
+FastCache 也提供了一些配置属性，您可以根据自己的情况来配置，当然也可以不配置，使用 FastCache 的默认值。
+
+```yaml
+fast-cache:
+  local:
+    provider: caffeine
+  remote:
+    provider: redisson
+    key-converter: jackson
+    value-serializer: jackson
+  sync-strategy:
+    mode: invalidate
+    broadcast-channel: fast_cache_broadcast_channel
+```
+
+### 三、定义缓存键枚举
 
 很多开发者在使用缓存时，都会定义一个枚举类，目的是方便对缓存键进行管理。
 
@@ -94,9 +123,9 @@ public enum CacheKeyEnum implements BaseCacheKeyEnum {
 }
 ```
 
-### 三、定义缓存服务
+### 四、定义缓存服务
 
-FastCache 提供了多种使用方式，这里介绍一种比较简单的方式。
+FastCache 提供了多种使用方式，这里介绍一种比较简单的方式，你也可以使用我们提供的 `CacheManager` 类。
 
 为什么要定义缓存服务呢？主要是为了让分层更加清晰，避免与业务逻辑混在一起，这也是比较符合 DDD（领域驱动设计）的一种设计。
 
@@ -159,7 +188,7 @@ public class UserCacheServiceImpl extends AbstractCacheService<Long, User> imple
 }
 ```
 
-### 使用缓存服务
+### 五、使用缓存服务
 
 最后，您就可以在业务代码中调用缓存服务进行相关的操作了。
 
@@ -173,5 +202,6 @@ public class UserRepository {
     public User queryUserById(Long userId) {
         return userCacheService.get(userId);
     }
+
 }
 ```
