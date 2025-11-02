@@ -4,7 +4,6 @@ import cn.floseek.fastcache.cache.AbstractCache;
 import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.common.enums.CacheType;
 import cn.floseek.fastcache.config.CacheConfig;
-import lombok.Getter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 
@@ -23,7 +22,6 @@ import java.util.Set;
  * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
-@Getter
 public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
 
     /**
@@ -119,6 +117,14 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
     @Override
     public CacheType getCacheType() {
         return CacheType.MULTI_LEVEL;
+    }
+
+    public Cache<K, V> getLocalCache() {
+        return localCache;
+    }
+
+    public Cache<K, V> getRemoteCache() {
+        return remoteCache;
     }
 
 }

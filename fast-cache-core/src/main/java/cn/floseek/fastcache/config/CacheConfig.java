@@ -1,13 +1,11 @@
 package cn.floseek.fastcache.config;
 
 import cn.floseek.fastcache.cache.CacheLoader;
-import cn.floseek.fastcache.converter.KeyConverter;
-import cn.floseek.fastcache.common.enums.CacheType;
-import cn.floseek.fastcache.common.enums.CacheSyncMode;
-import cn.floseek.fastcache.serializer.ValueSerializer;
 import cn.floseek.fastcache.common.enums.BaseCacheKeyEnum;
-import lombok.Getter;
-import lombok.ToString;
+import cn.floseek.fastcache.common.enums.CacheSyncMode;
+import cn.floseek.fastcache.common.enums.CacheType;
+import cn.floseek.fastcache.converter.KeyConverter;
+import cn.floseek.fastcache.serializer.ValueSerializer;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -22,8 +20,6 @@ import java.util.concurrent.TimeUnit;
  * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
-@Getter
-@ToString
 public class CacheConfig<K, V> implements Serializable {
 
     @Serial
@@ -92,6 +88,102 @@ public class CacheConfig<K, V> implements Serializable {
         this.cacheName = baseCacheKeyEnum.getName();
         this.expireTime = baseCacheKeyEnum.getExpireTime();
         this.localExpireTime = baseCacheKeyEnum.getLocalExpireTime();
+    }
+
+    public String getCacheName() {
+        return cacheName;
+    }
+
+    public void setCacheName(String cacheName) {
+        this.cacheName = cacheName;
+    }
+
+    public CacheType getCacheType() {
+        return cacheType;
+    }
+
+    public void setCacheType(CacheType cacheType) {
+        this.cacheType = cacheType;
+    }
+
+    public Duration getExpireTime() {
+        return expireTime;
+    }
+
+    public void setExpireTime(Duration expireTime) {
+        this.expireTime = expireTime;
+    }
+
+    public Duration getLocalExpireTime() {
+        return localExpireTime;
+    }
+
+    public void setLocalExpireTime(Duration localExpireTime) {
+        this.localExpireTime = localExpireTime;
+    }
+
+    public Long getLocalMaximumSize() {
+        return localMaximumSize;
+    }
+
+    public void setLocalMaximumSize(Long localMaximumSize) {
+        this.localMaximumSize = localMaximumSize;
+    }
+
+    public CacheSyncMode getCacheSyncMode() {
+        return cacheSyncMode;
+    }
+
+    public void setCacheSyncMode(CacheSyncMode cacheSyncMode) {
+        this.cacheSyncMode = cacheSyncMode;
+    }
+
+    public RefreshPolicy getRefreshPolicy() {
+        return refreshPolicy;
+    }
+
+    public void setRefreshPolicy(RefreshPolicy refreshPolicy) {
+        this.refreshPolicy = refreshPolicy;
+    }
+
+    public KeyConverter getKeyConverter() {
+        return keyConverter;
+    }
+
+    public void setKeyConverter(KeyConverter keyConverter) {
+        this.keyConverter = keyConverter;
+    }
+
+    public ValueSerializer getValueSerializer() {
+        return valueSerializer;
+    }
+
+    public void setValueSerializer(ValueSerializer valueSerializer) {
+        this.valueSerializer = valueSerializer;
+    }
+
+    public CacheLoader<K, V> getLoader() {
+        return loader;
+    }
+
+    public void setLoader(CacheLoader<K, V> loader) {
+        this.loader = loader;
+    }
+
+    @Override
+    public String toString() {
+        return "CacheConfig{" +
+                "cacheName='" + cacheName + '\'' +
+                ", cacheType=" + cacheType +
+                ", expireTime=" + expireTime +
+                ", localExpireTime=" + localExpireTime +
+                ", localMaximumSize=" + localMaximumSize +
+                ", cacheSyncMode=" + cacheSyncMode +
+                ", refreshPolicy=" + refreshPolicy +
+                ", keyConverter=" + keyConverter +
+                ", valueSerializer=" + valueSerializer +
+                ", loader=" + loader +
+                '}';
     }
 
     /**

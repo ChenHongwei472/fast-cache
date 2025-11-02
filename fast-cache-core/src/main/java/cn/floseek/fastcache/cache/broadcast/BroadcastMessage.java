@@ -1,7 +1,5 @@
 package cn.floseek.fastcache.cache.broadcast;
 
-import lombok.Data;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
@@ -15,7 +13,6 @@ import java.util.Map;
  *
  * @author ChenHongwei472
  */
-@Data
 public class BroadcastMessage implements Serializable {
 
     @Serial
@@ -60,6 +57,57 @@ public class BroadcastMessage implements Serializable {
      * </p>
      */
     private List<Object> keys;
+
+    public String getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
+    }
+
+    public String getCacheName() {
+        return cacheName;
+    }
+
+    public void setCacheName(String cacheName) {
+        this.cacheName = cacheName;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public Map<Object, Object> getKeyValues() {
+        return keyValues;
+    }
+
+    public void setKeyValues(Map<Object, Object> keyValues) {
+        this.keyValues = keyValues;
+    }
+
+    public List<Object> getKeys() {
+        return keys;
+    }
+
+    public void setKeys(List<Object> keys) {
+        this.keys = keys;
+    }
+
+    @Override
+    public String toString() {
+        return "BroadcastMessage{" +
+                "instanceId='" + instanceId + '\'' +
+                ", cacheName='" + cacheName + '\'' +
+                ", type=" + type +
+                ", keyValues=" + keyValues +
+                ", keys=" + keys +
+                '}';
+    }
 
     /**
      * 创建删除广播消息
@@ -112,4 +160,5 @@ public class BroadcastMessage implements Serializable {
     public boolean isUpdate() {
         return this.type == TYPE_UPDATE;
     }
+
 }

@@ -1,20 +1,18 @@
 package cn.floseek.fastcache.config;
 
+import cn.floseek.fastcache.common.enums.CacheSyncMode;
 import cn.floseek.fastcache.common.enums.LocalCacheProvider;
 import cn.floseek.fastcache.common.enums.RemoteCacheProvider;
-import cn.floseek.fastcache.common.enums.CacheSyncMode;
 import cn.floseek.fastcache.converter.KeyConverter;
 import cn.floseek.fastcache.converter.KeyConverterType;
 import cn.floseek.fastcache.serializer.ValueSerializer;
 import cn.floseek.fastcache.serializer.ValueSerializerType;
-import lombok.Data;
 
 /**
  * 全局配置属性
  *
  * @author ChenHongwei472
  */
-@Data
 public class GlobalProperties {
 
     /**
@@ -32,63 +30,37 @@ public class GlobalProperties {
      */
     private CacheSyncStrategy syncStrategy = new CacheSyncStrategy();
 
-    /**
-     * 本地缓存配置
-     */
-    @Data
-    public static class LocalCache {
-
-        /**
-         * 本地缓存提供者
-         */
-        private LocalCacheProvider provider = LocalCacheProvider.CAFFEINE;
-
-        /**
-         * 每个实例最大容量
-         */
-        private Long maximumSize;
-
+    public LocalCache getLocal() {
+        return local;
     }
 
-    /**
-     * 分布式缓存配置
-     */
-    @Data
-    public static class RemoteCache {
-
-        /**
-         * 分布式缓存提供者
-         */
-        private RemoteCacheProvider provider = RemoteCacheProvider.REDISSON;
-
-        /**
-         * 键名转换器类型
-         */
-        private KeyConverterType keyConverter = KeyConverterType.JACKSON;
-
-        /**
-         * 值序列化器类型
-         */
-        private ValueSerializerType valueSerializer = ValueSerializerType.JAVA;
-
+    public void setLocal(LocalCache local) {
+        this.local = local;
     }
 
-    /**
-     * 缓存同步策略配置
-     */
-    @Data
-    public static class CacheSyncStrategy {
+    public RemoteCache getRemote() {
+        return remote;
+    }
 
-        /**
-         * 缓存同步模式
-         */
-        private CacheSyncMode mode = CacheSyncMode.NONE;
+    public void setRemote(RemoteCache remote) {
+        this.remote = remote;
+    }
 
-        /**
-         * 缓存广播频道
-         */
-        private String broadcastChannel = "fast_cache_broadcast_channel";
+    public CacheSyncStrategy getSyncStrategy() {
+        return syncStrategy;
+    }
 
+    public void setSyncStrategy(CacheSyncStrategy syncStrategy) {
+        this.syncStrategy = syncStrategy;
+    }
+
+    @Override
+    public String toString() {
+        return "GlobalProperties{" +
+                "local=" + local +
+                ", remote=" + remote +
+                ", syncStrategy=" + syncStrategy +
+                '}';
     }
 
     /**
@@ -152,6 +124,143 @@ public class GlobalProperties {
      */
     public String getCacheSyncBroadcastChannel() {
         return this.syncStrategy.getBroadcastChannel();
+    }
+
+    /**
+     * 本地缓存配置
+     */
+    public static class LocalCache {
+
+        /**
+         * 本地缓存提供者
+         */
+        private LocalCacheProvider provider = LocalCacheProvider.CAFFEINE;
+
+        /**
+         * 每个实例最大容量
+         */
+        private Long maximumSize;
+
+        public LocalCacheProvider getProvider() {
+            return provider;
+        }
+
+        public void setProvider(LocalCacheProvider provider) {
+            this.provider = provider;
+        }
+
+        public Long getMaximumSize() {
+            return maximumSize;
+        }
+
+        public void setMaximumSize(Long maximumSize) {
+            this.maximumSize = maximumSize;
+        }
+
+        @Override
+        public String toString() {
+            return "LocalCache{" +
+                    "provider=" + provider +
+                    ", maximumSize=" + maximumSize +
+                    '}';
+        }
+
+    }
+
+    /**
+     * 分布式缓存配置
+     */
+    public static class RemoteCache {
+
+        /**
+         * 分布式缓存提供者
+         */
+        private RemoteCacheProvider provider = RemoteCacheProvider.REDISSON;
+
+        /**
+         * 键名转换器类型
+         */
+        private KeyConverterType keyConverter = KeyConverterType.JACKSON;
+
+        /**
+         * 值序列化器类型
+         */
+        private ValueSerializerType valueSerializer = ValueSerializerType.JAVA;
+
+        public RemoteCacheProvider getProvider() {
+            return provider;
+        }
+
+        public void setProvider(RemoteCacheProvider provider) {
+            this.provider = provider;
+        }
+
+        public KeyConverterType getKeyConverter() {
+            return keyConverter;
+        }
+
+        public void setKeyConverter(KeyConverterType keyConverter) {
+            this.keyConverter = keyConverter;
+        }
+
+        public ValueSerializerType getValueSerializer() {
+            return valueSerializer;
+        }
+
+        public void setValueSerializer(ValueSerializerType valueSerializer) {
+            this.valueSerializer = valueSerializer;
+        }
+
+        @Override
+        public String toString() {
+            return "RemoteCache{" +
+                    "provider=" + provider +
+                    ", keyConverter=" + keyConverter +
+                    ", valueSerializer=" + valueSerializer +
+                    '}';
+        }
+
+    }
+
+    /**
+     * 缓存同步策略配置
+     */
+    public static class CacheSyncStrategy {
+
+        /**
+         * 缓存同步模式
+         */
+        private CacheSyncMode mode = CacheSyncMode.NONE;
+
+        /**
+         * 缓存广播频道
+         */
+        private String broadcastChannel = "fast_cache_broadcast_channel";
+
+        public CacheSyncMode getMode() {
+            return mode;
+        }
+
+        public void setMode(CacheSyncMode mode) {
+            this.mode = mode;
+        }
+
+        public String getBroadcastChannel() {
+            return broadcastChannel;
+        }
+
+        public void setBroadcastChannel(String broadcastChannel) {
+            this.broadcastChannel = broadcastChannel;
+        }
+
+        @Override
+        public String toString() {
+            return "CacheSyncStrategy{" +
+                    "mode=" + mode +
+                    ", broadcastChannel='" + broadcastChannel + '\'' +
+                    '}';
+        }
+
     }
 
 }

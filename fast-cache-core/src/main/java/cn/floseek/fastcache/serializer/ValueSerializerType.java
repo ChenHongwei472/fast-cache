@@ -2,16 +2,12 @@ package cn.floseek.fastcache.serializer;
 
 import cn.floseek.fastcache.serializer.impl.JacksonValueSerializer;
 import cn.floseek.fastcache.serializer.impl.JavaValueSerializer;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 /**
  * 值序列化器类型枚举
  *
  * @author ChenHongwei472
  */
-@Getter
-@RequiredArgsConstructor
 public enum ValueSerializerType {
 
     /**
@@ -32,5 +28,18 @@ public enum ValueSerializerType {
      * 值序列化器实例
      */
     private final ValueSerializer instance;
+
+    ValueSerializerType(String name, ValueSerializer instance) {
+        this.name = name;
+        this.instance = instance;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ValueSerializer getInstance() {
+        return instance;
+    }
 
 }

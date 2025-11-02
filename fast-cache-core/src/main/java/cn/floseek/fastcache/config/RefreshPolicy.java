@@ -1,8 +1,5 @@
 package cn.floseek.fastcache.config;
 
-import lombok.Getter;
-import lombok.ToString;
-
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
@@ -11,8 +8,6 @@ import java.util.concurrent.TimeUnit;
  *
  * @author ChenHongwei472
  */
-@Getter
-@ToString
 public class RefreshPolicy {
 
     /**
@@ -29,6 +24,39 @@ public class RefreshPolicy {
      * 刷新锁超时时间（毫秒）
      */
     private long refreshLockTimeoutMillis = 60 * 1000;
+
+    public long getRefreshMillis() {
+        return refreshMillis;
+    }
+
+    public void setRefreshMillis(long refreshMillis) {
+        this.refreshMillis = refreshMillis;
+    }
+
+    public long getStopRefreshAfterLastAccessMillis() {
+        return stopRefreshAfterLastAccessMillis;
+    }
+
+    public void setStopRefreshAfterLastAccessMillis(long stopRefreshAfterLastAccessMillis) {
+        this.stopRefreshAfterLastAccessMillis = stopRefreshAfterLastAccessMillis;
+    }
+
+    public long getRefreshLockTimeoutMillis() {
+        return refreshLockTimeoutMillis;
+    }
+
+    public void setRefreshLockTimeoutMillis(long refreshLockTimeoutMillis) {
+        this.refreshLockTimeoutMillis = refreshLockTimeoutMillis;
+    }
+
+    @Override
+    public String toString() {
+        return "RefreshPolicy{" +
+                "refreshMillis=" + refreshMillis +
+                ", stopRefreshAfterLastAccessMillis=" + stopRefreshAfterLastAccessMillis +
+                ", refreshLockTimeoutMillis=" + refreshLockTimeoutMillis +
+                '}';
+    }
 
     /**
      * 创建缓存刷新策略
