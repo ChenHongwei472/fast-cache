@@ -1,7 +1,7 @@
 package cn.floseek.fastcache.serializer.impl;
 
-import cn.floseek.fastcache.serializer.ValueSerializer;
 import cn.floseek.fastcache.common.exception.CacheException;
+import cn.floseek.fastcache.serializer.ValueSerializer;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -75,6 +75,10 @@ public class JacksonValueSerializer implements ValueSerializer {
                     // 19-Apr-2016, tatu: ReferenceType like Optional also requires similar handling:
                     while (t.isReferenceType()) {
                         t = t.getReferencedType();
+                    }
+                    // to fix problem with record
+                    if (t.isRecordType()) {
+                        return true;
                     }
                     // to fix problem with wrong long to int conversion
                     if (t.getRawClass() == Long.class) {
