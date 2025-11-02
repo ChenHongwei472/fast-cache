@@ -1,7 +1,8 @@
 package cn.floseek.fastcache.cache;
 
 import cn.floseek.fastcache.config.CacheConfig;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 缓存抽象类
@@ -10,8 +11,9 @@ import lombok.extern.slf4j.Slf4j;
  * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
-@Slf4j
 public abstract class AbstractCache<K, V> implements Cache<K, V> {
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractCache.class);
 
     /**
      * 缓存配置

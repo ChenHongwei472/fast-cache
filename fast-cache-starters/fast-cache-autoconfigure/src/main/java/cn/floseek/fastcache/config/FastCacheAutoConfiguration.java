@@ -10,7 +10,6 @@ import cn.floseek.fastcache.cache.local.GuavaCacheBuilder;
 import cn.floseek.fastcache.config.properties.FastCacheProperties;
 import cn.floseek.fastcache.lock.LockTemplate;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +21,6 @@ import java.util.List;
  *
  * @author ChenHongwei472
  */
-@Slf4j
 @Configuration
 @EnableConfigurationProperties(FastCacheProperties.class)
 public class FastCacheAutoConfiguration {

@@ -3,10 +3,11 @@ package cn.floseek.fastcache.redisson;
 import cn.floseek.fastcache.cache.CacheManager;
 import cn.floseek.fastcache.cache.broadcast.AbstractBroadcastManager;
 import cn.floseek.fastcache.cache.broadcast.BroadcastMessage;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RedissonClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -15,8 +16,9 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * @author ChenHongwei472
  */
-@Slf4j
 public class RedissonBroadcastManager extends AbstractBroadcastManager {
+
+    private static final Logger log = LoggerFactory.getLogger(RedissonBroadcastManager.class);
 
     /**
      * 未订阅状态标识

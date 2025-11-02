@@ -3,8 +3,9 @@ package cn.floseek.fastcache.test.cache.serialize;
 import cn.floseek.fastcache.serializer.ValueSerializer;
 import cn.floseek.fastcache.serializer.impl.JacksonValueSerializer;
 import cn.floseek.fastcache.serializer.impl.JavaValueSerializer;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,8 +15,9 @@ import java.util.HashMap;
  *
  * @author ChenHongwei472
  */
-@Slf4j
 public class ValueSerializerTest {
+
+    private static final Logger log = LoggerFactory.getLogger(ValueSerializerTest.class);
 
     private final ValueSerializer javaValueSerializer = new JavaValueSerializer();
 

@@ -3,12 +3,13 @@ package cn.floseek.fastcache.cache.decorator;
 import cn.floseek.fastcache.cache.AbstractLocalCache;
 import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.CacheLoader;
-import cn.floseek.fastcache.config.RefreshPolicy;
 import cn.floseek.fastcache.cache.multilevel.MultiLevelCache;
+import cn.floseek.fastcache.config.RefreshPolicy;
 import cn.floseek.fastcache.lock.LockTemplate;
 import cn.floseek.fastcache.util.CacheUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Map;
@@ -31,8 +32,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
-@Slf4j
 public class RefreshCacheDecorator<K, V> extends CacheLoaderDecorator<K, V> {
+
+    private static final Logger log = LoggerFactory.getLogger(RefreshCacheDecorator.class);
 
     /**
      * 缓存刷新线程名称前缀

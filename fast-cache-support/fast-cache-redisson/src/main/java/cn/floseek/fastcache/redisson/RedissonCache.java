@@ -3,7 +3,6 @@ package cn.floseek.fastcache.redisson;
 import cn.floseek.fastcache.cache.AbstractRemoteCache;
 import cn.floseek.fastcache.config.CacheConfig;
 import cn.floseek.fastcache.serializer.ValueSerializer;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.time.DurationUtils;
@@ -30,7 +29,6 @@ import java.util.Objects;
  *
  * @author ChenHongwei472
  */
-@Slf4j
 public class RedissonCache<K, V> extends AbstractRemoteCache<K, V> {
 
     protected final RedissonClient redissonClient;

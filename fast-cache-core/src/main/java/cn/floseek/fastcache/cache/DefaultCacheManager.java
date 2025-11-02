@@ -4,21 +4,22 @@ import cn.floseek.fastcache.cache.broadcast.BroadcastManager;
 import cn.floseek.fastcache.cache.builder.CacheBuilderManager;
 import cn.floseek.fastcache.cache.builder.LocalCacheBuilder;
 import cn.floseek.fastcache.cache.builder.RemoteCacheBuilder;
-import cn.floseek.fastcache.config.CacheConfig;
-import cn.floseek.fastcache.common.enums.CacheType;
-import cn.floseek.fastcache.common.enums.LocalCacheProvider;
-import cn.floseek.fastcache.common.enums.RemoteCacheProvider;
-import cn.floseek.fastcache.common.enums.CacheSyncMode;
 import cn.floseek.fastcache.cache.decorator.BroadcastDecorator;
 import cn.floseek.fastcache.cache.decorator.CacheLoaderDecorator;
 import cn.floseek.fastcache.cache.decorator.RefreshCacheDecorator;
 import cn.floseek.fastcache.cache.multilevel.MultiLevelCacheBuilder;
+import cn.floseek.fastcache.common.enums.CacheSyncMode;
+import cn.floseek.fastcache.common.enums.CacheType;
+import cn.floseek.fastcache.common.enums.LocalCacheProvider;
+import cn.floseek.fastcache.common.enums.RemoteCacheProvider;
 import cn.floseek.fastcache.common.exception.CacheException;
+import cn.floseek.fastcache.config.CacheConfig;
 import cn.floseek.fastcache.config.GlobalProperties;
 import cn.floseek.fastcache.lock.LockTemplate;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Objects;
@@ -29,9 +30,10 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author ChenHongwei472
  */
-@Slf4j
 @SuppressWarnings("unchecked")
 public class DefaultCacheManager implements CacheManager {
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultCacheManager.class);
 
     /**
      * 缓存映射

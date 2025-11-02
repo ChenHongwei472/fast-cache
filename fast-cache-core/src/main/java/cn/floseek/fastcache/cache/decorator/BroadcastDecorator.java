@@ -3,9 +3,10 @@ package cn.floseek.fastcache.cache.decorator;
 import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.broadcast.BroadcastManager;
 import cn.floseek.fastcache.cache.broadcast.BroadcastMessage;
-import cn.floseek.fastcache.config.CacheConfig;
 import cn.floseek.fastcache.common.enums.CacheSyncMode;
-import lombok.extern.slf4j.Slf4j;
+import cn.floseek.fastcache.config.CacheConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,8 +24,9 @@ import java.util.Map;
  * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
-@Slf4j
 public class BroadcastDecorator<K, V> extends CacheDecorator<K, V> {
+
+    private static final Logger log = LoggerFactory.getLogger(BroadcastDecorator.class);
 
     protected final CacheConfig<K, V> config;
     private final BroadcastManager broadcastManager;

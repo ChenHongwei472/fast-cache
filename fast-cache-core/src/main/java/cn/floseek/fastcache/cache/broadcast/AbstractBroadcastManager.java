@@ -2,11 +2,12 @@ package cn.floseek.fastcache.cache.broadcast;
 
 import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.CacheManager;
-import cn.floseek.fastcache.common.enums.CacheType;
 import cn.floseek.fastcache.cache.decorator.BroadcastDecorator;
 import cn.floseek.fastcache.cache.decorator.CacheDecorator;
 import cn.floseek.fastcache.cache.multilevel.MultiLevelCache;
-import lombok.extern.slf4j.Slf4j;
+import cn.floseek.fastcache.common.enums.CacheType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
@@ -18,8 +19,9 @@ import java.util.UUID;
  *
  * @author ChenHongwei472
  */
-@Slf4j
 public abstract class AbstractBroadcastManager implements BroadcastManager {
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractBroadcastManager.class);
 
     /**
      * 当前实例 ID

@@ -1,9 +1,8 @@
 package cn.floseek.fastcache.cache.decorator;
 
 import cn.floseek.fastcache.cache.Cache;
-import cn.floseek.fastcache.config.CacheConfig;
 import cn.floseek.fastcache.common.enums.CacheType;
-import lombok.extern.slf4j.Slf4j;
+import cn.floseek.fastcache.config.CacheConfig;
 
 import java.util.Collection;
 import java.util.Map;
@@ -18,7 +17,6 @@ import java.util.Map;
  * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
-@Slf4j
 public abstract class CacheDecorator<K, V> implements Cache<K, V> {
 
     /**

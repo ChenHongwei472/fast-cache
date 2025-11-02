@@ -3,7 +3,6 @@ package cn.floseek.fastcache.cache.multilevel;
 import cn.floseek.fastcache.cache.Cache;
 import cn.floseek.fastcache.cache.builder.CacheBuilder;
 import cn.floseek.fastcache.config.CacheConfig;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 多级缓存构建器实现
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
  * @param <V> 缓存值类型
  * @author ChenHongwei472
  */
-@Slf4j
 public class MultiLevelCacheBuilder<K, V> implements CacheBuilder<K, V> {
 
     /**
